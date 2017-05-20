@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+	<!-- Gambling -->
+	<!-- http://www.creationkit.com/fallout4/index.php?title=Papyrus_Projects -->
+	<PapyrusProject
+		xmlns="PapyrusProject.xsd"
+		Flags="Institute_Papyrus_Flags.flg"
+		Output="..\..\"
+		Asm="Discard"
+		Optimize="false"
+		Release="false"
+		Final="false"
+	>
+	<Imports>
+		<Import>.</Import>
+		<Import>..\Base</Import>
+	</Imports>
+	<Folders>
+		<Folder>.</Folder>
+	</Folders>
+</PapyrusProject>
