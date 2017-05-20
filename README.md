@@ -1,12 +1,12 @@
 # Fallout 4 Gambling
 Play the game of Black Jack in fallout 4.
 
-== Ideas ==
+## Ideas ##
 * A new casino location.
 * Perk: Luck of the Draw
 * * You always keep a trick up your sleeve.
 * * When you accept this perk, choose a card. You hide this card in your boot. During a card game you may ethier choose to draw your next card or play the card in your boot.
 
-== Contributors ==
+## Contributors ##
 * Se7enRaven - http://www.nexusmods.com/fallout4/mods/23990/?
 * Sarinia - Counsel regarding meshes, textures, and materials.
