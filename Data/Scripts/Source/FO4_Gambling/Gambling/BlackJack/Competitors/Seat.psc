@@ -25,7 +25,7 @@ EndEvent
 ;---------------------------------------------
 
 Function Startup()
-	RegisterForCustomEvent(Main, "OnPhase")
+	RegisterForCustomEvent(BlackJack, "OnPhase")
 	self.OnStartup()
 	WriteLine(self, "Seat '"+ID+"' has started up.")
 EndFunction
@@ -39,7 +39,7 @@ EndFunction
 
 Function Deal(Deck:Card card)
 	Hand.Add(card)
-	Score = Main.GetScore(Hand, Score)
+	Score = BlackJack.GetScore(Hand, Score)
 	int index = Hand.Length - 1
 	self.OnDeal(card, index)
 	WriteLine(self, "Seat '"+ID+"' has been dealt the '"+card+"' card for '"+Score+"' score.")
@@ -53,7 +53,7 @@ EndFunction
 
 
 Function Shutdown()
-	UnregisterForCustomEvent(Main, "OnPhase")
+	UnregisterForCustomEvent(BlackJack, "OnPhase")
 	self.OnShutdown()
 	WriteLine(self, "Seat '"+ID+"' has shutdown.")
 EndFunction
@@ -63,7 +63,7 @@ EndFunction
 ;---------------------------------------------
 
 Group Components
-	Gambling:BlackJack:Main Property Main Auto Const Mandatory
+	BlackJack:Main Property BlackJack Auto Const Mandatory
 	BlackJack:Motion:Controller Property Controller Auto Const Mandatory
 EndGroup
 

@@ -1,6 +1,5 @@
 ScriptName Gambling:BlackJack:Competitors:SeatType extends ReferenceAlias Native Const Hidden
 import Gambling
-import Gambling:Common
 
 
 ; Virtuals

@@ -55,7 +55,7 @@ EndEvent
 
 Event OnPlay()
 	If (Turn == 1)
-		If (Main.IsWin(Score))
+		If (BlackJack.IsWin(Score))
 			WriteLine(self, "The seat '"+ID+"' has a black jack on turn one.")
 			return
 		Else
@@ -63,7 +63,7 @@ Event OnPlay()
 
 			If (selected == OptionHit)
 				WriteLine(self, "The seat '"+ID+"' has chosen to hit with "+Score)
-				Deal(Main.Cards.Deck.Draw())
+				Deal(BlackJack.Cards.Deck.Draw())
 				self.OnPlay()
 
 			ElseIf (selected == OptionStand)
@@ -76,11 +76,11 @@ Event OnPlay()
 		EndIf
 
 	ElseIf (Turn >= 2)
-		If (Main.IsWin(Score))
+		If (BlackJack.IsWin(Score))
 			WriteLine(self, "The seat '"+ID+"' has a black jack with "+Score)
 			return
 
-		ElseIf (Main.IsBust(Score))
+		ElseIf (BlackJack.IsBust(Score))
 			WriteLine(self, "The seat '"+ID+"' has busted with "+Score)
 			return
 
@@ -90,7 +90,7 @@ Event OnPlay()
 
 			If (selected == OptionHit)
 				WriteLine(self, "The seat '"+ID+"' has chosen to hit with "+Score)
-				Deal(Main.Cards.Deck.Draw())
+				Deal(BlackJack.Cards.Deck.Draw())
 				self.OnPlay()
 
 			ElseIf (selected == OptionStand)

@@ -3,8 +3,6 @@ import Gambling
 import Gambling:BlackJack
 import Gambling:Common
 
-; TODO: send ending phases after entire block has run
-; TODO: PhaseEventArgs.Ending, refactor to "Starting"
 
 CustomEvent OnPhase
 
@@ -199,7 +197,7 @@ EndFunction
 
 Group Properties
 	BlackJack:Players Property Players Auto Const Mandatory
-	Gambling:BlackJack:Cards Property Cards Auto Const Mandatory
+	BlackJack:Cards Property Cards Auto Const Mandatory
 EndGroup
 
 Group ReadOnly

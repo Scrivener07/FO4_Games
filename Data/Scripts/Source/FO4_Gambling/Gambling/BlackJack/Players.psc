@@ -189,8 +189,8 @@ Group Properties
 EndGroup
 
 Group ReadOnly
-	bool Property Count Hidden
-		bool Function Get()
+	int Property Count Hidden
+		int Function Get()
 			return Seats.Length
 		EndFunction
 	EndProperty
