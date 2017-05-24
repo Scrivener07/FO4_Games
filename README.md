@@ -25,6 +25,8 @@ The White Collar Players: twcpgaming@gmail.com
 
 ## Ideas ##
 * A new casino location.
+* Perk and stat based effects on the games.
+* Quests relating to the casino itself, work for the Pitboss. (similar to the work you could do for the Garret twins in FNV)
 * Perk: Luck of the Draw
 * * You always keep a trick up your sleeve.
 * * When you accept this perk, choose a card. You hide this card in your boot. During a card game you may either choose to draw your next card or play the card in your boot.
