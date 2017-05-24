@@ -2,7 +2,7 @@
 Play the game of Black Jack in fallout 4.
 
 ## Features ##
-- [x] Compete agisnt opponent AI.
+- [x] Compete against opponent AI.
 - [ ] An in-game tutorial.
 
 ## Ideas ##
