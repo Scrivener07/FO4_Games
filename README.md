@@ -1,6 +1,10 @@
 # Fallout 4 Gambling
 Play the game of Black Jack in fallout 4.
 
+## Features ##
+- [x] Compete agisnt opponent AI.
+- [ ] An in-game tutorial.
+
 ## Ideas ##
 * A new casino location.
 * Perk: Luck of the Draw
