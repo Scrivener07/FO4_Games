@@ -2,6 +2,7 @@ ScriptName Gambling:BlackJack:Main extends Quest
 import Gambling
 import Gambling:BlackJack
 import Gambling:Common
+import Gambling:Shared
 
 
 CustomEvent OnPhase
@@ -124,7 +125,7 @@ Function Exit()
 EndFunction
 
 
-int Function GetScore(Deck:Card[] aCards, int aScore)
+int Function GetScore(CardDeck:Card[] aCards, int aScore)
 	int score = 0
 	int index = 0
 	While (index < aCards.Length)
@@ -135,7 +136,7 @@ int Function GetScore(Deck:Card[] aCards, int aScore)
 EndFunction
 
 
-int Function CardToScore(Deck:Card aCard, int aScore)
+int Function CardToScore(CardDeck:Card aCard, int aScore)
 	If (aCard.Rank == Cards.Deck.Ace)
 		If (aScore + 11 > BlackJack)
 			return 1

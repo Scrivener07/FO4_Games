@@ -6,11 +6,11 @@ ScriptName Gambling:BlackJack:View extends Quest
 
 Function Test()
 	{Camera Stuff}
-	InputEnableLayer input = InputEnableLayer.Create()
-	input.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
+	InputEnableLayer inputLayer = InputEnableLayer.Create()
+	inputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
 	Game.StartDialogueCameraOrCenterOnTarget(Gambling_Camera)
 	Utility.Wait(3)
-	input.Delete()
+	inputLayer.Delete()
 EndFunction
 
 

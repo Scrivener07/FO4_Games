@@ -1,8 +1,9 @@
 ScriptName Gambling:BlackJack:Players extends Quest
 import Gambling
-import Gambling:Common
 import Gambling:BlackJack
 import Gambling:BlackJack:Main
+import Gambling:Common
+import Gambling:Shared
 
 ; TODO: player allocation
 ; TODO: give feedback to player about play results
@@ -93,7 +94,7 @@ Function Wager()
 EndFunction
 
 
-Function Deal(Gambling:Deck deck)
+Function Deal(CardDeck deck)
 	If (Seats)
 		int index = 0
 		While (index < Count)

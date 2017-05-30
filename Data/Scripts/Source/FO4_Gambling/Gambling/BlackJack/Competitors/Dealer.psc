@@ -1,7 +1,7 @@
 ScriptName Gambling:BlackJack:Competitors:Dealer extends Gambling:BlackJack:Competitors:Seat
 import Gambling
 import Gambling:Common
-
+import Gambling:Shared
 
 ; Events
 ;---------------------------------------------
@@ -12,7 +12,7 @@ Event OnStartup()
 	Score = 0
 	Wager = 0
 	Winnings = 0
-	Hand = new Deck:Card[0]
+	Hand = new CardDeck:Card[0]
 EndEvent
 
 
@@ -21,7 +21,7 @@ Event OnWager()
 EndEvent
 
 
-Event OnDeal(Deck:Card card, int index)
+Event OnDeal(CardDeck:Card card, int index)
 	If (card)
 		If (card.Reference)
 			If (index == 0)
@@ -60,7 +60,7 @@ EndEvent
 
 Event OnPlay()
 	If (Turn == 1)
-		Deck:Card card = Hand[0]
+		CardDeck:Card card = Hand[0]
 		Controller.Translate(card.Reference, Gambling_BlackJack_D1C01B)
 
 		If (BlackJack.IsWin(Score))
@@ -93,7 +93,7 @@ Event OnPlay()
 			return
 
 		Else
-			Deck:Card card = Hand[Turn]
+			CardDeck:Card card = Hand[Turn]
 			int selected = OptionChoice()
 
 			If (selected == OptionHit)

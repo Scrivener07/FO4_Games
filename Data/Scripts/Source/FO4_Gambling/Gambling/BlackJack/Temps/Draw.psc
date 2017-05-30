@@ -1,12 +1,13 @@
-Scriptname Gambling:BlackJack:Temps:Play extends ObjectReference Const
-import Gambling
+Scriptname Gambling:BlackJack:Temps:Draw extends ObjectReference Const
+import Gambling:Shared
+import Gambling:Common
 
 
 ; Events
 ;---------------------------------------------
 
 Event OnActivate(ObjectReference akActionRef)
-	BlackJack.Play()
+	Shoe.Draw()
 EndEvent
 
 
@@ -14,5 +15,5 @@ EndEvent
 ;---------------------------------------------
 
 Group Components
-	BlackJack:Main Property BlackJack Auto Const Mandatory
+	Cards:Shoe Property Shoe Auto Const Mandatory
 EndGroup

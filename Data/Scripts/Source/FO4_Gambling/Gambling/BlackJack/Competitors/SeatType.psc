@@ -1,5 +1,7 @@
 ScriptName Gambling:BlackJack:Competitors:SeatType extends ReferenceAlias Native Const Hidden
 import Gambling
+import Gambling:Common
+import Gambling:Shared
 
 
 ; Virtuals
@@ -15,7 +17,7 @@ Event OnWager()
 EndEvent
 
 
-Event OnDeal(Deck:Card aCard, int aIndex)
+Event OnDeal(CardDeck:Card aCard, int aIndex)
 	{Virtual}
 EndEvent
 

@@ -5,13 +5,14 @@ import Gambling
 ;---------------------------------------------
 
 Event OnActivate(ObjectReference akActionRef)
-	BlackJack.Cards.Position()
+	BlackJack.Cards.Position(TableReference)
 EndEvent
 
 
 ; Properties
 ;---------------------------------------------
 
-Group Components
+Group Properties
 	BlackJack:Main Property BlackJack Auto Const Mandatory
+	ObjectReference Property TableReference Auto Const Mandatory
 EndGroup

@@ -1,6 +1,7 @@
 ScriptName Gambling:BlackJack:Competitors:PlayerD extends Gambling:BlackJack:Competitors:Seat
 import Gambling
 import Gambling:Common
+import Gambling:Shared
 
 
 ; Methods
@@ -12,10 +13,10 @@ Event OnStartup()
 	Score = 0
 	Wager = 0
 	Winnings = 0
-	Hand = new Deck:Card[0]
+	Hand = new CardDeck:Card[0]
 EndEvent
 
-Event OnDeal(Deck:Card card, int index)
+Event OnDeal(CardDeck:Card card, int index)
 	If (card)
 		If (card.Reference)
 			If (index == 0)
@@ -84,7 +85,7 @@ Event OnPlay()
 			return
 
 		Else
-			Deck:Card card = Hand[Turn]
+			CardDeck:Card card = Hand[Turn]
 			int selected = OptionChoice()
 
 			If (selected == OptionHit)

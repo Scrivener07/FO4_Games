@@ -1,8 +1,10 @@
-ScriptName Gambling:Deck extends ReferenceAlias
+ScriptName Gambling:Shared:CardDeck extends Activator
 import Gambling:Common
+import Gambling:Shared
 
 
-Card[] Cards
+CardDeck:Card[] Cards
+
 
 Struct Card
 	int Suit = -1
@@ -10,416 +12,6 @@ Struct Card
 	bool Drawn = false
 	ObjectReference Reference
 EndStruct
-
-
-; Functions
-;---------------------------------------------
-
-Card Function Draw()
-	{Returns the next undrawn card from the deck.}
-	int index = 0
-	While (index < Cards.Length)
-		index = Cards.FindStruct("Drawn", false, index)
-		If (index > -1)
-			Card element = Cards[index]
-			element.Drawn = true
-			WriteLine(self, "Drawing the '"+element.Rank+"' card from the deck.")
-			return element
-		Else
-			WriteLine(self, "No available card to draw was found.")
-			return none
-		EndIf
-		index += 1
-	EndWhile
-EndFunction
-
-
-bool Function Shuffle()
-	If (Cards)
-		int count = Cards.Length
-		int index = 0
-
-		While (index < count)
-			int random = index + Utility.RandomInt() % (count - index)
-			Card temp = Cards[index]
-			Cards[index] = Cards[random]
-			Cards[random] = temp
-			index += 1
-		EndWhile
-
-		WriteLine(self, "The deck has been shuffled.")
-		return true
-	Else
-		WriteLine(self, "Cannot shuffle a none deck.")
-		return false
-	EndIf
-EndFunction
-
-
-bool Function IsFaceCard(Card aCard)
-	return aCard.Rank > Ten
-EndFunction
-
-
-Card[] Function GetCards()
-	Card[] array = new Card[0]
-	int index = 0
-	While (index < Cards.Length)
-		array.Add(Cards[index])
-		index += 1
-	EndWhile
-	return array
-EndFunction
-
-
-ObjectReference[] Function GetReferences(Deck:Card[] aCards) Global
-	ObjectReference[] array = new ObjectReference[0]
-	If (aCards)
-		int index = 0
-		While (index < aCards.Length)
-			array.Add(aCards[index].Reference)
-			index += 1
-		EndWhile
-	EndIf
-	return array
-EndFunction
-
-
-
-Function NewCards()
-	WriteLine(self, "Replacing the cards in the deck with new ones.")
-	Cards = new Card[0]
-
-	Card Club01 = new Card
-	Club01.Suit = Club
-	Club01.Rank = Ace
-	Club01.Reference = Gambling_ClubAce
-	Cards.Add(Club01)
-
-	Card Club02 = new Card
-	Club02.Suit = Club
-	Club02.Rank = Two
-	Club02.Reference = Gambling_Club02
-	Cards.Add(Club02)
-
-	Card Club03 = new Card
-	Club03.Suit = Club
-	Club03.Rank = Three
-	Club03.Reference = Gambling_Club03
-	Cards.Add(Club03)
-
-	Card Club04 = new Card
-	Club04.Suit = Club
-	Club04.Rank = Four
-	Club04.Reference = Gambling_Club04
-	Cards.Add(Club04)
-
-	Card Club05 = new Card
-	Club05.Suit = Club
-	Club05.Rank = Five
-	Club05.Reference = Gambling_Club05
-	Cards.Add(Club05)
-
-	Card Club06 = new Card
-	Club06.Suit = Club
-	Club06.Rank = Six
-	Club06.Reference = Gambling_Club06
-	Cards.Add(Club06)
-
-	Card Club07 = new Card
-	Club07.Suit = Club
-	Club07.Rank = Seven
-	Club07.Reference = Gambling_Club07
-	Cards.Add(Club07)
-
-	Card Club08 = new Card
-	Club08.Suit = Club
-	Club08.Rank = Eight
-	Club08.Reference = Gambling_Club08
-	Cards.Add(Club08)
-
-	Card Club09 = new Card
-	Club09.Suit = Club
-	Club09.Rank = Nine
-	Club09.Reference = Gambling_Club09
-	Cards.Add(Club09)
-
-	Card Club10 = new Card
-	Club10.Suit = Club
-	Club10.Rank = Ten
-	Club10.Reference = Gambling_Club10
-	Cards.Add(Club10)
-
-	Card Club11 = new Card
-	Club11.Suit = Club
-	Club11.Rank = Jack
-	Club11.Reference = Gambling_ClubJack
-	Cards.Add(Club11)
-
-	Card Club12 = new Card
-	Club12.Suit = Club
-	Club12.Rank = Queen
-	Club12.Reference = Gambling_ClubQueen
-	Cards.Add(Club12)
-
-	Card Club13 = new Card
-	Club13.Suit = Club
-	Club13.Rank = King
-	Club13.Reference = Gambling_ClubKing
-	Cards.Add(Club13)
-
-	Card Diamond01 = new Card
-	Diamond01.Suit = Diamond
-	Diamond01.Rank = Ace
-	Diamond01.Reference = Gambling_DiamondAce
-	Cards.Add(Diamond01)
-
-	Card Diamond02 = new Card
-	Diamond02.Suit = Diamond
-	Diamond02.Rank = Two
-	Diamond02.Reference = Gambling_Diamond02
-	Cards.Add(Diamond02)
-
-	Card Diamond03 = new Card
-	Diamond03.Suit = Diamond
-	Diamond03.Rank = Three
-	Diamond03.Reference = Gambling_Diamond03
-	Cards.Add(Diamond03)
-
-	Card Diamond04 = new Card
-	Diamond04.Suit = Diamond
-	Diamond04.Rank = Four
-	Diamond04.Reference = Gambling_Diamond04
-	Cards.Add(Diamond04)
-
-	Card Diamond05 = new Card
-	Diamond05.Suit = Diamond
-	Diamond05.Rank = Five
-	Diamond05.Reference = Gambling_Diamond05
-	Cards.Add(Diamond05)
-
-	Card Diamond06 = new Card
-	Diamond06.Suit = Diamond
-	Diamond06.Rank = Six
-	Diamond06.Reference = Gambling_Diamond06
-	Cards.Add(Diamond06)
-
-	Card Diamond07 = new Card
-	Diamond07.Suit = Diamond
-	Diamond07.Rank = Seven
-	Diamond07.Reference = Gambling_Diamond07
-	Cards.Add(Diamond07)
-
-	Card Diamond08 = new Card
-	Diamond08.Suit = Diamond
-	Diamond08.Rank = Eight
-	Diamond08.Reference = Gambling_Diamond08
-	Cards.Add(Diamond08)
-
-	Card Diamond09 = new Card
-	Diamond09.Suit = Diamond
-	Diamond09.Rank = Nine
-	Diamond09.Reference = Gambling_Diamond09
-	Cards.Add(Diamond09)
-
-	Card Diamond10 = new Card
-	Diamond10.Suit = Diamond
-	Diamond10.Rank = Ten
-	Diamond10.Reference = Gambling_Diamond10
-	Cards.Add(Diamond10)
-
-	Card Diamond11 = new Card
-	Diamond11.Suit = Diamond
-	Diamond11.Rank = Jack
-	Diamond11.Reference = Gambling_DiamondJack
-	Cards.Add(Diamond11)
-
-	Card Diamond12 = new Card
-	Diamond12.Suit = Diamond
-	Diamond12.Rank = Queen
-	Diamond12.Reference = Gambling_DiamondQueen
-	Cards.Add(Diamond12)
-
-	Card Diamond13 = new Card
-	Diamond13.Suit = Diamond
-	Diamond13.Rank = King
-	Diamond13.Reference = Gambling_DiamondKing
-	Cards.Add(Diamond13)
-
-	Card Heart01 = new Card
-	Heart01.Suit = Heart
-	Heart01.Rank = Ace
-	Heart01.Reference = Gambling_HeartAce
-	Cards.Add(Heart01)
-
-	Card Heart02 = new Card
-	Heart02.Suit = Heart
-	Heart02.Rank = Two
-	Heart02.Reference = Gambling_Heart02
-	Cards.Add(Heart02)
-
-	Card Heart03 = new Card
-	Heart03.Suit = Heart
-	Heart03.Rank = Three
-	Heart03.Reference = Gambling_Heart03
-	Cards.Add(Heart03)
-
-	Card Heart04 = new Card
-	Heart04.Suit = Heart
-	Heart04.Rank = Four
-	Heart04.Reference = Gambling_Heart04
-	Cards.Add(Heart04)
-
-	Card Heart05 = new Card
-	Heart05.Suit = Heart
-	Heart05.Rank = Five
-	Heart05.Reference = Gambling_Heart05
-	Cards.Add(Heart05)
-
-	Card Heart06 = new Card
-	Heart06.Suit = Heart
-	Heart06.Rank = Six
-	Heart06.Reference = Gambling_Heart06
-	Cards.Add(Heart06)
-
-	Card Heart07 = new Card
-	Heart07.Suit = Heart
-	Heart07.Rank = Seven
-	Heart07.Reference = Gambling_Heart07
-	Cards.Add(Heart07)
-
-	Card Heart08 = new Card
-	Heart08.Suit = Heart
-	Heart08.Rank = Eight
-	Heart08.Reference = Gambling_Heart08
-	Cards.Add(Heart08)
-
-	Card Heart09 = new Card
-	Heart09.Suit = Heart
-	Heart09.Rank = Nine
-	Heart09.Reference = Gambling_Heart09
-	Cards.Add(Heart09)
-
-	Card Heart10 = new Card
-	Heart10.Suit = Heart
-	Heart10.Rank = Ten
-	Heart10.Reference = Gambling_Heart10
-	Cards.Add(Heart10)
-
-	Card Heart11 = new Card
-	Heart11.Suit = Heart
-	Heart11.Rank = Jack
-	Heart11.Reference = Gambling_HeartJack
-	Cards.Add(Heart11)
-
-	Card Heart12 = new Card
-	Heart12.Suit = Heart
-	Heart12.Rank = Queen
-	Heart12.Reference = Gambling_HeartQueen
-	Cards.Add(Heart12)
-
-	Card Heart13 = new Card
-	Heart13.Suit = Heart
-	Heart13.Rank = King
-	Heart13.Reference = Gambling_HeartKing
-	Cards.Add(Heart13)
-
-	Card Spade01 = new Card
-	Spade01.Suit = Spade
-	Spade01.Rank = Ace
-	Spade01.Reference = Gambling_SpadeAce
-	Cards.Add(Spade01)
-
-	Card Spade02 = new Card
-	Spade02.Suit = Spade
-	Spade02.Rank = Two
-	Spade02.Reference = Gambling_Spade02
-	Cards.Add(Spade02)
-
-	Card Spade03 = new Card
-	Spade03.Suit = Spade
-	Spade03.Rank = Three
-	Spade03.Reference = Gambling_Spade03
-	Cards.Add(Spade03)
-
-	Card Spade04 = new Card
-	Spade04.Suit = Spade
-	Spade04.Rank = Four
-	Spade04.Reference = Gambling_Spade04
-	Cards.Add(Spade04)
-
-	Card Spade05 = new Card
-	Spade05.Suit = Spade
-	Spade05.Rank = Five
-	Spade05.Reference = Gambling_Spade05
-	Cards.Add(Spade05)
-
-	Card Spade06 = new Card
-	Spade06.Suit = Spade
-	Spade06.Rank = Six
-	Spade06.Reference = Gambling_Spade06
-	Cards.Add(Spade06)
-
-	Card Spade07 = new Card
-	Spade07.Suit = Spade
-	Spade07.Rank = Seven
-	Spade07.Reference = Gambling_Spade07
-	Cards.Add(Spade07)
-
-	Card Spade08 = new Card
-	Spade08.Suit = Spade
-	Spade08.Rank = Eight
-	Spade08.Reference = Gambling_Spade08
-	Cards.Add(Spade08)
-
-	Card Spade09 = new Card
-	Spade09.Suit = Spade
-	Spade09.Rank = Nine
-	Spade09.Reference = Gambling_Spade09
-	Cards.Add(Spade09)
-
-	Card Spade10 = new Card
-	Spade10.Suit = Spade
-	Spade10.Rank = Ten
-	Spade10.Reference = Gambling_Spade10
-	Cards.Add(Spade10)
-
-	Card Spade11 = new Card
-	Spade11.Suit = Spade
-	Spade11.Rank = Jack
-	Spade11.Reference = Gambling_SpadeJack
-	Cards.Add(Spade11)
-
-	Card Spade12 = new Card
-	Spade12.Suit = Spade
-	Spade12.Rank = Queen
-	Spade12.Reference = Gambling_SpadeQueen
-	Cards.Add(Spade12)
-
-	Card Spade13 = new Card
-	Spade13.Suit = Spade
-	Spade13.Rank = King
-	Spade13.Reference = Gambling_SpadeKing
-	Cards.Add(Spade13)
-
-	If (UseJoker)
-		Card Joker01 = new Card
-		Joker01.Suit = -1
-		Joker01.Rank = Joker
-		Joker01.Reference = Gambling_JokerBlack
-		Cards.Add(Joker01)
-
-		Card Joker02 = new Card
-		Joker02.Suit = -1
-		Joker02.Rank = Joker
-		Joker02.Reference = Gambling_JokerRed
-		Cards.Add(Joker02)
-	EndIf
-EndFunction
-
-
-; Properties
-;---------------------------------------------
 
 Group Properties
 	bool Property UseJoker = false Auto
@@ -448,6 +40,425 @@ Group Ranks
 	int Property Queen = 12 AutoReadOnly
 	int Property King = 13 AutoReadOnly
 EndGroup
+
+
+; Methods
+;---------------------------------------------
+
+CardDeck:Card Function Draw()
+	{Returns the next undrawn card from the deck.}
+	int index = 0
+	While (index < Cards.Length)
+		index = Cards.FindStruct("Drawn", false, index)
+		If (index > -1)
+			CardDeck:Card element = Cards[index]
+			element.Drawn = true
+			WriteLine(self, "Drawing the '"+element.Rank+"' card from the deck.")
+			return element
+		Else
+			WriteLine(self, "No available card to draw was found.")
+			return none
+		EndIf
+		index += 1
+	EndWhile
+EndFunction
+
+
+bool Function Shuffle()
+	If (Cards)
+		int count = Cards.Length
+		int index = 0
+
+		While (index < count)
+			int random = index + Utility.RandomInt() % (count - index)
+			CardDeck:Card temp = Cards[index]
+			Cards[index] = Cards[random]
+			Cards[random] = temp
+			index += 1
+		EndWhile
+
+		WriteLine(self, "The deck has been shuffled.")
+		return true
+	Else
+		WriteLine(self, "Cannot shuffle a none deck.")
+		return false
+	EndIf
+EndFunction
+
+
+; Functions
+;---------------------------------------------
+
+bool Function IsFaceCard(CardDeck:Card aCard)
+	return aCard.Rank > Ten
+EndFunction
+
+
+CardDeck:Card[] Function GetCards()
+	CardDeck:Card[] array = new CardDeck:Card[0]
+	int index = 0
+	While (index < Cards.Length)
+		array.Add(Cards[index])
+		index += 1
+	EndWhile
+	return array
+EndFunction
+
+
+ObjectReference[] Function GetReferences(CardDeck:Card[] aCards) Global
+	ObjectReference[] array = new ObjectReference[0]
+	If (aCards)
+		int index = 0
+		While (index < aCards.Length)
+			array.Add(aCards[index].Reference)
+			index += 1
+		EndWhile
+	EndIf
+	return array
+EndFunction
+
+
+Function NewCards()
+	WriteLine(self, "Replacing the Cards in the deck with new ones.")
+	Cards = Create(UseJoker)
+EndFunction
+
+
+CardDeck:Card[] Function Create(bool aUseJoker = false)
+	CardDeck:Card[] array = new CardDeck:Card[0]
+
+	CardDeck:Card Club01 = new CardDeck:Card
+	Club01.Suit = Club
+	Club01.Rank = Ace
+	Club01.Reference = Gambling_ClubAce
+	array.Add(Club01)
+
+	CardDeck:Card Club02 = new CardDeck:Card
+	Club02.Suit = Club
+	Club02.Rank = Two
+	Club02.Reference = Gambling_Club02
+	array.Add(Club02)
+
+	CardDeck:Card Club03 = new CardDeck:Card
+	Club03.Suit = Club
+	Club03.Rank = Three
+	Club03.Reference = Gambling_Club03
+	array.Add(Club03)
+
+	CardDeck:Card Club04 = new CardDeck:Card
+	Club04.Suit = Club
+	Club04.Rank = Four
+	Club04.Reference = Gambling_Club04
+	array.Add(Club04)
+
+	CardDeck:Card Club05 = new CardDeck:Card
+	Club05.Suit = Club
+	Club05.Rank = Five
+	Club05.Reference = Gambling_Club05
+	array.Add(Club05)
+
+	CardDeck:Card Club06 = new CardDeck:Card
+	Club06.Suit = Club
+	Club06.Rank = Six
+	Club06.Reference = Gambling_Club06
+	array.Add(Club06)
+
+	CardDeck:Card Club07 = new CardDeck:Card
+	Club07.Suit = Club
+	Club07.Rank = Seven
+	Club07.Reference = Gambling_Club07
+	array.Add(Club07)
+
+	CardDeck:Card Club08 = new CardDeck:Card
+	Club08.Suit = Club
+	Club08.Rank = Eight
+	Club08.Reference = Gambling_Club08
+	array.Add(Club08)
+
+	CardDeck:Card Club09 = new CardDeck:Card
+	Club09.Suit = Club
+	Club09.Rank = Nine
+	Club09.Reference = Gambling_Club09
+	array.Add(Club09)
+
+	CardDeck:Card Club10 = new CardDeck:Card
+	Club10.Suit = Club
+	Club10.Rank = Ten
+	Club10.Reference = Gambling_Club10
+	array.Add(Club10)
+
+	CardDeck:Card Club11 = new CardDeck:Card
+	Club11.Suit = Club
+	Club11.Rank = Jack
+	Club11.Reference = Gambling_ClubJack
+	array.Add(Club11)
+
+	CardDeck:Card Club12 = new CardDeck:Card
+	Club12.Suit = Club
+	Club12.Rank = Queen
+	Club12.Reference = Gambling_ClubQueen
+	array.Add(Club12)
+
+	CardDeck:Card Club13 = new CardDeck:Card
+	Club13.Suit = Club
+	Club13.Rank = King
+	Club13.Reference = Gambling_ClubKing
+	array.Add(Club13)
+
+	CardDeck:Card Diamond01 = new CardDeck:Card
+	Diamond01.Suit = Diamond
+	Diamond01.Rank = Ace
+	Diamond01.Reference = Gambling_DiamondAce
+	array.Add(Diamond01)
+
+	CardDeck:Card Diamond02 = new CardDeck:Card
+	Diamond02.Suit = Diamond
+	Diamond02.Rank = Two
+	Diamond02.Reference = Gambling_Diamond02
+	array.Add(Diamond02)
+
+	CardDeck:Card Diamond03 = new CardDeck:Card
+	Diamond03.Suit = Diamond
+	Diamond03.Rank = Three
+	Diamond03.Reference = Gambling_Diamond03
+	array.Add(Diamond03)
+
+	CardDeck:Card Diamond04 = new CardDeck:Card
+	Diamond04.Suit = Diamond
+	Diamond04.Rank = Four
+	Diamond04.Reference = Gambling_Diamond04
+	array.Add(Diamond04)
+
+	CardDeck:Card Diamond05 = new CardDeck:Card
+	Diamond05.Suit = Diamond
+	Diamond05.Rank = Five
+	Diamond05.Reference = Gambling_Diamond05
+	array.Add(Diamond05)
+
+	CardDeck:Card Diamond06 = new CardDeck:Card
+	Diamond06.Suit = Diamond
+	Diamond06.Rank = Six
+	Diamond06.Reference = Gambling_Diamond06
+	array.Add(Diamond06)
+
+	CardDeck:Card Diamond07 = new CardDeck:Card
+	Diamond07.Suit = Diamond
+	Diamond07.Rank = Seven
+	Diamond07.Reference = Gambling_Diamond07
+	array.Add(Diamond07)
+
+	CardDeck:Card Diamond08 = new CardDeck:Card
+	Diamond08.Suit = Diamond
+	Diamond08.Rank = Eight
+	Diamond08.Reference = Gambling_Diamond08
+	array.Add(Diamond08)
+
+	CardDeck:Card Diamond09 = new CardDeck:Card
+	Diamond09.Suit = Diamond
+	Diamond09.Rank = Nine
+	Diamond09.Reference = Gambling_Diamond09
+	array.Add(Diamond09)
+
+	CardDeck:Card Diamond10 = new CardDeck:Card
+	Diamond10.Suit = Diamond
+	Diamond10.Rank = Ten
+	Diamond10.Reference = Gambling_Diamond10
+	array.Add(Diamond10)
+
+	CardDeck:Card Diamond11 = new CardDeck:Card
+	Diamond11.Suit = Diamond
+	Diamond11.Rank = Jack
+	Diamond11.Reference = Gambling_DiamondJack
+	array.Add(Diamond11)
+
+	CardDeck:Card Diamond12 = new CardDeck:Card
+	Diamond12.Suit = Diamond
+	Diamond12.Rank = Queen
+	Diamond12.Reference = Gambling_DiamondQueen
+	array.Add(Diamond12)
+
+	CardDeck:Card Diamond13 = new CardDeck:Card
+	Diamond13.Suit = Diamond
+	Diamond13.Rank = King
+	Diamond13.Reference = Gambling_DiamondKing
+	array.Add(Diamond13)
+
+	CardDeck:Card Heart01 = new CardDeck:Card
+	Heart01.Suit = Heart
+	Heart01.Rank = Ace
+	Heart01.Reference = Gambling_HeartAce
+	array.Add(Heart01)
+
+	CardDeck:Card Heart02 = new CardDeck:Card
+	Heart02.Suit = Heart
+	Heart02.Rank = Two
+	Heart02.Reference = Gambling_Heart02
+	array.Add(Heart02)
+
+	CardDeck:Card Heart03 = new CardDeck:Card
+	Heart03.Suit = Heart
+	Heart03.Rank = Three
+	Heart03.Reference = Gambling_Heart03
+	array.Add(Heart03)
+
+	CardDeck:Card Heart04 = new CardDeck:Card
+	Heart04.Suit = Heart
+	Heart04.Rank = Four
+	Heart04.Reference = Gambling_Heart04
+	array.Add(Heart04)
+
+	CardDeck:Card Heart05 = new CardDeck:Card
+	Heart05.Suit = Heart
+	Heart05.Rank = Five
+	Heart05.Reference = Gambling_Heart05
+	array.Add(Heart05)
+
+	CardDeck:Card Heart06 = new CardDeck:Card
+	Heart06.Suit = Heart
+	Heart06.Rank = Six
+	Heart06.Reference = Gambling_Heart06
+	array.Add(Heart06)
+
+	CardDeck:Card Heart07 = new CardDeck:Card
+	Heart07.Suit = Heart
+	Heart07.Rank = Seven
+	Heart07.Reference = Gambling_Heart07
+	array.Add(Heart07)
+
+	CardDeck:Card Heart08 = new CardDeck:Card
+	Heart08.Suit = Heart
+	Heart08.Rank = Eight
+	Heart08.Reference = Gambling_Heart08
+	array.Add(Heart08)
+
+	CardDeck:Card Heart09 = new CardDeck:Card
+	Heart09.Suit = Heart
+	Heart09.Rank = Nine
+	Heart09.Reference = Gambling_Heart09
+	array.Add(Heart09)
+
+	CardDeck:Card Heart10 = new CardDeck:Card
+	Heart10.Suit = Heart
+	Heart10.Rank = Ten
+	Heart10.Reference = Gambling_Heart10
+	array.Add(Heart10)
+
+	CardDeck:Card Heart11 = new CardDeck:Card
+	Heart11.Suit = Heart
+	Heart11.Rank = Jack
+	Heart11.Reference = Gambling_HeartJack
+	array.Add(Heart11)
+
+	CardDeck:Card Heart12 = new CardDeck:Card
+	Heart12.Suit = Heart
+	Heart12.Rank = Queen
+	Heart12.Reference = Gambling_HeartQueen
+	array.Add(Heart12)
+
+	CardDeck:Card Heart13 = new CardDeck:Card
+	Heart13.Suit = Heart
+	Heart13.Rank = King
+	Heart13.Reference = Gambling_HeartKing
+	array.Add(Heart13)
+
+	CardDeck:Card Spade01 = new CardDeck:Card
+	Spade01.Suit = Spade
+	Spade01.Rank = Ace
+	Spade01.Reference = Gambling_SpadeAce
+	array.Add(Spade01)
+
+	CardDeck:Card Spade02 = new CardDeck:Card
+	Spade02.Suit = Spade
+	Spade02.Rank = Two
+	Spade02.Reference = Gambling_Spade02
+	array.Add(Spade02)
+
+	CardDeck:Card Spade03 = new CardDeck:Card
+	Spade03.Suit = Spade
+	Spade03.Rank = Three
+	Spade03.Reference = Gambling_Spade03
+	array.Add(Spade03)
+
+	CardDeck:Card Spade04 = new CardDeck:Card
+	Spade04.Suit = Spade
+	Spade04.Rank = Four
+	Spade04.Reference = Gambling_Spade04
+	array.Add(Spade04)
+
+	CardDeck:Card Spade05 = new CardDeck:Card
+	Spade05.Suit = Spade
+	Spade05.Rank = Five
+	Spade05.Reference = Gambling_Spade05
+	array.Add(Spade05)
+
+	CardDeck:Card Spade06 = new CardDeck:Card
+	Spade06.Suit = Spade
+	Spade06.Rank = Six
+	Spade06.Reference = Gambling_Spade06
+	array.Add(Spade06)
+
+	CardDeck:Card Spade07 = new CardDeck:Card
+	Spade07.Suit = Spade
+	Spade07.Rank = Seven
+	Spade07.Reference = Gambling_Spade07
+	array.Add(Spade07)
+
+	CardDeck:Card Spade08 = new CardDeck:Card
+	Spade08.Suit = Spade
+	Spade08.Rank = Eight
+	Spade08.Reference = Gambling_Spade08
+	array.Add(Spade08)
+
+	CardDeck:Card Spade09 = new CardDeck:Card
+	Spade09.Suit = Spade
+	Spade09.Rank = Nine
+	Spade09.Reference = Gambling_Spade09
+	array.Add(Spade09)
+
+	CardDeck:Card Spade10 = new CardDeck:Card
+	Spade10.Suit = Spade
+	Spade10.Rank = Ten
+	Spade10.Reference = Gambling_Spade10
+	array.Add(Spade10)
+
+	CardDeck:Card Spade11 = new CardDeck:Card
+	Spade11.Suit = Spade
+	Spade11.Rank = Jack
+	Spade11.Reference = Gambling_SpadeJack
+	array.Add(Spade11)
+
+	CardDeck:Card Spade12 = new CardDeck:Card
+	Spade12.Suit = Spade
+	Spade12.Rank = Queen
+	Spade12.Reference = Gambling_SpadeQueen
+	array.Add(Spade12)
+
+	CardDeck:Card Spade13 = new CardDeck:Card
+	Spade13.Suit = Spade
+	Spade13.Rank = King
+	Spade13.Reference = Gambling_SpadeKing
+	array.Add(Spade13)
+
+	If (aUseJoker)
+		CardDeck:Card Joker01 = new CardDeck:Card
+		Joker01.Suit = -1
+		Joker01.Rank = Joker
+		Joker01.Reference = Gambling_JokerBlack
+		array.Add(Joker01)
+
+		CardDeck:Card Joker02 = new CardDeck:Card
+		Joker02.Suit = -1
+		Joker02.Rank = Joker
+		Joker02.Reference = Gambling_JokerRed
+		array.Add(Joker02)
+	EndIf
+
+	return array
+EndFunction
+
+
+; Properties
+;---------------------------------------------
 
 Group References
 	ObjectReference Property Gambling_JokerBlack Auto Const Mandatory

@@ -1,12 +1,12 @@
-Scriptname Gambling:BlackJack:Temps:Play extends ObjectReference Const
-import Gambling
+Scriptname Gambling:BlackJack:Temps:Alloc extends ObjectReference Const
+import Gambling:Shared
 
 
 ; Events
 ;---------------------------------------------
 
 Event OnActivate(ObjectReference akActionRef)
-	BlackJack.Play()
+	Shoe.Allocate()
 EndEvent
 
 
@@ -14,5 +14,5 @@ EndEvent
 ;---------------------------------------------
 
 Group Components
-	BlackJack:Main Property BlackJack Auto Const Mandatory
+	Cards:Shoe Property Shoe Auto Const Mandatory
 EndGroup

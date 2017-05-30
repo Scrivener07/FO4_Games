@@ -1,11 +1,11 @@
 ScriptName Gambling:Common Hidden
-
+import Gambling:Context
 
 ; Logging
 ;---------------------------------------------
 
 bool Function WriteLine(string prefix, string text) Global DebugOnly
-	string filename = "Gambling" const
+	string filename = GetTitle() const
 	text = prefix + " " + text
 	If(Debug.TraceUser(filename, text))
 		return true
@@ -45,6 +45,14 @@ EndFunction
 
 bool Function HasState(ScriptObject script) Global
 	return script.GetState() != ""
+EndFunction
+
+
+; Arrays
+;---------------------------------------------
+
+bool Function ArrayIsCapacity(var[] array)
+	return array && array.Length >= 128
 EndFunction
 
 
