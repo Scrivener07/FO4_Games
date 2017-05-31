@@ -1,6 +1,7 @@
 ScriptName Gambling:BlackJack:Competitors:PlayerE extends Gambling:BlackJack:Competitors:Seat
 import Gambling
 import Gambling:Common
+import Gambling:Shared
 
 
 ; Events

@@ -1,8 +1,9 @@
 ScriptName Gambling:BlackJack:Players extends Quest
 import Gambling
-import Gambling:Common
 import Gambling:BlackJack
 import Gambling:BlackJack:Main
+import Gambling:Common
+import Gambling:Shared
 
 ; TODO: player allocation
 ; TODO: give feedback to player about play results
@@ -93,7 +94,7 @@ Function Wager()
 EndFunction
 
 
-Function Deal(Gambling:Deck deck)
+Function Deal(Shared:Deck deck)
 	If (Seats)
 		int index = 0
 		While (index < Count)
@@ -138,9 +139,26 @@ EndFunction
 ; Functions
 ;---------------------------------------------
 
+int Function IndexOf(Competitors:Seat seat)
+	{Determines the index of a specific element in the array.}
+	If (seat)
+		return Seats.Find(seat)
+	Else
+		return Invalid
+	EndIf
+EndFunction
+
+
+bool Function Contains(Competitors:Seat seat)
+	{Determines whether an element is in the array.}
+	return IndexOf(seat) > Invalid
+EndFunction
+
+
 bool Function Remove(Competitors:Seat seat)
-	int index = Seats.Find(seat)
-	If (index > -1)
+	int index = IndexOf(seat)
+
+	If (index > Invalid)
 		Seats.Remove(index)
 		return true
 	Else
@@ -152,10 +170,15 @@ EndFunction
 
 bool Function Add(Competitors:Seat seat)
 	If (seat)
-		Seats.Add(seat)
-		return true
+		If (Contains(seat) == false)
+			Seats.Add(seat)
+			return true
+		Else
+			WriteLine(self, "The seats already contain the '"+seat+"' player.")
+			return false
+		EndIf
 	Else
-		WriteLine(self, "Cannot register a none seat.")
+		WriteLine(self, "Cannot add a none seat.")
 		return false
 	EndIf
 EndFunction
@@ -197,7 +220,7 @@ Group ReadOnly
 
 	bool Property HasHuman Hidden
 		bool Function Get()
-			return Seats.Find(PlayerA) > -1
+			return Contains(PlayerA)
 		EndFunction
 	EndProperty
 EndGroup

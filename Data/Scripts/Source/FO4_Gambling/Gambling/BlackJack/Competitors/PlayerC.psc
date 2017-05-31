@@ -1,9 +1,10 @@
 ScriptName Gambling:BlackJack:Competitors:PlayerC extends Gambling:BlackJack:Competitors:Seat
 import Gambling
 import Gambling:Common
+import Gambling:Shared
 
 
-; Methods
+; Events
 ;---------------------------------------------
 
 Event OnStartup()

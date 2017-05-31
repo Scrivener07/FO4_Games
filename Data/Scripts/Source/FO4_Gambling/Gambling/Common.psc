@@ -116,7 +116,7 @@ EndFunction
 ; References
 ;---------------------------------------------
 
-Point Function ToPoint(ObjectReference reference) Global
+Point Function ToPosition(ObjectReference reference) Global
 	Point result = new Point
 	If (reference)
 		result.X = reference.X
@@ -127,8 +127,20 @@ Point Function ToPoint(ObjectReference reference) Global
 EndFunction
 
 
-Function SetPoint(ObjectReference reference, Point value) Global
+Point Function ToAngle(ObjectReference reference) Global
+	Point result = new Point
 	If (reference)
-		reference.SetPosition(value.X, value.Y, value.Z)
+		result.X = reference.GetAngleX()
+		result.Y = reference.GetAngleY()
+		result.Z = reference.GetAngleZ()
+	EndIf
+	return result
+EndFunction
+
+
+Function SetPoint(ObjectReference reference, Point position, Point angle) Global
+	If (reference)
+		reference.SetPosition(position.X, position.Y, position.Z)
+		reference.SetAngle(angle.X, angle.Y, angle.Z)
 	EndIf
 EndFunction

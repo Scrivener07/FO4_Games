@@ -1,6 +1,8 @@
 ScriptName Gambling:BlackJack:Competitors:PlayerA extends Gambling:BlackJack:Competitors:Seat
 import Gambling
 import Gambling:Common
+import Gambling:Shared
+
 
 int Invalid = -1 const
 
@@ -15,7 +17,7 @@ int OptionWager50 = 5 const
 int OptionWager100 = 6 const
 
 
-; Methods
+; Events
 ;---------------------------------------------
 
 Event OnStartup()

@@ -1,15 +1,19 @@
 ScriptName Gambling:BlackJack:Competitors:Seat extends Gambling:BlackJack:Competitors:SeatType Hidden
 import Gambling
-import Gambling:Common
 import Gambling:BlackJack:Main
+import Gambling:Common
+import Gambling:Shared
 
+
+; Events
+;---------------------------------------------
 
 Event Gambling:BlackJack:Main.OnPhase(BlackJack:Main akSender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
 		If (e.Name == akSender.ScoringState && e.Begun == false)
 			If (Hand)
-				ObjectReference[] references = Gambling:Deck.GetReferences(Hand)
+				ObjectReference[] references = Gambling:Shared:Deck.GetReferences(Hand)
 				Controller.TranslateEach(references, Gambling_Card)
 			Else
 				WriteLine(self, "Seat '"+ID+"' has no hand to cleanup.")
@@ -21,7 +25,7 @@ Event Gambling:BlackJack:Main.OnPhase(BlackJack:Main akSender, var[] arguments)
 EndEvent
 
 
-; Functions
+; Methods
 ;---------------------------------------------
 
 Function Startup()
@@ -64,7 +68,7 @@ EndFunction
 
 Group Components
 	BlackJack:Main Property BlackJack Auto Const Mandatory
-	BlackJack:Motion:Controller Property Controller Auto Const Mandatory
+	Shared:Motion:Controller Property Controller Auto Const Mandatory
 EndGroup
 
 Group Properties

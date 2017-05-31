@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Motion:Controller extends ReferenceAlias
+ScriptName Gambling:Shared:Motion:Controller extends ReferenceAlias
 import Gambling:Common
 
 

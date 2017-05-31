@@ -1,9 +1,10 @@
 ScriptName Gambling:BlackJack:Competitors:PlayerD extends Gambling:BlackJack:Competitors:Seat
 import Gambling
 import Gambling:Common
+import Gambling:Shared
 
 
-; Methods
+; Events
 ;---------------------------------------------
 
 Event OnStartup()
@@ -14,6 +15,7 @@ Event OnStartup()
 	Winnings = 0
 	Hand = new Deck:Card[0]
 EndEvent
+
 
 Event OnDeal(Deck:Card card, int index)
 	If (card)

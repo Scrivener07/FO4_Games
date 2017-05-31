@@ -2,7 +2,7 @@ ScriptName Gambling:BlackJack:Main extends Quest
 import Gambling
 import Gambling:BlackJack
 import Gambling:Common
-
+import Gambling:Shared
 
 CustomEvent OnPhase
 
@@ -97,6 +97,11 @@ State Scoring
 	Event OnEndState(string asNewState)
 		WriteLine(self, "Ending the scoring phase.")
 		Players.Deallocate()
+
+		If (Gambling_BlackJack_MessagePlayAgain.Show() == 1)
+			Play()
+		EndIf
+
 		SendPhase(ScoringState, Ended)
 	EndEvent
 EndState
@@ -198,6 +203,7 @@ EndFunction
 Group Properties
 	BlackJack:Players Property Players Auto Const Mandatory
 	BlackJack:Cards Property Cards Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessagePlayAgain Auto Const Mandatory
 EndGroup
 
 Group ReadOnly
