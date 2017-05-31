@@ -45,6 +45,10 @@ Event Gambling:BlackJack:Main.OnPhase(BlackJack:Main akSender, var[] arguments)
 			If (BlackJack.IsBust(PlayerA.Score))
 				Gambling_BlackJack_MessageBust.Show(PlayerA.Score)
 			EndIf
+
+			If (Gambling_BlackJack_MessagePlayAgain.Show() == 1)
+				BlackJack.Play()
+			EndIf
 		EndIf
 	Else
 		WriteLine(self, "Invalid phase event arguments.")
@@ -209,6 +213,7 @@ Group Properties
 	Message Property Gambling_BlackJack_MessageBust Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageWin Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageWinNatural Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessagePlayAgain Auto Const Mandatory
 EndGroup
 
 Group ReadOnly
