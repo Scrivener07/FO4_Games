@@ -11,7 +11,7 @@ import Gambling:Shared
 Event Gambling:BlackJack:Main.OnPhase(BlackJack:Main akSender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
-		If (e.Name == akSender.ScoringState && e.Begun == false)
+		If (e.Name == akSender.ScoringState && e.Change == akSender.Ended)
 			If (Hand)
 				ObjectReference[] references = Gambling:Shared:Deck.GetReferences(Hand)
 				Controller.TranslateEach(references, Gambling_Card)

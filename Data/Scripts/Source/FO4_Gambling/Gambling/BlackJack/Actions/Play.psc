@@ -20,7 +20,7 @@ EndEvent
 
 
 Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akActionRef)
-	Utility.Wait(4.0)
+	Utility.Wait(5)
 	BlackJack.Play()
 EndEvent
 

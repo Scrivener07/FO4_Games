@@ -4,23 +4,21 @@ import Gambling:BlackJack
 import Gambling:Common
 import Gambling:Shared
 
-bool once = false
 
 
 ; Methods
 ;---------------------------------------------
 
-Function Restore()
-	Deck.NewCards()
+Function Allocate()
+	Deck.Allocate()
+	GoHome()
+EndFunction
 
-	If (once == false) ; TODO: this whole block, yikes
-		once = true
-		Deck:Card[] Cards = Deck.GetCards()
-		ObjectReference[] array = Gambling:Shared:Deck.GetReferences(Cards)
-		Controller.TranslateEach(array, Gambling_Card)
-	Else
-		WriteLine(self, "The deck has already been restored.")
-	EndIf
+
+Function GoHome()
+	Deck:Card[] Cards = Deck.GetCards()
+	ObjectReference[] array = Gambling:Shared:Deck.GetReferences(Cards)
+	Controller.TranslateEach(array, Gambling_Card)
 EndFunction
 
 

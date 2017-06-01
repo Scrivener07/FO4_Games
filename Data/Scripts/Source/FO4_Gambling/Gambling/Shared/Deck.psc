@@ -85,8 +85,8 @@ ObjectReference[] Function GetReferences(Deck:Card[] aCards) Global
 EndFunction
 
 
-Function NewCards()
-	WriteLine(self, "Replacing the cards in the deck with new ones.")
+Function Allocate()
+	WriteLine(self, "Allocating new card data.")
 	Cards = new Card[0]
 
 	Card Club01 = new Card

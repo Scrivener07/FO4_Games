@@ -6,8 +6,6 @@ import Gambling:Common
 import Gambling:Shared
 
 ; TODO: player allocation
-; TODO: give feedback to player about play results
-; TODO: check for difference in win or natural win
 ; TODO: scoring for a player/dealer draw
 
 Competitors:Seat[] Seats
@@ -29,25 +27,11 @@ EndEvent
 Event Gambling:BlackJack:Main.OnPhase(BlackJack:Main akSender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
-		If (e.Name == akSender.WageringState && e.Begun)
+		If (e.Name == akSender.WageringState && e.Change == akSender.Ended)
 			If (PlayerA.Abort)
 				If (Remove(PlayerA))
 					WriteLine(self, "The player has aborted the game.")
 				EndIf
-			EndIf
-		ElseIf (e.Name == akSender.ScoringState && e.Begun)
-			WriteLine(self, "Your final score is "+PlayerA.Score+".")
-
-			If (BlackJack.IsWin(PlayerA.Score))
-				Gambling_BlackJack_MessageWinNatural.Show(PlayerA.Score)
-			EndIf
-
-			If (BlackJack.IsBust(PlayerA.Score))
-				Gambling_BlackJack_MessageBust.Show(PlayerA.Score)
-			EndIf
-
-			If (Gambling_BlackJack_MessagePlayAgain.Show() == 1)
-				BlackJack.Play()
 			EndIf
 		EndIf
 	Else
@@ -61,7 +45,9 @@ EndEvent
 
 bool Function Allocate()
 	int selected = Gambling_BlackJack_MessagePlay.Show()
+
 	If (selected == OptionStart)
+
 		Add(PlayerA)
 		Add(PlayerB)
 		Add(PlayerC)
@@ -69,11 +55,8 @@ bool Function Allocate()
 		Add(PlayerE)
 		Add(Dealer)
 
-		int index = 0
-		While (index < Count)
-			Seats[index].Startup()
-			index += 1
-		EndWhile
+		Startup()
+
 		return true
 	ElseIf (selected == OptionExit || selected == Invalid)
 		WriteLine(self, "Chose not to play Black Jack.")
@@ -81,6 +64,21 @@ bool Function Allocate()
 	Else
 		WriteLine(self, "The option '"+selected+"' is unhandled.")
 		return false
+	EndIf
+EndFunction
+
+
+
+
+Function Startup()
+	If (Seats)
+		int index = 0
+		While (index < Count)
+			Seats[index].Startup()
+			index += 1
+		EndWhile
+	Else
+		WriteLine(self, "There are no seats to startup.")
 	EndIf
 EndFunction
 
@@ -144,7 +142,7 @@ EndFunction
 ;---------------------------------------------
 
 int Function IndexOf(Competitors:Seat seat)
-	{Determines the index of a specific element in the array.}
+	{Determines the index of a specific seat in the collection.}
 	If (seat)
 		return Seats.Find(seat)
 	Else
@@ -154,12 +152,13 @@ EndFunction
 
 
 bool Function Contains(Competitors:Seat seat)
-	{Determines whether an element is in the array.}
+	{Determines whether a seat is in the collection.}
 	return IndexOf(seat) > Invalid
 EndFunction
 
 
 bool Function Remove(Competitors:Seat seat)
+	{Removes a seat from the collection.}
 	int index = IndexOf(seat)
 
 	If (index > Invalid)
@@ -173,6 +172,7 @@ EndFunction
 
 
 bool Function Add(Competitors:Seat seat)
+	{Adds a seat to the collection.}
 	If (seat)
 		If (Contains(seat) == false)
 			Seats.Add(seat)
@@ -189,6 +189,7 @@ EndFunction
 
 
 Function Clear()
+	{Removes all seats from the collection.}
 	If (Seats)
 		Seats.Clear()
 	Else
@@ -210,22 +211,12 @@ Group Properties
 	Competitors:PlayerE Property PlayerE Auto Const Mandatory
 
 	Message Property Gambling_BlackJack_MessagePlay Auto Const Mandatory
-	Message Property Gambling_BlackJack_MessageBust Auto Const Mandatory
-	Message Property Gambling_BlackJack_MessageWin Auto Const Mandatory
-	Message Property Gambling_BlackJack_MessageWinNatural Auto Const Mandatory
-	Message Property Gambling_BlackJack_MessagePlayAgain Auto Const Mandatory
 EndGroup
 
 Group ReadOnly
 	int Property Count Hidden
 		int Function Get()
 			return Seats.Length
-		EndFunction
-	EndProperty
-
-	bool Property HasHuman Hidden
-		bool Function Get()
-			return Contains(PlayerA)
 		EndFunction
 	EndProperty
 EndGroup

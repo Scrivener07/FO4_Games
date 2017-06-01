@@ -8,12 +8,10 @@ CustomEvent OnPhase
 
 Struct PhaseEventArgs
 	string Name
-	bool Begun = true
+	bool Change = true
 EndStruct
 
 int BlackJack = 21 const
-bool Begun = false const
-bool Ended = true const
 
 
 ; Methods
@@ -21,21 +19,19 @@ bool Ended = true const
 
 State Starting
 	Event OnBeginState(string asOldState)
-		WriteLine(self, "Beginning the starting phase.")
+		SendPhase(StartingState, Begun)
 
 		If (Players.Allocate())
-			Cards.Restore()
+			Cards.Allocate()
+			Players.Startup()
 			ChangeState(self, WageringState)
 		Else
 			WriteLine(self, "Aborting startup.")
 			Exit()
 		EndIf
-
-		SendPhase(StartingState, Begun)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		WriteLine(self, "Ending the starting phase.")
 		SendPhase(StartingState, Ended)
 	EndEvent
 EndState
@@ -43,14 +39,14 @@ EndState
 
 State Wagering
 	Event OnBeginState(string asOldState)
-		WriteLine(self, "Beginning the wagering phase.")
-		Players.Wager()
 		SendPhase(WageringState, Begun)
+
+		Players.Wager()
+
 		ChangeState(self, DealingState)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		WriteLine(self, "Ending the wagering phase.")
 		SendPhase(WageringState, Ended)
 	EndEvent
 EndState
@@ -58,15 +54,15 @@ EndState
 
 State Dealing
 	Event OnBeginState(string asOldState)
-		WriteLine(self, "Beginning the dealing phase.")
+		SendPhase(DealingState, Begun)
+
 		Cards.Shuffle()
 		Players.Deal(Cards.Deck)
-		SendPhase(DealingState, Begun)
+
 		ChangeState(self, PlayingState)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		WriteLine(self, "Ending the dealing phase.")
 		SendPhase(DealingState, Ended)
 	EndEvent
 EndState
@@ -74,14 +70,14 @@ EndState
 
 State Playing
 	Event OnBeginState(string asOldState)
-		WriteLine(self, "Beginning the playing phase.")
-		Players.Play()
 		SendPhase(PlayingState, Begun)
+
+		Players.Play()
+
 		ChangeState(self, ScoringState)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		WriteLine(self, "Ending the playing phase.")
 		SendPhase(PlayingState, Ended)
 	EndEvent
 EndState
@@ -89,13 +85,12 @@ EndState
 
 State Scoring
 	Event OnBeginState(string asOldState)
-		WriteLine(self, "Beginning the scoring phase.")
-		Exit()
 		SendPhase(ScoringState, Begun)
+		Exit()
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		WriteLine(self, "Ending the scoring phase.")
+		Cards.GoHome()
 		Players.Deallocate()
 		SendPhase(ScoringState, Ended)
 	EndEvent
@@ -165,12 +160,12 @@ bool Function IsBust(int aScore)
 EndFunction
 
 
-Function SendPhase(string aName, bool aBegun)
+Function SendPhase(string aName, bool aChange)
 	string sState = self.GetState()
 	If (sState == aName)
 		PhaseEventArgs Phase = new PhaseEventArgs
 		Phase.Name = aName
-		Phase.Begun = aBegun
+		Phase.Change = aChange
 
 		var[] arguments = new var[1]
 		arguments[0] = Phase
@@ -207,10 +202,23 @@ Group ReadOnly
 		EndFunction
 	EndProperty
 
+	bool Property HasHuman Hidden
+		bool Function Get()
+			return Players.Contains(Players.PlayerA)
+		EndFunction
+	EndProperty
+EndGroup
+
+Group States
 	string Property EmptyState = "" AutoReadOnly
 	string Property StartingState = "Starting" AutoReadOnly
 	string Property WageringState = "Wagering" AutoReadOnly
 	string Property DealingState = "Dealing" AutoReadOnly
 	string Property PlayingState = "Playing" AutoReadOnly
 	string Property ScoringState = "Scoring" AutoReadOnly
+EndGroup
+
+Group Changes
+	bool Property Begun = false AutoReadOnly
+	bool Property Ended = true AutoReadOnly
 EndGroup
