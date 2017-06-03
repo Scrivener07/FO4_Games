@@ -1,7 +1,7 @@
 # Fallout 4 Gambling
 Play the game of Black Jack in Fallout 4.
 
-[Watch a video](https://youtu.be/6fm8QedoMTg) of this projects most recent progress.
+Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaju0r1Zw4MTMmxLbc9ZQ1MOLJ) for work in progress footage.
 
 
 ## Introduction ##
