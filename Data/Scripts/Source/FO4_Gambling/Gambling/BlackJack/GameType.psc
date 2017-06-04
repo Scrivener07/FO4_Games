@@ -12,6 +12,7 @@ Event OnInitialize()
 EndEvent
 
 
+; Phase Events
 ;---------------------------------------------
 
 Struct PhaseEventArgs
@@ -45,6 +46,7 @@ Function SendPhase(BlackJack:Game sender, string name, bool change) Global
 		arguments[0] = phase
 
 		WriteLine(sender, "Sending phase event:" + phase)
+		sender.SendCustomEvent("PhaseEvent", arguments)
 	Else
 		WriteLine(sender, "Cannot not send the phase '"+name+"' while in the '"+stateName+"' state.")
 	EndIf
@@ -60,5 +62,6 @@ PhaseEventArgs Function GetPhaseEventArgs(var[] arguments) Global
 EndFunction
 
 
+Event OnGamePhase(PhaseEventArgs e)
 	{Virtual}
 EndEvent
