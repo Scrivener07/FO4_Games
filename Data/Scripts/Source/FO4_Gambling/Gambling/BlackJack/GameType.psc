@@ -12,7 +12,6 @@ Event OnInitialize()
 EndEvent
 
 
-; Game Event
 ;---------------------------------------------
 
 Struct PhaseEventArgs
@@ -20,26 +19,34 @@ Struct PhaseEventArgs
 	bool Change = true
 EndStruct
 
+Group PhaseNames
+	string Property ReadyPhase = "" AutoReadOnly
+	string Property StartingPhase = "Starting" AutoReadOnly
+	string Property WageringPhase = "Wagering" AutoReadOnly
+	string Property DealingPhase = "Dealing" AutoReadOnly
+	string Property PlayingPhase = "Playing" AutoReadOnly
+	string Property ScoringPhase = "Scoring" AutoReadOnly
+EndGroup
 
-Event OnGameEvent(BlackJack:Game akSender, PhaseEventArgs e)
-	{Virtual}
-EndEvent
+Group PhaseChanges
+	bool Property Begun = true AutoReadOnly
+	bool Property Ended = false AutoReadOnly
+EndGroup
 
 
-Function SendPhase(BlackJack:Game akSender, string aName, bool aChange) Global
-	string sState = akSender.GetState()
-	If (sState == aName)
+Function SendPhase(BlackJack:Game sender, string name, bool change) Global
+	string stateName = sender.GetState()
+	If (stateName == name)
 		PhaseEventArgs phase = new PhaseEventArgs
-		phase.Name = aName
-		phase.Change = aChange
+		phase.Name = name
+		phase.Change = change
 
 		var[] arguments = new var[1]
 		arguments[0] = phase
 
-		WriteLine(akSender, "Sending phase event:" + phase)
-		akSender.SendCustomEvent("OnPhase", arguments)
+		WriteLine(sender, "Sending phase event:" + phase)
 	Else
-		WriteLine(akSender, "Cannot not send the phase '"+aName+"' while in the '"+sState+"' state.")
+		WriteLine(sender, "Cannot not send the phase '"+name+"' while in the '"+stateName+"' state.")
 	EndIf
 EndFunction
 
@@ -51,3 +58,7 @@ PhaseEventArgs Function GetPhaseEventArgs(var[] arguments) Global
 		return none
 	EndIf
 EndFunction
+
+
+	{Virtual}
+EndEvent

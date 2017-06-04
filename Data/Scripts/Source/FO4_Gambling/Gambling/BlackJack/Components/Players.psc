@@ -1,7 +1,6 @@
 ScriptName Gambling:BlackJack:Components:Players extends Gambling:BlackJack:GameComponent
 import Gambling
 import Gambling:BlackJack
-import Gambling:BlackJack:Game
 import Gambling:Common
 import Gambling:Shared
 
@@ -23,8 +22,8 @@ Event OnInitialize()
 EndEvent
 
 
-Event OnGameEvent(BlackJack:Game akSender, PhaseEventArgs e)
-	If (e.Name == akSender.WageringState && e.Change == akSender.Ended)
+Event OnGamePhase(PhaseEventArgs e)
+	If (e.Name == WageringPhase && e.Change == Ended)
 		If (PlayerA.Abort)
 			If (Remove(PlayerA))
 				WriteLine(self, "The player has aborted the game.")
@@ -60,8 +59,6 @@ bool Function Allocate()
 		return false
 	EndIf
 EndFunction
-
-
 
 
 Function Startup()

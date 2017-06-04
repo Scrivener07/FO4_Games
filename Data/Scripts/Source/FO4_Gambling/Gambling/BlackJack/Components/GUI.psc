@@ -1,6 +1,5 @@
 ScriptName Gambling:BlackJack:Components:GUI extends Gambling:BlackJack:GameComponent
 import Gambling
-import Gambling:BlackJack:Game
 import Gambling:Common
 
 
@@ -11,22 +10,23 @@ import Gambling:Common
 ; Events
 ;---------------------------------------------
 
-Event OnGameEvent(BlackJack:Game akSender, PhaseEventArgs e)
-	If (e.Name == akSender.ScoringState)
-		If (e.Change == akSender.Begun)
-			If (BlackJack.HasHuman)
-				int humanScore = BlackJack.Players.PlayerA.Score
-				WriteLine(self, "Your final score is "+humanScore+".")
+Event OnGamePhase(PhaseEventArgs e)
+	If !(BlackJack.HasHuman)
+		WriteLine(self, "No human, ignoring messages.")
+		return
+	EndIf
 
-				If (BlackJack.IsWin(humanScore))
-					Gambling_BlackJack_MessageWinNatural.Show(humanScore)
-				EndIf
+	If (e.Name == ScoringPhase)
+		If (e.Change == Begun)
+			int humanScore = BlackJack.Players.PlayerA.Score
+			WriteLine(self, "Your final score is "+humanScore+".")
 
-				If (BlackJack.IsBust(humanScore))
-					Gambling_BlackJack_MessageBust.Show(humanScore)
-				EndIf
-			Else
-				WriteLine(self, "No human to show any messages.")
+			If (BlackJack.IsWin(humanScore))
+				Gambling_BlackJack_MessageWinNatural.Show(humanScore)
+			EndIf
+
+			If (BlackJack.IsBust(humanScore))
+				Gambling_BlackJack_MessageBust.Show(humanScore)
 			EndIf
 		Else
 			If (Gambling_BlackJack_MessagePlayAgain.Show() == 1)

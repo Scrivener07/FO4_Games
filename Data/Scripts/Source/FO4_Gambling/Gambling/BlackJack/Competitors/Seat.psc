@@ -8,10 +8,10 @@ import Gambling:Shared
 ; Events
 ;---------------------------------------------
 
-Event Gambling:BlackJack:Game.OnPhase(BlackJack:Game akSender, var[] arguments)
+Event Gambling:BlackJack:Game.PhaseEvent(BlackJack:Game akSender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
-		If (e.Name == akSender.ScoringState && e.Change == akSender.Ended)
+		If (e.Name == akSender.ScoringPhase && e.Change == akSender.Ended)
 			If (Hand)
 				ObjectReference[] references = Gambling:Shared:Deck.GetReferences(Hand)
 				Controller.TranslateEach(references, Gambling_Card)
@@ -29,7 +29,7 @@ EndEvent
 ;---------------------------------------------
 
 Function Startup()
-	RegisterForCustomEvent(BlackJack, "OnPhase")
+	RegisterForCustomEvent(BlackJack, "PhaseEvent")
 	self.OnStartup()
 	WriteLine(self, "Seat '"+ID+"' has started up.")
 EndFunction
@@ -57,7 +57,7 @@ EndFunction
 
 
 Function Shutdown()
-	UnregisterForCustomEvent(BlackJack, "OnPhase")
+	UnregisterForCustomEvent(BlackJack, "PhaseEvent")
 	self.OnShutdown()
 	WriteLine(self, "Seat '"+ID+"' has shutdown.")
 EndFunction

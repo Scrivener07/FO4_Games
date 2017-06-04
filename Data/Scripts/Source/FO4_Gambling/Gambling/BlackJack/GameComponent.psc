@@ -8,15 +8,15 @@ import Gambling:Common
 ;---------------------------------------------
 
 Event OnInit()
-	RegisterForCustomEvent(BlackJack, "OnPhase")
+	RegisterForCustomEvent(BlackJack, "PhaseEvent")
 	self.OnInitialize()
 EndEvent
 
 
-Event Gambling:BlackJack:Game.OnPhase(BlackJack:Game akSender, var[] arguments)
+Event Gambling:BlackJack:Game.PhaseEvent(BlackJack:Game sender, var[] arguments)
 	PhaseEventArgs e = Gambling:BlackJack:GameType.GetPhaseEventArgs(arguments)
 	If (e)
-		self.OnGameEvent(akSender, e)
+		self.OnGamePhase(e)
 	Else
 		WriteLine(self, "Invalid phase event arguments.")
 	EndIf

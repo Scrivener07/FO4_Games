@@ -15,12 +15,12 @@ Event OnInitialize()
 EndEvent
 
 
-Event OnGameEvent(BlackJack:Game akSender, PhaseEventArgs e)
-	If (e.Name == akSender.StartingState && e.Change == akSender.Begun)
+Event OnGamePhase(PhaseEventArgs e)
+	If (e.Name == StartingPhase && e.Change == Begun)
 		Enable()
 	EndIf
 
-	If (e.Name == akSender.ScoringState && e.Change == akSender.Ended)
+	If (e.Name == ScoringPhase && e.Change == Ended)
 		Disable()
 	EndIf
 EndEvent

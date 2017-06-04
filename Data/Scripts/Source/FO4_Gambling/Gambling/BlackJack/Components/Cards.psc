@@ -1,6 +1,5 @@
 ScriptName Gambling:BlackJack:Components:Cards extends Gambling:BlackJack:GameComponent
 import Gambling
-import Gambling:Common
 import Gambling:Shared
 
 

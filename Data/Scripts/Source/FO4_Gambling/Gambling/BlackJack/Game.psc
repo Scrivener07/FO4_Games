@@ -1,11 +1,10 @@
 ScriptName Gambling:BlackJack:Game extends Gambling:BlackJack:GameType
 import Gambling
-;import Gambling:BlackJack
 import Gambling:Common
 import Gambling:Shared
 
 
-CustomEvent OnPhase
+CustomEvent PhaseEvent
 
 
 ; Methods
@@ -13,12 +12,12 @@ CustomEvent OnPhase
 
 State Starting
 	Event OnBeginState(string asOldState)
-		Gambling:BlackJack:GameType.SendPhase(self, StartingState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, StartingPhase, Begun)
 
 		If (Players.Allocate())
 			Cards.Allocate()
 			Players.Startup()
-			ChangeState(self, WageringState)
+			ChangeState(self, WageringPhase)
 		Else
 			WriteLine(self, "Aborting startup.")
 			Exit()
@@ -27,67 +26,67 @@ State Starting
 
 	Event OnEndState(string asNewState)
 		View.Enable()
-		Gambling:BlackJack:GameType.SendPhase(self, StartingState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, StartingPhase, Ended)
 	EndEvent
 EndState
 
 
 State Wagering
 	Event OnBeginState(string asOldState)
-		Gambling:BlackJack:GameType.SendPhase(self, WageringState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, WageringPhase, Begun)
 
 		Players.Wager()
 
-		ChangeState(self, DealingState)
+		ChangeState(self, DealingPhase)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		Gambling:BlackJack:GameType.SendPhase(self, WageringState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, WageringPhase, Ended)
 	EndEvent
 EndState
 
 
 State Dealing
 	Event OnBeginState(string asOldState)
-		Gambling:BlackJack:GameType.SendPhase(self, DealingState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, DealingPhase, Begun)
 
 		Cards.Shuffle()
 		Players.Deal(Cards.Deck)
 
-		ChangeState(self, PlayingState)
+		ChangeState(self, PlayingPhase)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		Gambling:BlackJack:GameType.SendPhase(self, DealingState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, DealingPhase, Ended)
 	EndEvent
 EndState
 
 
 State Playing
 	Event OnBeginState(string asOldState)
-		Gambling:BlackJack:GameType.SendPhase(self, PlayingState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, PlayingPhase, Begun)
 
 		Players.Play()
 
-		ChangeState(self, ScoringState)
+		ChangeState(self, ScoringPhase)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		Gambling:BlackJack:GameType.SendPhase(self, PlayingState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, PlayingPhase, Ended)
 	EndEvent
 EndState
 
 
 State Scoring
 	Event OnBeginState(string asOldState)
-		Gambling:BlackJack:GameType.SendPhase(self, ScoringState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, ScoringPhase, Begun)
 		Exit()
 	EndEvent
 
 	Event OnEndState(string asNewState)
 		Cards.GoHome()
 		Players.Deallocate()
-		Gambling:BlackJack:GameType.SendPhase(self, ScoringState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, ScoringPhase, Ended)
 	EndEvent
 EndState
 
@@ -97,7 +96,7 @@ EndState
 
 bool Function Play()
 	If (Exited)
-		return ChangeState(self, StartingState)
+		return ChangeState(self, StartingPhase)
 	Else
 		WriteLine(self, "The game is not ready to play right now.")
 		return false
@@ -107,7 +106,7 @@ EndFunction
 
 Function Exit()
 	If !(Exited)
-		ChangeState(self, EmptyState)
+		ChangeState(self, ReadyPhase)
 	Else
 		WriteLine(self, "The game is already exited.")
 	EndIf
@@ -167,7 +166,7 @@ EndGroup
 Group ReadOnly
 	bool Property Exited Hidden
 		bool Function Get()
-			return self.GetState() == EmptyState
+			return self.GetState() == ReadyPhase
 		EndFunction
 	EndProperty
 
@@ -178,20 +177,7 @@ Group ReadOnly
 	EndProperty
 EndGroup
 
-Group States
-	string Property EmptyState = "" AutoReadOnly
-	string Property StartingState = "Starting" AutoReadOnly
-	string Property WageringState = "Wagering" AutoReadOnly
-	string Property DealingState = "Dealing" AutoReadOnly
-	string Property PlayingState = "Playing" AutoReadOnly
-	string Property ScoringState = "Scoring" AutoReadOnly
-EndGroup
 
 Group Rules
 	string Property BlackJack = 21 AutoReadOnly
-EndGroup
-
-Group Changes
-	bool Property Begun = true AutoReadOnly
-	bool Property Ended = false AutoReadOnly
 EndGroup
