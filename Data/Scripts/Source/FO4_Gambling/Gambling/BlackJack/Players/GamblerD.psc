@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Competitors:PlayerE extends Gambling:BlackJack:Competitors:Seat
+ScriptName Gambling:BlackJack:Players:GamblerD extends Gambling:BlackJack:Players:Player
 import Gambling
 import Gambling:Common
 import Gambling:Shared

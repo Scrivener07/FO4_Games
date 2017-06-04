@@ -1,6 +1,7 @@
 ScriptName Gambling:BlackJack:Components:Cards extends Gambling:BlackJack:GameComponent
 import Gambling
 import Gambling:Shared
+import Gambling:BlackJack
 
 
 ; Methods
@@ -8,14 +9,20 @@ import Gambling:Shared
 
 Function Allocate()
 	Deck.Allocate()
-	GoHome()
+	CollectAll()
 EndFunction
 
 
-Function GoHome()
+Function Collect(Players:Player seat)
+	ObjectReference[] references = Gambling:Shared:Deck.GetReferences(seat.Hand)
+	Controller.TranslateEach(references, Gambling_BlackJack_DeckMarker)
+EndFunction
+
+
+Function CollectAll()
 	Deck:Card[] Cards = Deck.GetCards()
-	ObjectReference[] array = Gambling:Shared:Deck.GetReferences(Cards)
-	Controller.TranslateEach(array, Gambling_BlackJack_DeckMarker)
+	ObjectReference[] references = Gambling:Shared:Deck.GetReferences(Cards)
+	Controller.TranslateEach(references, Gambling_BlackJack_DeckMarker)
 EndFunction
 
 

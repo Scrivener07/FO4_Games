@@ -1,6 +1,5 @@
 ScriptName Gambling:BlackJack:GameType extends Quest Native Const Hidden
 import Gambling
-import Gambling:BlackJack:Game
 import Gambling:Common
 
 
@@ -12,8 +11,7 @@ Event OnInitialize()
 EndEvent
 
 
-; Phase Events
-;---------------------------------------------
+; Game Phase ---------------------------------
 
 Struct PhaseEventArgs
 	string Name
@@ -21,12 +19,13 @@ Struct PhaseEventArgs
 EndStruct
 
 Group PhaseNames
-	string Property ReadyPhase = "" AutoReadOnly
+	string Property IdlePhase = "" AutoReadOnly
 	string Property StartingPhase = "Starting" AutoReadOnly
 	string Property WageringPhase = "Wagering" AutoReadOnly
 	string Property DealingPhase = "Dealing" AutoReadOnly
 	string Property PlayingPhase = "Playing" AutoReadOnly
 	string Property ScoringPhase = "Scoring" AutoReadOnly
+	string Property ExitingPhase = "Exiting" AutoReadOnly
 EndGroup
 
 Group PhaseChanges

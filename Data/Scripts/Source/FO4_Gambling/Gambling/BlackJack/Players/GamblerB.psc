@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Competitors:PlayerC extends Gambling:BlackJack:Competitors:Seat
+ScriptName Gambling:BlackJack:Players:GamblerB extends Gambling:BlackJack:Players:Player
 import Gambling
 import Gambling:Common
 import Gambling:Shared
@@ -8,7 +8,7 @@ import Gambling:Shared
 ;---------------------------------------------
 
 Event OnStartup()
-	ID = 3
+	ID = 2
 	Abort = false
 	Score = 0
 	Wager = 0
@@ -21,27 +21,27 @@ Event OnDeal(Deck:Card card, int index)
 	If (card)
 		If (card.Reference)
 			If (index == 0)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C01)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C01)
 			ElseIf (index == 1)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C02)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C02)
 			ElseIf (index == 2)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C03)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C03)
 			ElseIf (index == 3)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C04)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C04)
 			ElseIf (index == 4)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C05)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C05)
 			ElseIf (index == 5)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C06)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C06)
 			ElseIf (index == 6)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C07)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C07)
 			ElseIf (index == 7)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C08)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C08)
 			ElseIf (index == 8)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C09)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C09)
 			ElseIf (index == 9)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C10)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C10)
 			ElseIf (index == 10)
-				Controller.Translate(card.Reference, Gambling_BlackJack_P3C11)
+				Controller.Translate(card.Reference, Gambling_BlackJack_P2C11)
 			Else
 				WriteLine(self, "The hand index '"+index+"' is out of range.")
 			EndIf
@@ -124,15 +124,15 @@ EndFunction
 ;---------------------------------------------
 
 Group Cards
-	ObjectReference Property Gambling_BlackJack_P3C01 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C02 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C03 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C04 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C05 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C06 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C07 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C08 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C09 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C10 Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_P3C11 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C01 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C02 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C03 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C04 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C05 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C06 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C07 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C08 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C09 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C10 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_P2C11 Auto Const Mandatory
 EndGroup

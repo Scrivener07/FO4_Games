@@ -1,8 +1,8 @@
 ScriptName Gambling:BlackJack:Game extends Gambling:BlackJack:GameType
 import Gambling
+import Gambling:BlackJack
 import Gambling:Common
 import Gambling:Shared
-
 
 CustomEvent PhaseEvent
 
@@ -10,21 +10,52 @@ CustomEvent PhaseEvent
 ; Methods
 ;---------------------------------------------
 
+bool Function Play(Actions:Play playAction)
+	If (Idling)
+		If (playAction)
+			Table.PlayAction = playAction
+		EndIf
+
+		return ChangeState(self, StartingPhase)
+	Else
+		WriteLine(self, "The game is not ready to play right now.")
+		return false
+	EndIf
+EndFunction
+
+
+Function Exit()
+	If (Idling == false)
+		ChangeState(self, ExitingPhase)
+	Else
+		WriteLine(self, "The game has already exited.")
+	EndIf
+EndFunction
+
+
+; Phases -------------------------------------
+
 State Starting
 	Event OnBeginState(string asOldState)
 		Gambling:BlackJack:GameType.SendPhase(self, StartingPhase, Begun)
 
-		If (Players.Allocate() && HasHuman)
-			Cards.Allocate()
-			Players.Startup()
-			ChangeState(self, WageringPhase)
-		Else
-			WriteLine(self, "Aborting startup.")
-			Exit()
+		If (GUI.PromptPlay())
+			Table.Enable()
+
+			If (Players.Allocate())
+				Cards.Allocate()
+				ChangeState(self, WageringPhase)
+			Else
+				WriteLine(self, "Aborting startup.")
+				Exit()
+			EndIf
 		EndIf
 	EndEvent
 
 	Event OnEndState(string asNewState)
+		If (asNewState == WageringPhase)
+			Players.Startup()
+		EndIf
 		Gambling:BlackJack:GameType.SendPhase(self, StartingPhase, Ended)
 	EndEvent
 EndState
@@ -79,38 +110,33 @@ EndState
 State Scoring
 	Event OnBeginState(string asOldState)
 		Gambling:BlackJack:GameType.SendPhase(self, ScoringPhase, Begun)
-		Exit()
+		ChangeState(self, ExitingPhase)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		Cards.GoHome()
+		Cards.CollectAll()
 		Players.Deallocate()
+		Table.Disable()
 		Gambling:BlackJack:GameType.SendPhase(self, ScoringPhase, Ended)
+	EndEvent
+EndState
+
+
+State Exiting
+	Event OnBeginState(string asOldState)
+		Gambling:BlackJack:GameType.SendPhase(self, ExitingPhase, Begun)
+		ChangeState(self, IdlePhase)
+	EndEvent
+
+	Event OnEndState(string asNewState)
+		; final clean up
+		Gambling:BlackJack:GameType.SendPhase(self, ExitingPhase, Ended)
 	EndEvent
 EndState
 
 
 ; Functions
 ;---------------------------------------------
-
-bool Function Play()
-	If (Exited)
-		return ChangeState(self, StartingPhase)
-	Else
-		WriteLine(self, "The game is not ready to play right now.")
-		return false
-	EndIf
-EndFunction
-
-
-Function Exit()
-	If !(Exited)
-		ChangeState(self, ReadyPhase)
-	Else
-		WriteLine(self, "The game is already exited.")
-	EndIf
-EndFunction
-
 
 int Function GetScore(Deck:Card[] aCards, int aScore)
 	int score = 0
@@ -156,17 +182,15 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Properties
-	Components:View Property View Auto Const Mandatory
-	Components:Players Property Players Auto Const Mandatory
+Group Game
+	Components:Table Property Table Auto Const Mandatory
 	Components:Cards Property Cards Auto Const Mandatory
-EndGroup
+	Components:Players Property Players Auto Const Mandatory
+	Components:GUI Property GUI Auto Const Mandatory
 
-
-Group ReadOnly
-	bool Property Exited Hidden
+	bool Property Idling Hidden
 		bool Function Get()
-			return self.GetState() == ReadyPhase
+			return self.GetState() == IdlePhase
 		EndFunction
 	EndProperty
 
@@ -175,9 +199,6 @@ Group ReadOnly
 			return Players.Contains(Players.Human)
 		EndFunction
 	EndProperty
-EndGroup
 
-
-Group Rules
 	string Property BlackJack = 21 AutoReadOnly
 EndGroup

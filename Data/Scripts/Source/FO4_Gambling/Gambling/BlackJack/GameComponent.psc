@@ -1,6 +1,5 @@
 ScriptName Gambling:BlackJack:GameComponent extends Gambling:BlackJack:GameType Hidden
 import Gambling
-import Gambling:BlackJack:GameType
 import Gambling:Common
 
 
@@ -26,6 +25,6 @@ EndEvent
 ; Properties
 ;---------------------------------------------
 
-Group Properties
+Group Game
 	BlackJack:Game Property BlackJack Auto Const Mandatory
 EndGroup

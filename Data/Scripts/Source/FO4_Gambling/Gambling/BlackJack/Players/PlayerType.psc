@@ -1,9 +1,14 @@
-ScriptName Gambling:BlackJack:Competitors:SeatType extends ReferenceAlias Native Const Hidden
+ScriptName Gambling:BlackJack:Players:PlayerType extends ReferenceAlias Native Const Hidden
 import Gambling:Shared
 
 
 ; Virtuals
 ;---------------------------------------------
+
+Event OnInitialize()
+	{Virtual}
+EndEvent
+
 
 Event OnStartup()
 	{Virtual}

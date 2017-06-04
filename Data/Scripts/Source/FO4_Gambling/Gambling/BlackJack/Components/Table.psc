@@ -1,6 +1,6 @@
-ScriptName Gambling:BlackJack:Components:View extends Gambling:BlackJack:GameComponent
+ScriptName Gambling:BlackJack:Components:Table extends Gambling:BlackJack:GameComponent
 import Gambling
-import Gambling:BlackJack:Game
+import Gambling:BlackJack
 import Gambling:Common
 
 Actor Player
@@ -15,30 +15,28 @@ Event OnInitialize()
 EndEvent
 
 
-Event OnGamePhase(PhaseEventArgs e)
-	If (e.Name == StartingPhase && e.Change == Begun)
-		Enable()
-	EndIf
-
-	If (e.Name == ScoringPhase && e.Change == Ended)
-		Disable()
-	EndIf
-EndEvent
-
-
 ; Functions
 ;---------------------------------------------
 
 Function Enable()
-	Player.SetAlpha(0.0)
+	Game.SetPlayerAIDriven()
+
+	Player.MoveTo(Gambling_BlackJack_CellMarker)
+
 	InputLayer = InputEnableLayer.Create()
 	InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
-	Game.StartDialogueCameraOrCenterOnTarget(Gambling_BlackJack_Camera)
+
+	Game.StartDialogueCameraOrCenterOnTarget(Gambling_BlackJack_CameraMarker)
 EndFunction
 
 
 Function Disable()
-	Player.SetAlpha(1.0)
+	Game.SetPlayerAIDriven(false)
+
+	If (PlayAction)
+		Player.MoveTo(PlayAction as ObjectReference)
+	EndIf
+
 	If (InputLayer)
 		InputLayer.Delete()
 		InputLayer = none
@@ -49,6 +47,11 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
+Group Actions
+	Actions:Play Property PlayAction Auto Hidden
+EndGroup
+
 Group Markers
-	ObjectReference Property Gambling_BlackJack_Camera Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_CellMarker Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_CameraMarker Auto Const Mandatory
 EndGroup

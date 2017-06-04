@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Competitors:Human extends Gambling:BlackJack:Competitors:Seat
+ScriptName Gambling:BlackJack:Players:Human extends Gambling:BlackJack:Players:Player
 import Gambling
 import Gambling:Common
 import Gambling:Shared
@@ -152,7 +152,7 @@ EndEvent
 ; Properties
 ;---------------------------------------------
 
-Group Properties
+Group Messages
 	Message Property Gambling_BlackJack_MessageWager Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageDealt Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageTurn Auto Const Mandatory

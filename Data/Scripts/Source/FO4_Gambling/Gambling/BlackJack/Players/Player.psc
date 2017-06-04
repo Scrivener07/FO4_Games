@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Competitors:Seat extends Gambling:BlackJack:Competitors:SeatType Hidden
+ScriptName Gambling:BlackJack:Players:Player extends Gambling:BlackJack:Players:PlayerType Hidden
 import Gambling
 import Gambling:BlackJack:GameType
 import Gambling:Common
@@ -8,19 +8,24 @@ import Gambling:Shared
 ; Events
 ;---------------------------------------------
 
-Event Gambling:BlackJack:Game.PhaseEvent(BlackJack:Game akSender, var[] arguments)
+Event OnInit()
+	RegisterForCustomEvent(BlackJack, "PhaseEvent")
+	self.OnInitialize()
+EndEvent
+
+
+Event Gambling:BlackJack:Game.PhaseEvent(BlackJack:Game sender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
-		If (e.Name == akSender.ScoringPhase && e.Change == akSender.Ended)
+		If (e.Name == sender.ScoringPhase && e.Change == sender.Ended)
 			If (Hand)
-				ObjectReference[] references = Gambling:Shared:Deck.GetReferences(Hand)
-				Controller.TranslateEach(references, Gambling_BlackJack_DeckMarker)
+				sender.Cards.Collect(self)
 			Else
-				WriteLine(self, "Seat '"+ID+"' has no hand to cleanup.")
+				WriteLine(self, "Player '"+ID+"' has no hand to cleanup.")
 			EndIf
 		EndIf
 	Else
-		WriteLine(self, "Seat '"+ID+"' has invalid phase event arguments.")
+		WriteLine(self, "Player '"+ID+"' has invalid phase event arguments.")
 	EndIf
 EndEvent
 
@@ -29,15 +34,14 @@ EndEvent
 ;---------------------------------------------
 
 Function Startup()
-	RegisterForCustomEvent(BlackJack, "PhaseEvent")
 	self.OnStartup()
-	WriteLine(self, "Seat '"+ID+"' has started up.")
+	WriteLine(self, "Player '"+ID+"' has started up.")
 EndFunction
 
 
 Function Wager()
 	self.OnWager()
-	WriteLine(self, "Seat '"+ID+"' has wagered '"+Wager+"'.")
+	WriteLine(self, "Player '"+ID+"' has wagered '"+Wager+"'.")
 EndFunction
 
 
@@ -46,20 +50,20 @@ Function Deal(Deck:Card card)
 	Score = BlackJack.GetScore(Hand, Score)
 	int index = Hand.Length - 1
 	self.OnDeal(card, index)
-	WriteLine(self, "Seat '"+ID+"' has been dealt the '"+card+"' card for '"+Score+"' score.")
+	WriteLine(self, "Player '"+ID+"' has been dealt the '"+card+"' card for '"+Score+"' score.")
 EndFunction
 
 
 Function Play()
 	self.OnPlay()
-	WriteLine(self, "Seat '"+ID+"' has played their turn.")
+	WriteLine(self, "Player '"+ID+"' has played their turn.")
 EndFunction
 
 
 Function Shutdown()
 	UnregisterForCustomEvent(BlackJack, "PhaseEvent")
 	self.OnShutdown()
-	WriteLine(self, "Seat '"+ID+"' has shutdown.")
+	WriteLine(self, "Player '"+ID+"' has shutdown.")
 EndFunction
 
 

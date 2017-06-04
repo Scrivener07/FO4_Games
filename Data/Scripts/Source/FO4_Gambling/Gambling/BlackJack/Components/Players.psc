@@ -1,24 +1,20 @@
 ScriptName Gambling:BlackJack:Components:Players extends Gambling:BlackJack:GameComponent
 import Gambling
 import Gambling:BlackJack
+import Gambling:BlackJack:Players
 import Gambling:Common
 import Gambling:Shared
 
-; TODO: player allocation
-; TODO: scoring for a player/dealer draw
 
-Competitors:Seat[] Seats
-
+Player[] Players
 int Invalid = -1 const
-int OptionExit = 0 const
-int OptionStart = 1 const
 
 
 ; Events
 ;---------------------------------------------
 
 Event OnInitialize()
-	Seats = new Competitors:Seat[0]
+	Players = new Player[0]
 EndEvent
 
 
@@ -26,7 +22,9 @@ Event OnGamePhase(PhaseEventArgs e)
 	If (e.Name == WageringPhase && e.Change == Ended)
 		If (Human.Abort)
 			If (Remove(Human))
-				WriteLine(self, "The player has aborted the game.")
+				WriteLine(self, "The human has aborted the game.")
+			Else
+				WriteLine(self, "The human could not abort the game.")
 			EndIf
 		EndIf
 	EndIf
@@ -37,35 +35,21 @@ EndEvent
 ;---------------------------------------------
 
 bool Function Allocate()
-	int selected = Gambling_BlackJack_MessagePlay.Show()
-
-	If (selected == OptionStart)
-
-		Add(Human)
-		Add(PlayerB)
-		Add(PlayerC)
-		Add(PlayerD)
-		Add(PlayerE)
-		Add(Dealer)
-
-		Startup()
-
-		return true
-	ElseIf (selected == OptionExit || selected == Invalid)
-		WriteLine(self, "Chose not to play Black Jack.")
-		return false
-	Else
-		WriteLine(self, "The option '"+selected+"' is unhandled.")
-		return false
-	EndIf
+	Add(Human)
+	Add(GamblerA)
+	Add(GamblerB)
+	Add(GamblerC)
+	Add(GamblerD)
+	Add(Dealer)
+	return true
 EndFunction
 
 
 Function Startup()
-	If (Seats)
+	If (Players)
 		int index = 0
 		While (index < Count)
-			Seats[index].Startup()
+			Players[index].Startup()
 			index += 1
 		EndWhile
 	Else
@@ -75,10 +59,10 @@ EndFunction
 
 
 Function Wager()
-	If (Seats)
+	If (Players)
 		int index = 0
 		While (index < Count)
-			Seats[index].Wager()
+			Players[index].Wager()
 			index += 1
 		EndWhile
 	Else
@@ -88,11 +72,11 @@ EndFunction
 
 
 Function Deal(Shared:Deck deck)
-	If (Seats)
+	If (Players)
 		int index = 0
 		While (index < Count)
-			Seats[index].Deal(deck.Draw())
-			Seats[index].Deal(deck.Draw())
+			Players[index].Deal(deck.Draw())
+			Players[index].Deal(deck.Draw())
 			index += 1
 		EndWhile
 	Else
@@ -102,10 +86,10 @@ EndFunction
 
 
 Function Play()
-	If (Seats)
+	If (Players)
 		int index = 0
 		While (index < Count)
-			Seats[index].Play()
+			Players[index].Play()
 			index += 1
 		EndWhile
 	Else
@@ -115,10 +99,10 @@ EndFunction
 
 
 Function Deallocate()
-	If (Seats)
+	If (Players)
 		int index = 0
 		While (index < Count)
-			Seats[index].Shutdown()
+			Players[index].Shutdown()
 			index += 1
 		EndWhile
 
@@ -132,57 +116,57 @@ EndFunction
 ; Functions
 ;---------------------------------------------
 
-int Function IndexOf(Competitors:Seat seat)
-	{Determines the index of a specific seat in the collection.}
-	If (seat)
-		return Seats.Find(seat)
+int Function IndexOf(Player aPlayer)
+	{Determines the index of a specific player in the collection.}
+	If (aPlayer)
+		return Players.Find(aPlayer)
 	Else
 		return Invalid
 	EndIf
 EndFunction
 
 
-bool Function Contains(Competitors:Seat seat)
-	{Determines whether a seat is in the collection.}
-	return IndexOf(seat) > Invalid
+bool Function Contains(Player aPlayer)
+	{Determines whether a player is in the collection.}
+	return IndexOf(aPlayer) > Invalid
 EndFunction
 
 
-bool Function Remove(Competitors:Seat seat)
-	{Removes a seat from the collection.}
-	int index = IndexOf(seat)
+bool Function Remove(Player aPlayer)
+	{Removes a player from the collection.}
+	int index = IndexOf(aPlayer)
 
 	If (index > Invalid)
-		Seats.Remove(index)
+		Players.Remove(index)
 		return true
 	Else
-		WriteLine(self, "Could not find player '"+seat+"' for abort.")
+		WriteLine(self, "Could not find aPlayer '"+aPlayer+"' for abort.")
 		return false
 	EndIf
 EndFunction
 
 
-bool Function Add(Competitors:Seat seat)
-	{Adds a seat to the collection.}
-	If (seat)
-		If (Contains(seat) == false)
-			Seats.Add(seat)
+bool Function Add(Player aPlayer)
+	{Adds a player to the collection.}
+	If (aPlayer)
+		If (Contains(aPlayer) == false)
+			Players.Add(aPlayer)
 			return true
 		Else
-			WriteLine(self, "The seats already contain the '"+seat+"' player.")
+			WriteLine(self, "The seats already contain the '"+aPlayer+"' aPlayer.")
 			return false
 		EndIf
 	Else
-		WriteLine(self, "Cannot add a none seat.")
+		WriteLine(self, "Cannot add a none aPlayer.")
 		return false
 	EndIf
 EndFunction
 
 
 Function Clear()
-	{Removes all seats from the collection.}
-	If (Seats)
-		Seats.Clear()
+	{Removes all players from the collection.}
+	If (Players)
+		Players.Clear()
 	Else
 		WriteLine(self, "The seats are empty or none.")
 	EndIf
@@ -192,23 +176,19 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Properties
-	Message Property Gambling_BlackJack_MessagePlay Auto Const Mandatory
-EndGroup
-
-Group Competitors
-	Competitors:Dealer Property Dealer Auto Const Mandatory
-	Competitors:Human Property Human Auto Const Mandatory
-	Competitors:PlayerB Property PlayerB Auto Const Mandatory
-	Competitors:PlayerC Property PlayerC Auto Const Mandatory
-	Competitors:PlayerD Property PlayerD Auto Const Mandatory
-	Competitors:PlayerE Property PlayerE Auto Const Mandatory
+Group Players
+	Players:Dealer Property Dealer Auto Const Mandatory
+	Players:Human Property Human Auto Const Mandatory
+	Players:GamblerA Property GamblerA Auto Const Mandatory
+	Players:GamblerB Property GamblerB Auto Const Mandatory
+	Players:GamblerC Property GamblerC Auto Const Mandatory
+	Players:GamblerD Property GamblerD Auto Const Mandatory
 EndGroup
 
 Group ReadOnly
 	int Property Count Hidden
 		int Function Get()
-			return Seats.Length
+			return Players.Length
 		EndFunction
 	EndProperty
 EndGroup
