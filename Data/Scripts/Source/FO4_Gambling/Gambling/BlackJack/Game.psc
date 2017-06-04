@@ -1,17 +1,11 @@
-ScriptName Gambling:BlackJack:Main extends Quest
+ScriptName Gambling:BlackJack:Game extends Gambling:BlackJack:GameType
 import Gambling
-import Gambling:BlackJack
+;import Gambling:BlackJack
 import Gambling:Common
 import Gambling:Shared
 
+
 CustomEvent OnPhase
-
-Struct PhaseEventArgs
-	string Name
-	bool Change = true
-EndStruct
-
-int BlackJack = 21 const
 
 
 ; Methods
@@ -19,7 +13,7 @@ int BlackJack = 21 const
 
 State Starting
 	Event OnBeginState(string asOldState)
-		SendPhase(StartingState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, StartingState, Begun)
 
 		If (Players.Allocate())
 			Cards.Allocate()
@@ -32,14 +26,15 @@ State Starting
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		SendPhase(StartingState, Ended)
+		View.Enable()
+		Gambling:BlackJack:GameType.SendPhase(self, StartingState, Ended)
 	EndEvent
 EndState
 
 
 State Wagering
 	Event OnBeginState(string asOldState)
-		SendPhase(WageringState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, WageringState, Begun)
 
 		Players.Wager()
 
@@ -47,14 +42,14 @@ State Wagering
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		SendPhase(WageringState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, WageringState, Ended)
 	EndEvent
 EndState
 
 
 State Dealing
 	Event OnBeginState(string asOldState)
-		SendPhase(DealingState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, DealingState, Begun)
 
 		Cards.Shuffle()
 		Players.Deal(Cards.Deck)
@@ -63,14 +58,14 @@ State Dealing
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		SendPhase(DealingState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, DealingState, Ended)
 	EndEvent
 EndState
 
 
 State Playing
 	Event OnBeginState(string asOldState)
-		SendPhase(PlayingState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, PlayingState, Begun)
 
 		Players.Play()
 
@@ -78,21 +73,21 @@ State Playing
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		SendPhase(PlayingState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, PlayingState, Ended)
 	EndEvent
 EndState
 
 
 State Scoring
 	Event OnBeginState(string asOldState)
-		SendPhase(ScoringState, Begun)
+		Gambling:BlackJack:GameType.SendPhase(self, ScoringState, Begun)
 		Exit()
 	EndEvent
 
 	Event OnEndState(string asNewState)
 		Cards.GoHome()
 		Players.Deallocate()
-		SendPhase(ScoringState, Ended)
+		Gambling:BlackJack:GameType.SendPhase(self, ScoringState, Ended)
 	EndEvent
 EndState
 
@@ -160,39 +155,13 @@ bool Function IsBust(int aScore)
 EndFunction
 
 
-Function SendPhase(string aName, bool aChange)
-	string sState = self.GetState()
-	If (sState == aName)
-		PhaseEventArgs Phase = new PhaseEventArgs
-		Phase.Name = aName
-		Phase.Change = aChange
-
-		var[] arguments = new var[1]
-		arguments[0] = Phase
-
-		WriteLine(self, "Sending phase event:"+Phase)
-		SendCustomEvent("OnPhase", arguments)
-	Else
-		WriteLine(self, "Cannot not send the phase '"+aName+"' while in the '"+sState+"' state.")
-	EndIf
-EndFunction
-
-
-PhaseEventArgs Function GetPhaseEventArgs(var[] arguments) Global
-	If (arguments)
-		return arguments[0] as PhaseEventArgs
-	Else
-		return none
-	EndIf
-EndFunction
-
-
 ; Properties
 ;---------------------------------------------
 
 Group Properties
-	BlackJack:Players Property Players Auto Const Mandatory
-	BlackJack:Cards Property Cards Auto Const Mandatory
+	Components:View Property View Auto Const Mandatory
+	Components:Players Property Players Auto Const Mandatory
+	Components:Cards Property Cards Auto Const Mandatory
 EndGroup
 
 Group ReadOnly
@@ -218,7 +187,11 @@ Group States
 	string Property ScoringState = "Scoring" AutoReadOnly
 EndGroup
 
+Group Rules
+	string Property BlackJack = 21 AutoReadOnly
+EndGroup
+
 Group Changes
-	bool Property Begun = false AutoReadOnly
-	bool Property Ended = true AutoReadOnly
+	bool Property Begun = true AutoReadOnly
+	bool Property Ended = false AutoReadOnly
 EndGroup

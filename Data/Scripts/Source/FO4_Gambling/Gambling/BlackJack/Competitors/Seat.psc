@@ -1,6 +1,6 @@
 ScriptName Gambling:BlackJack:Competitors:Seat extends Gambling:BlackJack:Competitors:SeatType Hidden
 import Gambling
-import Gambling:BlackJack:Main
+import Gambling:BlackJack:GameType
 import Gambling:Common
 import Gambling:Shared
 
@@ -8,7 +8,7 @@ import Gambling:Shared
 ; Events
 ;---------------------------------------------
 
-Event Gambling:BlackJack:Main.OnPhase(BlackJack:Main akSender, var[] arguments)
+Event Gambling:BlackJack:Game.OnPhase(BlackJack:Game akSender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
 		If (e.Name == akSender.ScoringState && e.Change == akSender.Ended)
@@ -67,7 +67,7 @@ EndFunction
 ;---------------------------------------------
 
 Group Components
-	BlackJack:Main Property BlackJack Auto Const Mandatory
+	BlackJack:Game Property BlackJack Auto Const Mandatory
 	Shared:Motion:Controller Property Controller Auto Const Mandatory
 EndGroup
 

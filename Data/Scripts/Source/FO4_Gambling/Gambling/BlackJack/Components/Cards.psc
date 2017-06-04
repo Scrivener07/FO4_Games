@@ -1,9 +1,7 @@
-ScriptName Gambling:BlackJack:Cards extends Quest
+ScriptName Gambling:BlackJack:Components:Cards extends Gambling:BlackJack:GameComponent
 import Gambling
-import Gambling:BlackJack
 import Gambling:Common
 import Gambling:Shared
-
 
 
 ; Methods

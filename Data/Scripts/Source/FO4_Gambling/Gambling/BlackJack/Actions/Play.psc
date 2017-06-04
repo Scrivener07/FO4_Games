@@ -29,7 +29,7 @@ EndEvent
 ;---------------------------------------------
 
 Group Properties
-	BlackJack:Main Property BlackJack Auto Const Mandatory
+	BlackJack:Game Property BlackJack Auto Const Mandatory
 	ObjectReference Property Gambling_CellMarker Auto Const Mandatory
 	ObjectReference Property Gambling_BlackJack_SeatA Auto Const Mandatory
 EndGroup

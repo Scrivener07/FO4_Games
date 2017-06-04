@@ -1,7 +1,7 @@
-ScriptName Gambling:BlackJack:Players extends Quest
+ScriptName Gambling:BlackJack:Components:Players extends Gambling:BlackJack:GameComponent
 import Gambling
 import Gambling:BlackJack
-import Gambling:BlackJack:Main
+import Gambling:BlackJack:Game
 import Gambling:Common
 import Gambling:Shared
 
@@ -18,24 +18,18 @@ int OptionStart = 1 const
 ; Events
 ;---------------------------------------------
 
-Event OnInit()
+Event OnInitialize()
 	Seats = new Competitors:Seat[0]
-	RegisterForCustomEvent(BlackJack, "OnPhase")
 EndEvent
 
 
-Event Gambling:BlackJack:Main.OnPhase(BlackJack:Main akSender, var[] arguments)
-	PhaseEventArgs e = GetPhaseEventArgs(arguments)
-	If (e)
-		If (e.Name == akSender.WageringState && e.Change == akSender.Ended)
-			If (PlayerA.Abort)
-				If (Remove(PlayerA))
-					WriteLine(self, "The player has aborted the game.")
-				EndIf
+Event OnGameEvent(BlackJack:Game akSender, PhaseEventArgs e)
+	If (e.Name == akSender.WageringState && e.Change == akSender.Ended)
+		If (PlayerA.Abort)
+			If (Remove(PlayerA))
+				WriteLine(self, "The player has aborted the game.")
 			EndIf
 		EndIf
-	Else
-		WriteLine(self, "Invalid phase event arguments.")
 	EndIf
 EndEvent
 
@@ -202,15 +196,16 @@ EndFunction
 ;---------------------------------------------
 
 Group Properties
-	BlackJack:Main Property BlackJack Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessagePlay Auto Const Mandatory
+EndGroup
+
+Group Competitors
 	Competitors:Dealer Property Dealer Auto Const Mandatory
 	Competitors:PlayerA Property PlayerA Auto Const Mandatory
 	Competitors:PlayerB Property PlayerB Auto Const Mandatory
 	Competitors:PlayerC Property PlayerC Auto Const Mandatory
 	Competitors:PlayerD Property PlayerD Auto Const Mandatory
 	Competitors:PlayerE Property PlayerE Auto Const Mandatory
-
-	Message Property Gambling_BlackJack_MessagePlay Auto Const Mandatory
 EndGroup
 
 Group ReadOnly
