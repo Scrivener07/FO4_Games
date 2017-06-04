@@ -14,7 +14,7 @@ Event Gambling:BlackJack:Game.PhaseEvent(BlackJack:Game akSender, var[] argument
 		If (e.Name == akSender.ScoringPhase && e.Change == akSender.Ended)
 			If (Hand)
 				ObjectReference[] references = Gambling:Shared:Deck.GetReferences(Hand)
-				Controller.TranslateEach(references, Gambling_Card)
+				Controller.TranslateEach(references, Gambling_BlackJack_DeckMarker)
 			Else
 				WriteLine(self, "Seat '"+ID+"' has no hand to cleanup.")
 			EndIf
@@ -72,7 +72,7 @@ Group Components
 EndGroup
 
 Group Properties
-	ObjectReference Property Gambling_Card Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_DeckMarker Auto Const Mandatory
 EndGroup
 
 

@@ -15,7 +15,7 @@ EndFunction
 Function GoHome()
 	Deck:Card[] Cards = Deck.GetCards()
 	ObjectReference[] array = Gambling:Shared:Deck.GetReferences(Cards)
-	Controller.TranslateEach(array, Gambling_Card)
+	Controller.TranslateEach(array, Gambling_BlackJack_DeckMarker)
 EndFunction
 
 
@@ -30,5 +30,5 @@ EndFunction
 Group Properties
 	Shared:Deck Property Deck Auto Const Mandatory
 	Motion:Controller Property Controller Auto Const Mandatory
-	ObjectReference Property Gambling_Card Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_DeckMarker Auto Const Mandatory
 EndGroup
