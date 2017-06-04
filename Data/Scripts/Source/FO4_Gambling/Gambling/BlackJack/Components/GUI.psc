@@ -18,7 +18,7 @@ Event OnGamePhase(PhaseEventArgs e)
 
 	If (e.Name == ScoringPhase)
 		If (e.Change == Begun)
-			int humanScore = BlackJack.Players.PlayerA.Score
+			int humanScore = BlackJack.Players.Human.Score
 			WriteLine(self, "Your final score is "+humanScore+".")
 
 			If (BlackJack.IsWin(humanScore))

@@ -24,8 +24,8 @@ EndEvent
 
 Event OnGamePhase(PhaseEventArgs e)
 	If (e.Name == WageringPhase && e.Change == Ended)
-		If (PlayerA.Abort)
-			If (Remove(PlayerA))
+		If (Human.Abort)
+			If (Remove(Human))
 				WriteLine(self, "The player has aborted the game.")
 			EndIf
 		EndIf
@@ -41,7 +41,7 @@ bool Function Allocate()
 
 	If (selected == OptionStart)
 
-		Add(PlayerA)
+		Add(Human)
 		Add(PlayerB)
 		Add(PlayerC)
 		Add(PlayerD)
@@ -198,7 +198,7 @@ EndGroup
 
 Group Competitors
 	Competitors:Dealer Property Dealer Auto Const Mandatory
-	Competitors:PlayerA Property PlayerA Auto Const Mandatory
+	Competitors:Human Property Human Auto Const Mandatory
 	Competitors:PlayerB Property PlayerB Auto Const Mandatory
 	Competitors:PlayerC Property PlayerC Auto Const Mandatory
 	Competitors:PlayerD Property PlayerD Auto Const Mandatory

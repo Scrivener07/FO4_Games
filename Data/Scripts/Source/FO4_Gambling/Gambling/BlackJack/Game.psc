@@ -14,7 +14,7 @@ State Starting
 	Event OnBeginState(string asOldState)
 		Gambling:BlackJack:GameType.SendPhase(self, StartingPhase, Begun)
 
-		If (Players.Allocate())
+		If (Players.Allocate() && HasHuman)
 			Cards.Allocate()
 			Players.Startup()
 			ChangeState(self, WageringPhase)
@@ -25,7 +25,6 @@ State Starting
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		View.Enable()
 		Gambling:BlackJack:GameType.SendPhase(self, StartingPhase, Ended)
 	EndEvent
 EndState
@@ -163,6 +162,7 @@ Group Properties
 	Components:Cards Property Cards Auto Const Mandatory
 EndGroup
 
+
 Group ReadOnly
 	bool Property Exited Hidden
 		bool Function Get()
@@ -172,7 +172,7 @@ Group ReadOnly
 
 	bool Property HasHuman Hidden
 		bool Function Get()
-			return Players.Contains(Players.PlayerA)
+			return Players.Contains(Players.Human)
 		EndFunction
 	EndProperty
 EndGroup
