@@ -27,6 +27,10 @@ Function Enable()
 	InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
 
 	Game.StartDialogueCameraOrCenterOnTarget(Gambling_BlackJack_CameraMarker)
+
+	Player.AddPerk(Gambling_TablePerk, true)
+	Player.AddItem(Gambling_ZoomWeapon)
+	Player.EquipItem(Gambling_ZoomWeapon)
 EndFunction
 
 
@@ -41,6 +45,8 @@ Function Disable()
 		InputLayer.Delete()
 		InputLayer = none
 	EndIf
+
+	Player.RemovePerk(Gambling_TablePerk)
 EndFunction
 
 
@@ -55,3 +61,6 @@ Group Markers
 	ObjectReference Property Gambling_BlackJack_CellMarker Auto Const Mandatory
 	ObjectReference Property Gambling_BlackJack_CameraMarker Auto Const Mandatory
 EndGroup
+
+Perk Property Gambling_TablePerk Auto Const Mandatory
+Weapon Property Gambling_ZoomWeapon Auto Const Mandatory
