@@ -1,5 +1,5 @@
 ScriptName Gambling:Shared:Motion:Controller extends ReferenceAlias
-import Gambling:Common
+import Gambling:Shared:Common
 
 
 int Index = -1

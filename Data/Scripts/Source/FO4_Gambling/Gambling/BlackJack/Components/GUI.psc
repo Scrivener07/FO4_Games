@@ -1,15 +1,27 @@
-ScriptName Gambling:BlackJack:Components:GUI extends Gambling:BlackJack:GameComponent
+ScriptName Gambling:BlackJack:Components:GUI extends Gambling:BlackJack:Component
 import Gambling
-import Gambling:Common
+import Gambling:Shared:Common
 
 
-int Invalid = -1 const
 int OptionExit = 0 const
 int OptionStart = 1 const
+
+int OptionWager1 = 1 const
+int OptionWager5 = 2 const
+int OptionWager10 = 3 const
+int OptionWager20 = 4 const
+int OptionWager50 = 5 const
+int OptionWager100 = 6 const
+
 
 
 ; Events
 ;---------------------------------------------
+
+Event OnInit()
+	RegisterForPhaseEvent(BlackJack)
+EndEvent
+
 
 Event OnGamePhase(PhaseEventArgs e)
 	If (e.Name == ScoringPhase)
@@ -22,22 +34,22 @@ Event OnGamePhase(PhaseEventArgs e)
 			int humanScore = BlackJack.Players.Human.Score
 			WriteLine(self, "Your final score is "+humanScore+".")
 
-			If (BlackJack.IsWin(humanScore))
+			If (BlackJack.Rules.IsWin(humanScore))
 				Gambling_BlackJack_MessageWinNatural.Show(humanScore)
 			EndIf
 
-			If (BlackJack.IsBust(humanScore))
+			If (BlackJack.Rules.IsBust(humanScore))
 				Gambling_BlackJack_MessageBust.Show(humanScore)
 			EndIf
 		Else
-			If (Gambling_BlackJack_MessagePlayAgain.Show() == 1)
-				BlackJack.Play(none)
-			EndIf
+
 		EndIf
 	EndIf
 EndEvent
 
 
+; Methods
+;---------------------------------------------
 
 bool Function PromptPlay()
 	int selected = Gambling_BlackJack_MessagePlay.Show()
@@ -55,13 +67,61 @@ bool Function PromptPlay()
 EndFunction
 
 
+bool Function PromptPlayAgain()
+	return Gambling_BlackJack_MessagePlayAgain.Show() == 1
+EndFunction
+
+
+
+int Function PromptWager()
+	int selected = Gambling_BlackJack_MessageWager.Show()
+
+	If (selected == OptionExit || selected == Invalid)
+		return Invalid
+	ElseIf (selected == OptionWager1)
+		return 1
+	ElseIf (selected == OptionWager5)
+		return 5
+	ElseIf (selected == OptionWager10)
+		return 10
+	ElseIf (selected == OptionWager20)
+		return 20
+	ElseIf (selected == OptionWager50)
+		return 50
+	ElseIf (selected == OptionWager100)
+		return 100
+	Else
+		WriteLine(self, "The option '"+selected+"' is unhandled.")
+		return Invalid
+	EndIf
+EndFunction
+
+
+int Function ShowDealt(float card1, float card2, float score)
+	return Gambling_BlackJack_MessageDealt.Show(card1, card2, score)
+EndFunction
+
+
+int Function ShowTurn(float card, floar score)
+	return Gambling_BlackJack_MessageTurn.Show(card.Rank, Score)
+EndFunction
+
+
 ; Properties
 ;---------------------------------------------
 
+Group Game
+	BlackJack:Game Property BlackJack Auto Const Mandatory
+EndGroup
+
 Group Messages
+	Message Property Gambling_BlackJack_MessageWager Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessageDealt Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessageTurn Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessagePlay Auto Const Mandatory
-	; Message Property Gambling_BlackJack_MessageWin Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessagePlayAgain Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessageWin Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageWinNatural Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageBust Auto Const Mandatory
-	Message Property Gambling_BlackJack_MessagePlayAgain Auto Const Mandatory
 EndGroup
+

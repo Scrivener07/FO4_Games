@@ -1,4 +1,4 @@
-ScriptName Gambling:Common Hidden
+ScriptName Gambling:Shared:Common Hidden
 
 
 ; Logging

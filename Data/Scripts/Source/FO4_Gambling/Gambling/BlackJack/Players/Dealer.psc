@@ -1,14 +1,14 @@
-ScriptName Gambling:BlackJack:Players:Dealer extends Gambling:BlackJack:Players:Player
+ScriptName Gambling:BlackJack:Players:Dealer extends Gambling:BlackJack:Player
 import Gambling
-import Gambling:Common
 import Gambling:Shared
+import Gambling:Shared:Common
 
 
 ; Events
 ;---------------------------------------------
 
-Event OnStartup()
-	ID = 0
+Event OnAllocate()
+	SeatID = 0
 	Abort = false
 	Score = 0
 	Wager = 0
@@ -64,7 +64,7 @@ Event OnPlay()
 		Deck:Card card = Hand[0]
 		Controller.Translate(card.Reference, Gambling_BlackJack_D1C01B)
 
-		If (BlackJack.IsWin(Score))
+		If (BlackJack.Rules.IsWin(Score))
 			WriteLine(self, "The dealer has a black jack on turn one.")
 			return
 		Else
@@ -85,11 +85,11 @@ Event OnPlay()
 		EndIf
 
 	ElseIf (Turn >= 2)
-		If (BlackJack.IsWin(Score))
+		If (BlackJack.Rules.IsWin(Score))
 			WriteLine(self, "The dealer has a black jack with "+Score)
 			return
 
-		ElseIf (BlackJack.IsBust(Score))
+		ElseIf (BlackJack.Rules.IsBust(Score))
 			WriteLine(self, "The dealer has busted with "+Score)
 			return
 

@@ -1,20 +1,19 @@
-ScriptName Gambling:BlackJack:Components:Players extends Gambling:BlackJack:GameComponent
+ScriptName Gambling:BlackJack:Components:Players extends Gambling:BlackJack:Component
 import Gambling
 import Gambling:BlackJack
-import Gambling:BlackJack:Players
-import Gambling:Common
-import Gambling:Shared
+import Gambling:Shared:Common
 
 
 Player[] Players
-int Invalid = -1 const
+
 
 
 ; Events
 ;---------------------------------------------
 
-Event OnInitialize()
+Event OnInit()
 	Players = new Player[0]
+	RegisterForPhaseEvent(BlackJack)
 EndEvent
 
 
@@ -31,133 +30,138 @@ Event OnGamePhase(PhaseEventArgs e)
 EndEvent
 
 
-; Methods
-;---------------------------------------------
+Event OnAllocate()
+	; TODO: variable player count, do we have enough players to play?
 
-bool Function Allocate()
-	Add(Human)
-	Add(GamblerA)
-	Add(GamblerB)
-	Add(GamblerC)
-	Add(GamblerD)
-	Add(Dealer)
-	return true
-EndFunction
+	If !(Players)
+		Add(Human)
+		Human.OnAllocate()
+
+		Add(BotA)
+		BotA.OnAllocate()
+
+		Add(BotB)
+		BotB.OnAllocate()
+
+		Add(BotC)
+		BotC.OnAllocate()
+
+		Add(BotD)
+		BotD.OnAllocate()
+
+		Add(Dealer)
+		Dealer.OnAllocate()
+	Else
+		WriteLine(self, "Players are already allocated.")
+	EndIf
+EndEvent
 
 
-Function Startup()
+Event OnWager()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Players[index].Startup()
+			Players[index].OnWager()
 			index += 1
 		EndWhile
 	Else
-		WriteLine(self, "There are no seats to startup.")
+		WriteLine(self, "There are no players to wager.")
 	EndIf
-EndFunction
+EndEvent
 
 
-Function Wager()
+Event OnDeal()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Players[index].Wager()
+			Player gambler = Players[index]
+
+			gambler.OnDeal()
+			gambler.OnDeal()
+
+			; BlackJack.Cards.Draw(gambler)
+			; BlackJack.Cards.Draw(gambler)
 			index += 1
 		EndWhile
 	Else
-		WriteLine(self, "There are no seats to wager.")
+		WriteLine(self, "There are no players to deal.")
 	EndIf
-EndFunction
+EndEvent
 
 
-Function Deal(Shared:Deck deck)
+Event OnPlay()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Players[index].Deal(deck.Draw())
-			Players[index].Deal(deck.Draw())
+			Players[index].OnPlay()
 			index += 1
 		EndWhile
 	Else
-		WriteLine(self, "There are no seats to deal.")
+		WriteLine(self, "There are no players to play.")
 	EndIf
-EndFunction
+EndEvent
 
 
-Function Play()
+Event OnDeallocate()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Players[index].Play()
-			index += 1
-		EndWhile
-	Else
-		WriteLine(self, "There are no seats to play.")
-	EndIf
-EndFunction
-
-
-Function Deallocate()
-	If (Players)
-		int index = 0
-		While (index < Count)
-			Players[index].Shutdown()
+			Players[index].OnDeallocate()
 			index += 1
 		EndWhile
 
 		Clear()
 	Else
-		WriteLine(self, "There are no seats to deallocate.")
+		WriteLine(self, "There are no players to deallocate.")
 	EndIf
-EndFunction
+EndEvent
 
 
 ; Functions
 ;---------------------------------------------
 
-int Function IndexOf(Player aPlayer)
+int Function IndexOf(Player value)
 	{Determines the index of a specific player in the collection.}
-	If (aPlayer)
-		return Players.Find(aPlayer)
+	If (value)
+		return Players.Find(value)
 	Else
 		return Invalid
 	EndIf
 EndFunction
 
 
-bool Function Contains(Player aPlayer)
+bool Function Contains(Player value)
 	{Determines whether a player is in the collection.}
-	return IndexOf(aPlayer) > Invalid
+	return IndexOf(value) > Invalid
 EndFunction
 
 
-bool Function Remove(Player aPlayer)
+bool Function Remove(Player value)
 	{Removes a player from the collection.}
-	int index = IndexOf(aPlayer)
+	int index = IndexOf(value)
 
 	If (index > Invalid)
 		Players.Remove(index)
 		return true
 	Else
-		WriteLine(self, "Could not find aPlayer '"+aPlayer+"' for abort.")
+		WriteLine(self, "Could not find the '"+value+"' player for abort.")
 		return false
 	EndIf
 EndFunction
 
 
-bool Function Add(Player aPlayer)
+bool Function Add(Player value)
 	{Adds a player to the collection.}
-	If (aPlayer)
-		If (Contains(aPlayer) == false)
-			Players.Add(aPlayer)
+	If (value)
+		If (Contains(value) == false)
+			Players.Add(value)
 			return true
 		Else
-			WriteLine(self, "The seats already contain the '"+aPlayer+"' aPlayer.")
+			WriteLine(self, "The players already contain '"+value+"'.")
 			return false
 		EndIf
 	Else
-		WriteLine(self, "Cannot add a none aPlayer.")
+		WriteLine(self, "Cannot add a none value.")
 		return false
 	EndIf
 EndFunction
@@ -175,14 +179,17 @@ EndFunction
 
 ; Properties
 ;---------------------------------------------
+Group Game
+	BlackJack:Game Property BlackJack Auto Const Mandatory
+EndGroup
 
 Group Players
-	Players:Dealer Property Dealer Auto Const Mandatory
+	Players:BotA Property BotA Auto Const Mandatory
+	Players:BotB Property BotB Auto Const Mandatory
+	Players:BotC Property BotC Auto Const Mandatory
+	Players:BotD Property BotD Auto Const Mandatory
 	Players:Human Property Human Auto Const Mandatory
-	Players:GamblerA Property GamblerA Auto Const Mandatory
-	Players:GamblerB Property GamblerB Auto Const Mandatory
-	Players:GamblerC Property GamblerC Auto Const Mandatory
-	Players:GamblerD Property GamblerD Auto Const Mandatory
+	Players:Dealer Property Dealer Auto Const Mandatory
 EndGroup
 
 Group ReadOnly

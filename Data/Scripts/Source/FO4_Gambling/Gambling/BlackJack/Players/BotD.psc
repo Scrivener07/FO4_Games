@@ -1,14 +1,14 @@
-ScriptName Gambling:BlackJack:Players:GamblerD extends Gambling:BlackJack:Players:Player
+ScriptName Gambling:BlackJack:Players:BotD extends Gambling:BlackJack:Player
 import Gambling
-import Gambling:Common
 import Gambling:Shared
+import Gambling:Shared:Common
 
 
 ; Events
 ;---------------------------------------------
 
-Event OnStartup()
-	ID = 5
+Event OnAllocate()
+	SeatID = 5
 	Abort = false
 	Score = 0
 	Wager = 0
@@ -56,19 +56,19 @@ EndEvent
 
 Event OnPlay()
 	If (Turn == 1)
-		If (BlackJack.IsWin(Score))
-			WriteLine(self, "The seat '"+ID+"' has a black jack on turn one.")
+		If (BlackJack.Rules.IsWin(Score))
+			WriteLine(self, "The seat '"+SeatID+"' has a black jack on turn one.")
 			return
 		Else
 			int selected = OptionChoice()
 
 			If (selected == OptionHit)
-				WriteLine(self, "The seat '"+ID+"' has chosen to hit with "+Score)
+				WriteLine(self, "The seat '"+SeatID+"' has chosen to hit with "+Score)
 				Deal(BlackJack.Cards.Deck.Draw())
 				self.OnPlay()
 
 			ElseIf (selected == OptionStand)
-				WriteLine(self, "The seat '"+ID+"' has chosen to stand with "+Score)
+				WriteLine(self, "The seat '"+SeatID+"' has chosen to stand with "+Score)
 				return
 			Else
 				WriteLine(self, "The option '"+selected+"' is unhandled.")
@@ -77,12 +77,12 @@ Event OnPlay()
 		EndIf
 
 	ElseIf (Turn >= 2)
-		If (BlackJack.IsWin(Score))
-			WriteLine(self, "The seat '"+ID+"' has a black jack with "+Score)
+		If (BlackJack.Rules.IsWin(Score))
+			WriteLine(self, "The seat '"+SeatID+"' has a black jack with "+Score)
 			return
 
-		ElseIf (BlackJack.IsBust(Score))
-			WriteLine(self, "The seat '"+ID+"' has busted with "+Score)
+		ElseIf (BlackJack.Rules.IsBust(Score))
+			WriteLine(self, "The seat '"+SeatID+"' has busted with "+Score)
 			return
 
 		Else
@@ -90,12 +90,12 @@ Event OnPlay()
 			int selected = OptionChoice()
 
 			If (selected == OptionHit)
-				WriteLine(self, "The seat '"+ID+"' has chosen to hit with "+Score)
+				WriteLine(self, "The seat '"+SeatID+"' has chosen to hit with "+Score)
 				Deal(BlackJack.Cards.Deck.Draw())
 				self.OnPlay()
 
 			ElseIf (selected == OptionStand)
-				WriteLine(self, "The seat '"+ID+"' has chosen to stand with "+Score)
+				WriteLine(self, "The seat '"+SeatID+"' has chosen to stand with "+Score)
 				return
 
 			Else
