@@ -7,7 +7,6 @@ import Gambling:Shared:Common
 Player[] Players
 
 
-
 ; Events
 ;---------------------------------------------
 
@@ -30,83 +29,80 @@ Event OnGamePhase(PhaseEventArgs e)
 EndEvent
 
 
-Event OnAllocate()
-	; TODO: variable player count, do we have enough players to play?
+; Component
+;---------------------------------------------
+
+Function GameBegin()
+	; TODO: variable player count?
 
 	If !(Players)
 		Add(Human)
-		Human.OnAllocate()
+		Human.GameBegin()
 
-		Add(BotA)
-		BotA.OnAllocate()
+		Add(BotWhale)
+		BotWhale.GameBegin()
 
-		Add(BotB)
-		BotB.OnAllocate()
+		Add(BotSwatter)
+		BotSwatter.GameBegin()
 
 		Add(BotC)
-		BotC.OnAllocate()
+		BotC.GameBegin()
 
 		Add(BotD)
-		BotD.OnAllocate()
+		BotD.GameBegin()
 
 		Add(Dealer)
-		Dealer.OnAllocate()
+		Dealer.GameBegin()
 	Else
 		WriteLine(self, "Players are already allocated.")
 	EndIf
-EndEvent
+EndFunction
 
 
-Event OnWager()
+Function GameWager()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Players[index].OnWager()
+			Players[index].GameWager()
 			index += 1
 		EndWhile
 	Else
 		WriteLine(self, "There are no players to wager.")
 	EndIf
-EndEvent
+EndFunction
 
 
-Event OnDeal()
+Function GameDeal()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Player gambler = Players[index]
-
-			gambler.OnDeal()
-			gambler.OnDeal()
-
-			; BlackJack.Cards.Draw(gambler)
-			; BlackJack.Cards.Draw(gambler)
+			Players[index].GameDeal()
 			index += 1
 		EndWhile
 	Else
 		WriteLine(self, "There are no players to deal.")
 	EndIf
-EndEvent
+EndFunction
 
 
-Event OnPlay()
+Function GamePlay()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Players[index].OnPlay()
+			Players[index].GamePlay()
 			index += 1
 		EndWhile
 	Else
 		WriteLine(self, "There are no players to play.")
 	EndIf
-EndEvent
+EndFunction
 
 
-Event OnDeallocate()
+Function GameEnd()
 	If (Players)
 		int index = 0
 		While (index < Count)
-			Players[index].OnDeallocate()
+			Players[index].GameEnd()
 			index += 1
 		EndWhile
 
@@ -114,7 +110,7 @@ Event OnDeallocate()
 	Else
 		WriteLine(self, "There are no players to deallocate.")
 	EndIf
-EndEvent
+EndFunction
 
 
 ; Functions
@@ -179,13 +175,13 @@ EndFunction
 
 ; Properties
 ;---------------------------------------------
-Group Game
+Group Object
 	BlackJack:Game Property BlackJack Auto Const Mandatory
 EndGroup
 
 Group Players
-	Players:BotA Property BotA Auto Const Mandatory
-	Players:BotB Property BotB Auto Const Mandatory
+	Players:BotWhale Property BotWhale Auto Const Mandatory
+	Players:BotSwatter Property BotSwatter Auto Const Mandatory
 	Players:BotC Property BotC Auto Const Mandatory
 	Players:BotD Property BotD Auto Const Mandatory
 	Players:Human Property Human Auto Const Mandatory

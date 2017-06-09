@@ -1,12 +1,7 @@
-ScriptName Gambling:BlackJack:Object extends ScriptObject Native Const Hidden
+ScriptName Gambling:BlackJack:Object extends Quest Native Const Hidden
 
 
-Group Game
-	string Property Invalid = -1 AutoReadOnly
-EndGroup
-
-
-; Phase --------------------------------------
+; Phase Event --------------------------------
 ;---------------------------------------------
 
 Struct PhaseEventArgs
@@ -29,4 +24,12 @@ EndGroup
 Group PhaseChanges
 	bool Property Begun = true AutoReadOnly
 	bool Property Ended = false AutoReadOnly
+EndGroup
+
+
+; Properties
+;---------------------------------------------
+
+Group Properties
+	int Property Invalid = -1 AutoReadOnly
 EndGroup

@@ -1,4 +1,4 @@
-ScriptName Gambling:Shared:Motion:Controller extends ReferenceAlias
+ScriptName Gambling:Shared:Controllers:Motion extends Form
 import Gambling:Shared:Common
 
 

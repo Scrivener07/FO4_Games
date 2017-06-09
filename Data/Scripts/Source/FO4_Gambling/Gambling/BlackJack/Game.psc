@@ -16,12 +16,9 @@ State Starting
 		{Session Begin}
 
 		If (GUI.PromptPlay())
-
-			Table.OnAllocate()
-			Cards.OnAllocate()
-			Players.OnAllocate()
-			Rules.OnAllocate()
-			GUI.OnAllocate()
+			Table.GameBegin()
+			Cards.GameBegin()
+			Players.GameBegin()
 
 			ChangeState(self, WageringPhase)
 			SendPhase(self, StartingPhase, Begun)
@@ -42,11 +39,7 @@ State Wagering
 	Event OnBeginState(string asOldState)
 		{Session State}
 
-		Table.OnWager()
-		Cards.OnWager()
-		Players.OnWager()
-		Rules.OnWager()
-		GUI.OnWager()
+		Players.GameWager()
 
 		ChangeState(self, DealingPhase)
 		SendPhase(self, WageringPhase, Begun)
@@ -63,12 +56,7 @@ State Dealing
 		{Session State}
 
 		Cards.Shuffle()
-
-		Table.OnDeal()
-		Cards.OnDeal()
-		Players.OnDeal()
-		Rules.OnDeal()
-		GUI.OnDeal()
+		Players.GameDeal()
 
 		ChangeState(self, PlayingPhase)
 		SendPhase(self, DealingPhase, Begun)
@@ -84,11 +72,7 @@ State Playing
 	Event OnBeginState(string asOldState)
 		{Session State}
 
-		Table.OnPlay()
-		Cards.OnPlay()
-		Players.OnPlay()
-		Rules.OnPlay()
-		GUI.OnPlay()
+		Players.GamePlay()
 
 		ChangeState(self, ScoringPhase)
 		SendPhase(self, PlayingPhase, Begun)
@@ -104,11 +88,17 @@ State Scoring
 	Event OnBeginState(string asOldState)
 		{Session State}
 
-		Table.OnScore()
-		Cards.OnScore()
-		Players.OnScore()
-		Rules.OnScore()
-		GUI.OnScore()
+		If (HasHuman)
+			int humanScore = Players.Human.Score
+			WriteLine(self, "Your final score is "+humanScore+".")
+
+			If (Rules.IsWin(humanScore))
+				GUI.ShowWinner(humanScore)
+
+			ElseIf (Rules.IsBust(humanScore))
+				GUI.ShowLoser(humanScore)
+			EndIf
+		EndIf
 
 		If (GUI.PromptPlayAgain())
 			ChangeState(self, WageringPhase)
@@ -130,11 +120,8 @@ State Exiting
 	Event OnBeginState(string asOldState)
 		{Session End}
 
-		Rules.OnDeallocate()
-		GUI.OnDeallocate()
-		Table.OnDeallocate()
-		Cards.OnDeallocate()
-		Players.OnDeallocate()
+		Table.GameEnd()
+		Players.GameEnd()
 
 		ChangeState(self, IdlePhase)
 		SendPhase(self, ExitingPhase, Begun)
@@ -166,6 +153,7 @@ EndFunction
 Function SendPhase(BlackJack:Game sender, string name, bool change) Global
 	string stateName = sender.GetState()
 	If (stateName == name)
+
 		PhaseEventArgs phase = new PhaseEventArgs
 		phase.Name = name
 		phase.Change = change
@@ -184,13 +172,15 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Game
+Group Object
 	Components:Rules Property Rules Auto Const Mandatory
 	Components:GUI Property GUI Auto Const Mandatory
 	Components:Table Property Table Auto Const Mandatory
 	Components:Cards Property Cards Auto Const Mandatory
 	Components:Players Property Players Auto Const Mandatory
+EndGroup
 
+Group Game
 	bool Property Idling Hidden
 		bool Function Get()
 			return self.GetState() == IdlePhase

@@ -6,47 +6,6 @@ import Gambling:Shared:Common
 int OptionExit = 0 const
 int OptionStart = 1 const
 
-int OptionWager1 = 1 const
-int OptionWager5 = 2 const
-int OptionWager10 = 3 const
-int OptionWager20 = 4 const
-int OptionWager50 = 5 const
-int OptionWager100 = 6 const
-
-
-
-; Events
-;---------------------------------------------
-
-Event OnInit()
-	RegisterForPhaseEvent(BlackJack)
-EndEvent
-
-
-Event OnGamePhase(PhaseEventArgs e)
-	If (e.Name == ScoringPhase)
-		If !(BlackJack.HasHuman)
-			WriteLine(self, "No human, ignoring messages.")
-			return
-		EndIf
-
-		If (e.Change == Begun)
-			int humanScore = BlackJack.Players.Human.Score
-			WriteLine(self, "Your final score is "+humanScore+".")
-
-			If (BlackJack.Rules.IsWin(humanScore))
-				Gambling_BlackJack_MessageWinNatural.Show(humanScore)
-			EndIf
-
-			If (BlackJack.Rules.IsBust(humanScore))
-				Gambling_BlackJack_MessageBust.Show(humanScore)
-			EndIf
-		Else
-
-		EndIf
-	EndIf
-EndEvent
-
 
 ; Methods
 ;---------------------------------------------
@@ -72,9 +31,14 @@ bool Function PromptPlayAgain()
 EndFunction
 
 
-
 int Function PromptWager()
 	int selected = Gambling_BlackJack_MessageWager.Show()
+	int OptionWager1 = 1 const
+	int OptionWager5 = 2 const
+	int OptionWager10 = 3 const
+	int OptionWager20 = 4 const
+	int OptionWager50 = 5 const
+	int OptionWager100 = 6 const
 
 	If (selected == OptionExit || selected == Invalid)
 		return Invalid
@@ -102,17 +66,23 @@ int Function ShowDealt(float card1, float card2, float score)
 EndFunction
 
 
-int Function ShowTurn(float card, floar score)
-	return Gambling_BlackJack_MessageTurn.Show(card.Rank, Score)
+int Function ShowTurn(float card, float score)
+	return Gambling_BlackJack_MessageTurn.Show(card, score)
+EndFunction
+
+
+Function ShowWinner(float score)
+	Gambling_BlackJack_MessageWinNatural.Show(score)
+EndFunction
+
+
+Function ShowLoser(float score)
+	Gambling_BlackJack_MessageWinNatural.Show(score)
 EndFunction
 
 
 ; Properties
 ;---------------------------------------------
-
-Group Game
-	BlackJack:Game Property BlackJack Auto Const Mandatory
-EndGroup
 
 Group Messages
 	Message Property Gambling_BlackJack_MessageWager Auto Const Mandatory
@@ -124,4 +94,3 @@ Group Messages
 	Message Property Gambling_BlackJack_MessageWinNatural Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageBust Auto Const Mandatory
 EndGroup
-

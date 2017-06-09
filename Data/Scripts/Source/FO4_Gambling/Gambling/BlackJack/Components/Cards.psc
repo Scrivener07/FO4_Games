@@ -69,15 +69,17 @@ Event OnInit()
 	Data.Heart11 = Gambling_BlackJack_HeartJack
 	Data.Heart12 = Gambling_BlackJack_HeartQueen
 	Data.Heart13 = Gambling_BlackJack_HeartKing
-
 	Deck:Card[] cards = Deck.SetData(Data)
 	References = ToReferences(cards)
 EndEvent
 
 
-Event OnAllocate()
+; Component
+;---------------------------------------------
+
+Function GameBegin()
 	CollectAll(true)
-EndEvent
+EndFunction
 
 
 ; Methods
@@ -90,20 +92,13 @@ EndFunction
 
 Card Function Draw()
 	return Deck.Draw()
-
-	If (gambler)
-
-		gambler.Score = BlackJack.Rules.GetScore(gambler.Hand, gambler.Score)
-	Else
-		WriteLine(self, "Cannot draw card for a none player.")
-	EndIf
 EndFunction
 
 
 Function Collect(Player gambler)
 	If (gambler)
 		ObjectReference[] values = ToReferences(gambler.Hand)
-		Controller.TranslateEach(values, Gambling_BlackJack_DeckMarker)
+		Motion.TranslateEach(values, Gambling_BlackJack_DeckMarker)
 	Else
 		WriteLine(self, "Cannot collect cards from a none player.")
 	EndIf
@@ -119,7 +114,7 @@ Function CollectAll(bool aForce = false)
 				index += 1
 			EndWhile
 		Else
-			Controller.TranslateEach(References, Gambling_BlackJack_DeckMarker)
+			Motion.TranslateEach(References, Gambling_BlackJack_DeckMarker)
 		EndIf
 	EndIf
 EndFunction
@@ -128,10 +123,10 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Game
+Group Object
 	BlackJack:Game Property BlackJack Auto Const Mandatory
 	Shared:Deck Property Deck Auto Const Mandatory
-	Motion:Controller Property Controller Auto Const Mandatory
+	Controllers:Motion Property Motion Auto Const Mandatory
 EndGroup
 
 Group Markers

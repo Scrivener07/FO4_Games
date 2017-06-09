@@ -1,43 +1,20 @@
 ScriptName Gambling:BlackJack:Component extends Gambling:BlackJack:Object Native Const Hidden
 import Gambling
 import Gambling:Shared:Common
-;import Gambling:Shared:Deck
 
 
-; Virtual ------------------------------------
+; Component
 ;---------------------------------------------
 
-Event OnAllocate()
-	{When a game session begins.}
-EndEvent
+Function GameBegin() Native
+Function GameWager() Native
+Function GameDeal() Native
+Function GamePlay() Native
+Function GameScore() Native
+Function GameEnd() Native
 
 
-Event OnWager()
-	{Virtual}
-EndEvent
-
-
-Event OnDeal()
-	{Virtual}
-EndEvent
-
-
-Event OnPlay()
-	{Virtual}
-EndEvent
-
-
-Event OnScore()
-	{Virtual}
-EndEvent
-
-
-Event OnDeallocate()
-	{When a game session ends.}
-EndEvent
-
-
-; Phase --------------------------------------
+; Phase Event --------------------------------
 ;---------------------------------------------
 
 Event OnGamePhase(PhaseEventArgs e)

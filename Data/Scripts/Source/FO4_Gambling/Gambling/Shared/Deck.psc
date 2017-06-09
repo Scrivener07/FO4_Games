@@ -1,4 +1,4 @@
-ScriptName Gambling:Shared:Deck extends ReferenceAlias
+ScriptName Gambling:Shared:Deck extends Form
 import Gambling:Shared:Common
 
 

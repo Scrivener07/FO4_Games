@@ -15,7 +15,10 @@ Event OnInit()
 EndEvent
 
 
-Event OnAllocate()
+; Component
+;---------------------------------------------
+
+Function GameBegin()
 	Game.SetPlayerAIDriven()
 
 	Player.MoveTo(Gambling_BlackJack_CellMarker)
@@ -24,10 +27,10 @@ Event OnAllocate()
 	InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
 
 	Game.StartDialogueCameraOrCenterOnTarget(Gambling_BlackJack_CameraMarker)
-EndEvent
+EndFunction
 
 
-Event OnDeallocate()
+Function GameEnd()
 	Game.SetPlayerAIDriven(false)
 
 	If (PlayAction)
@@ -38,7 +41,7 @@ Event OnDeallocate()
 		InputLayer.Delete()
 		InputLayer = none
 	EndIf
-EndEvent
+EndFunction
 
 
 ; Properties
