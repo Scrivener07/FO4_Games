@@ -3,6 +3,7 @@ Play the game of Black Jack in Fallout 4.
 
 Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaju0r1Zw4MTMmxLbc9ZQ1MOLJ) for work in progress footage.
 
+![Screenshot 1](Documents/Screenshot01.png)
 
 ## Introduction ##
 At the current stage, this mod allows the player to visit a casino and gamble at a Blackjack table. 
