@@ -26,13 +26,14 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 To request a new [feature](https://github.com/Scrivener07/FO4_Gambling/issues?q=is%3Aissue+is%3Aopen+label%3Afeature) or [enchancment](https://github.com/Scrivener07/FO4_Gambling/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement), report a [bug](https://github.com/Scrivener07/FO4_Gambling/issues?q=is%3Aissue+is%3Aopen+label%3Abug), or ask a [question](https://github.com/Scrivener07/FO4_Gambling/issues?q=is%3Aissue+is%3Aopen+label%3Aquestion), submit an issue on the tracker.
 
 
-## Authors ##
-* [The White Collar Players](https://github.com/TheWhiteCollarPlayers) - The projects creator, contact on [Youtube](https://www.youtube.com/channel/UCeJRP8IO7xhceM_xXrKxOcg) or by [Email](twcpgaming@gmail.com)
-* [Scrivener07](https://github.com/Scrivener07) - Scripting
-* Se7enRaven - Created [playing card assets](http://www.nexusmods.com/fallout4/mods/23990/?) as a resource for this project.
+### Acknowledgments
+* [The White Collar Players](https://github.com/TheWhiteCollarPlayers) - Creator, contact on discord `TheWhiteCollarPlayers#7879`, [Youtube](https://www.youtube.com/channel/UCeJRP8IO7xhceM_xXrKxOcg), or [Email](mailto:twcpgaming@gmail.com)
+* [Scrivener07](https://github.com/Scrivener07) - Scripter, contact on discord `Scrivener07#4154`
+* Se7enRaven - Artist, created [playing card assets](http://www.nexusmods.com/fallout4/mods/23990/?) as a resource for this project.
+* Sarinia - Help, counsel regarding meshes, textures, and materials.
 
 See also the list of [contributors](https://github.com/Scrivener07/FO4_Gambling/contributors) who participated in this project.
 
 
-## Acknowledgments
-* Sarinia - Counsel regarding meshes, textures, and materials.
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
