@@ -1,13 +1,14 @@
 # Fallout 4 Gambling
 Play classic games of chance or skill in Fallout 4.
 
-At the current stage, this mod allows the player to visit a casino and gamble at a Blackjack table. 
+At the current stage, this mod allows the player to visit a casino and gamble at a Blackjack table.
 The casino can be found in a previously unused building across the street from the Goodneighbor entrance.
-The player will have to pass either a Strength, Charisma, or credit check to be allowed inside. 
+The player will have to pass either a Strength, Charisma, or credit check to be allowed inside.
 Once inside, the basement of the casino contains the Blackjack table, with it's own dealer.
 
+Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaju0r1Zw4MTMmxLbc9ZQ1MOLJ) for work in progress footage.
 
-### Features and Enchancments 
+#### Features
 - [ ] [Black Jack](https://github.com/Scrivener07/FO4_Gambling/issues/13)
 - - [x] [Compete against opponent AI players](https://github.com/Scrivener07/FO4_Gambling/issues/9).
 - - [ ] [Wager a bet with caps or goods.](https://github.com/Scrivener07/FO4_Gambling/issues/6)
@@ -17,11 +18,10 @@ Once inside, the basement of the casino contains the Blackjack table, with it's 
 - - [ ] [An introductory quest.](https://github.com/Scrivener07/FO4_Gambling/issues/14)
 - [ ] [Award perks for performing well at games.](https://github.com/Scrivener07/FO4_Gambling/issues/2)
 
-
-### Progress
-Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaju0r1Zw4MTMmxLbc9ZQ1MOLJ) for work in progress footage.
-
 <img src="Documents/Screenshot01.png" height="300">
+<img src="Documents/Screenshot02.png" height="300">
+<img src="Documents/Screenshot03.png" height="300">
+
 
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
