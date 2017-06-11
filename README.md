@@ -1,5 +1,5 @@
 # Fallout 4 Gambling
-Play classic games of chance or skill in Fallout 4.
+Play classic games in Fallout 4.
 
 At the current stage, this mod allows the player to visit a casino and gamble at a Blackjack table.
 The casino can be found in a previously unused building across the street from the Goodneighbor entrance.
