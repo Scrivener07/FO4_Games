@@ -69,8 +69,8 @@ EndFunction
 ;---------------------------------------------
 
 int Function BehaviorTurn()
-	{Return th decision for this turn.}
-	If (Session.Score <= 16)
+	{Return the decision for this turn.}
+	If (Score <= 16)
 		return OptionHit
 	Else
 		return OptionStand
