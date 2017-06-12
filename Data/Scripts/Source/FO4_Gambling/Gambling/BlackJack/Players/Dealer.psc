@@ -4,95 +4,61 @@ import Gambling:Shared
 import Gambling:Shared:Common
 
 
-; Component
-;---------------------------------------------
-
-Function GamePlay()
-	If (Turn == 1)
-
-		RevealHand()
-
-		If (BlackJack.Rules.IsWin(Score))
-			WriteLine(self, "The dealer has a black jack on turn one.")
-			return
-		Else
-			int selected = BehaviorTurn()
-
-			If (selected == OptionHit)
-				WriteLine(self, "The dealer has chosen to hit with "+Score)
-
-				BehaviorDraw()
-				self.GamePlay()
-
-			ElseIf (selected == OptionStand)
-				WriteLine(self, "The dealer has chosen to stand with "+Score)
-				return
-			Else
-				WriteLine(self, "The option '"+selected+"' is unhandled.")
-				return
-			EndIf
-		EndIf
-	EndIf
-
-	If (Turn >= 2)
-		If (BlackJack.Rules.IsWin(Score))
-			WriteLine(self, "The dealer has a black jack with "+Score)
-			return
-
-		ElseIf (BlackJack.Rules.IsBust(Score))
-			WriteLine(self, "The dealer has busted with "+Score)
-			return
-
-		Else
-			int selected = BehaviorTurn()
-
-			If (selected == OptionHit)
-				WriteLine(self, "The dealer has chosen to hit with "+Score)
-
-				BehaviorDraw()
-				self.GamePlay()
-
-			ElseIf (selected == OptionStand)
-				WriteLine(self, "The dealer has chosen to stand with "+Score)
-				return
-
-			Else
-				WriteLine(self, "The option '"+selected+"' is unhandled.")
-				return
-			EndIf
-		EndIf
-	EndIf
-EndFunction
-
-
 ; Player
 ;---------------------------------------------
 
-int Function BehaviorTurn()
-	{Return the decision for this turn.}
-	If (Score <= 16)
-		return OptionHit
-	Else
-		return OptionStand
+MarkerData Function GetMarkerData()
+	MarkerData marker = new MarkerData
+	marker.Card01 = Gambling_BlackJack_D1C01
+	marker.Card02 = Gambling_BlackJack_D1C02
+	marker.Card03 = Gambling_BlackJack_D1C03
+	marker.Card04 = Gambling_BlackJack_D1C04
+	marker.Card05 = Gambling_BlackJack_D1C05
+	marker.Card06 = Gambling_BlackJack_D1C06
+	marker.Card07 = Gambling_BlackJack_D1C07
+	marker.Card08 = Gambling_BlackJack_D1C08
+	marker.Card09 = Gambling_BlackJack_D1C09
+	marker.Card10 = Gambling_BlackJack_D1C10
+	marker.Card11 = Gambling_BlackJack_D1C11
+	return marker
+EndFunction
+
+
+Function BehaviorPlay()
+	If (Turn == 1)
+		; reveal the face down card
+		Motion.Translate(Hand[0].Reference, Gambling_BlackJack_D1C01B)
+	EndIf
+
+	int selected = BehaviorTurn()
+	If (selected == OptionHit)
+		WriteLine(self, "Has chosen to hit with "+Score)
+		Draw()
+		self.BehaviorPlay()
 	EndIf
 EndFunction
 
 
-int Function BehaviorWager()
-	WriteLine(self, "Wagering is invalid, a dealer does not wager a bet.")
+int Function GetWager()
+	WriteLine(self, "Skipping, a dealer does not wager a bet.")
 	return Invalid
-EndFunction
-
-
-Function RevealHand()
-	Deck:Card card = Hand[0]
-	Motion.Translate(Hand[0].Reference, Gambling_BlackJack_D1C01B)
 EndFunction
 
 
 ; Properties
 ;---------------------------------------------
 
-Group Hand
+Group Markers
+	ObjectReference Property Gambling_BlackJack_D1C01 Auto Const Mandatory
 	ObjectReference Property Gambling_BlackJack_D1C01B Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C02 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C03 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C04 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C05 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C06 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C07 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C08 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C09 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C10 Auto Const Mandatory
+	ObjectReference Property Gambling_BlackJack_D1C11 Auto Const Mandatory
 EndGroup

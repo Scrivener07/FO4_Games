@@ -1,8 +1,8 @@
 ScriptName Gambling:BlackJack:Components:Players extends Gambling:BlackJack:Component
 import Gambling
 import Gambling:BlackJack
+import Gambling:BlackJack:Players
 import Gambling:Shared:Common
-
 
 Player[] Players
 
@@ -32,85 +32,104 @@ EndEvent
 ; Component
 ;---------------------------------------------
 
-Function GameBegin()
-	; TODO: variable player count?
-
-	If !(Players)
+State Starting
+	Event OnBeginState(string asOldState)
 		Add(Human)
-		Human.GameBegin()
+		Human.StartAndWait()
 
 		Add(BotWhale)
-		BotWhale.GameBegin()
+		BotWhale.StartAndWait()
 
 		Add(BotSwatter)
-		BotSwatter.GameBegin()
+		BotSwatter.StartAndWait()
 
 		Add(BotC)
-		BotC.GameBegin()
+		BotC.StartAndWait()
 
 		Add(BotD)
-		BotD.GameBegin()
+		BotD.StartAndWait()
 
 		Add(Dealer)
-		Dealer.GameBegin()
-	Else
-		WriteLine(self, "Players are already allocated.")
-	EndIf
-EndFunction
+		Dealer.StartAndWait()
+
+		ReleaseThread()
+	EndEvent
+EndState
 
 
-Function GameWager()
-	If (Players)
-		int index = 0
-		While (index < Count)
-			Players[index].GameWager()
-			index += 1
-		EndWhile
-	Else
-		WriteLine(self, "There are no players to wager.")
-	EndIf
-EndFunction
+State Wagering
+	Event OnBeginState(string asOldState)
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Players[index].WagerAndWait()
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to wager.")
+		EndIf
+
+		ReleaseThread()
+	EndEvent
+EndState
 
 
-Function GameDeal()
-	If (Players)
-		int index = 0
-		While (index < Count)
-			Players[index].GameDeal()
-			index += 1
-		EndWhile
-	Else
-		WriteLine(self, "There are no players to deal.")
-	EndIf
-EndFunction
+State Dealing
+	Event OnBeginState(string asOldState)
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Players[index].DealAndWait()
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to deal.")
+		EndIf
+
+		ReleaseThread()
+	EndEvent
+EndState
 
 
-Function GamePlay()
-	If (Players)
-		int index = 0
-		While (index < Count)
-			Players[index].GamePlay()
-			index += 1
-		EndWhile
-	Else
-		WriteLine(self, "There are no players to play.")
-	EndIf
-EndFunction
+State Playing
+	Event OnBeginState(string asOldState)
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Player gambler = Players[index]
+				gambler.PlayAndWait()
+
+				; after the player has taken all of their turns
+				If (gambler is Human)
+					int score = gambler.Score
+
+					If (BlackJack.Rules.IsWin(score))
+						WriteLine(self, "Player final score is "+score+" is a winner.")
+						BlackJack.GUI.ShowWinner(score)
+
+					ElseIf (BlackJack.Rules.IsBust(score))
+						WriteLine(self, "Player final score is "+score+" is a loser.")
+						BlackJack.GUI.ShowLoser(score)
+					EndIf
+				EndIf
+
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to play.")
+		EndIf
+
+		ReleaseThread()
+	EndEvent
+EndState
 
 
-Function GameEnd()
-	If (Players)
-		int index = 0
-		While (index < Count)
-			Players[index].GameEnd()
-			index += 1
-		EndWhile
-
+State Exiting
+	Event OnBeginState(string asOldState)
 		Clear()
-	Else
-		WriteLine(self, "There are no players to deallocate.")
-	EndIf
-EndFunction
+		ReleaseThread()
+	EndEvent
+EndState
 
 
 ; Functions
@@ -168,13 +187,14 @@ Function Clear()
 	If (Players)
 		Players.Clear()
 	Else
-		WriteLine(self, "The seats are empty or none.")
+		WriteLine(self, "Cannot clear empty or none players.")
 	EndIf
 EndFunction
 
 
 ; Properties
 ;---------------------------------------------
+
 Group Object
 	BlackJack:Game Property BlackJack Auto Const Mandatory
 EndGroup

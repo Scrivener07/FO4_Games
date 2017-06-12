@@ -6,148 +6,137 @@ import Gambling:Shared:Common
 import Gambling:Shared:Deck
 
 
-Card[] Cards
+PlayData Player
 SessionData Session
+MarkerData Marker
+Card[] Cards
 
-Struct SessionData
+
+Struct PlayData
 	int Score = 0
 	int Wager = 0
-	int Winnings = 0
-	bool Abort = false
 	int Turn = -1
+EndStruct
+
+Struct SessionData
+	bool Abort = false
+	int Winnings = 0
+EndStruct
+
+Struct MarkerData
+	ObjectReference Card01
+	ObjectReference Card02
+	ObjectReference Card03
+	ObjectReference Card04
+	ObjectReference Card05
+	ObjectReference Card06
+	ObjectReference Card07
+	ObjectReference Card08
+	ObjectReference Card09
+	ObjectReference Card10
+	ObjectReference Card11
 EndStruct
 
 
 ; Component
 ;---------------------------------------------
 
-Function GameBegin()
-	Cards = new Deck:Card[0]
-	Session = new SessionData
-EndFunction
+State Starting
+	Event OnBeginState(string asOldState)
+		Session = new SessionData
+		Marker = GetMarkerData()
+		Cards = new Deck:Card[0]
+		WriteLine(self, "Has begun the starting state.")
+		ReleaseThread()
+	EndEvent
+EndState
 
 
-Function GameWager()
-	int bet = BehaviorWager()
-	If (bet > 0)
-		Session.Wager = bet
-	Else
-		Session.Abort = true
-	EndIf
-EndFunction
+State Wagering
+	Event OnBeginState(string asOldState)
+		Player = new PlayData
 
-
-Function GameDeal()
-	BehaviorDraw()
-	BehaviorDraw()
-EndFunction
-
-
-Function GamePlay()
-	If (Turn == 0)
-
-	EndIf
-
-	If (Turn == 1)
-		If (BlackJack.Rules.IsWin(Score))
-			WriteLine(self, "Has a black jack on turn one.")
-			return
+		int bet = GetWager()
+		If (bet > 0)
+			Player.Wager = bet
+			WriteLine(self, "Has chosen to wager "+bet)
 		Else
-			int selected = BehaviorTurn()
-
-			If (selected == OptionHit)
-				WriteLine(self, "Has chosen to hit with "+Score)
-				BehaviorDraw()
-				self.GamePlay()
-
-			ElseIf (selected == OptionStand)
-				WriteLine(self, "Has chosen to stand with "+Score)
-				return
-			Else
-				WriteLine(self, "The option '"+selected+"' is unhandled.")
-				return
-			EndIf
+			Player.Score = 0
+			Session.Abort = true
+			WriteLine(self, "Aborting, cannot wager "+bet)
 		EndIf
-	EndIf
+		WriteLine(self, "Has begun the wagering state.")
+		ReleaseThread()
+	EndEvent
+EndState
 
 
-	If (Turn >= 2)
-		If (BlackJack.Rules.IsWin(Score))
-			WriteLine(self, "Has a black jack with "+Score)
-			return
+State Dealing
+	Event OnBeginState(string asOldState)
+		Draw()
+		Draw()
+		WriteLine(self, "Has begun the dealing state.")
+		ReleaseThread()
+	EndEvent
+EndState
 
-		ElseIf (BlackJack.Rules.IsBust(Score))
-			WriteLine(self, "Has busted with "+Score)
-			return
 
-		Else
-			int selected = BehaviorTurn()
-
-			If (selected == OptionHit)
-				WriteLine(self, "Has chosen to hit with "+Score)
-				BehaviorDraw()
-				self.GamePlay()
-
-			ElseIf (selected == OptionStand)
-				WriteLine(self, "Has chosen to stand with "+Score)
-				return
-
-			Else
-				WriteLine(self, "The option '"+selected+"' is unhandled.")
-				return
-			EndIf
-		EndIf
-	EndIf
-EndFunction
+State Playing
+	Event OnBeginState(string asOldState)
+		BehaviorPlay()
+		WriteLine(self, "Has begun the playing state.")
+		ReleaseThread()
+	EndEvent
+EndState
 
 
 ; Player
 ;---------------------------------------------
 
-int Function BehaviorWager()
+MarkerData Function GetMarkerData()
+	{Required}
+	WriteMessage(self, "Error, I forgot to implement the GetMarkerData function!")
+	return none
+EndFunction
+
+
+int Function GetWager()
 	{Returns the amount of caps to wager.}
-	return 20
+	int wagerDefault = 20 const
+	WriteLine(self, "Has wagered the default of "+wagerDefault)
+	return wagerDefault
 EndFunction
 
 
-int Function BehaviorTurn()
-	{Return th decision for this turn.}
-	If (Session.Score <= 16)
-		return OptionHit
-	Else
-		return OptionStand
-	EndIf
-EndFunction
-
-
-Function BehaviorDraw()
-	Card value = BlackJack.Cards.Deck.Draw()
+Function Draw()
+	Card value = BlackJack.Cards.Draw()
 	Cards.Add(value)
+	Player.Score = BlackJack.Rules.GetScore(Cards, Player.Score)
 
 	If (value)
 		If (value.Reference)
 			If (Turn == 0)
-				Motion.Translate(value.Reference, Hand_CardMarker01)
+				Motion.Translate(value.Reference, Marker.Card01)
 			ElseIf (Turn == 1)
-				Motion.Translate(value.Reference, Hand_CardMarker02)
+				Motion.Translate(value.Reference, Marker.Card02)
 			ElseIf (Turn == 2)
-				Motion.Translate(value.Reference, Hand_CardMarker03)
+				Motion.Translate(value.Reference, Marker.Card03)
 			ElseIf (Turn == 3)
-				Motion.Translate(value.Reference, Hand_CardMarker04)
+				Motion.Translate(value.Reference, Marker.Card04)
 			ElseIf (Turn == 4)
-				Motion.Translate(value.Reference, Hand_CardMarker05)
+				Motion.Translate(value.Reference, Marker.Card05)
 			ElseIf (Turn == 5)
-				Motion.Translate(value.Reference, Hand_CardMarker06)
+				Motion.Translate(value.Reference, Marker.Card06)
 			ElseIf (Turn == 6)
-				Motion.Translate(value.Reference, Hand_CardMarker07)
+				Motion.Translate(value.Reference, Marker.Card07)
 			ElseIf (Turn == 7)
-				Motion.Translate(value.Reference, Hand_CardMarker08)
+				Motion.Translate(value.Reference, Marker.Card08)
 			ElseIf (Turn == 8)
-				Motion.Translate(value.Reference, Hand_CardMarker09)
+				Motion.Translate(value.Reference, Marker.Card09)
 			ElseIf (Turn == 9)
-				Motion.Translate(value.Reference, Hand_CardMarker10)
+				Motion.Translate(value.Reference, Marker.Card10)
 			ElseIf (Turn == 10)
-				Motion.Translate(value.Reference, Hand_CardMarker11)
+				Motion.Translate(value.Reference, Marker.Card11)
 			Else
 				WriteLine(self, "The turn '"+Turn+"' is out of range.")
 			EndIf
@@ -156,6 +145,26 @@ Function BehaviorDraw()
 		EndIf
 	Else
 		WriteLine(self, "Cannot deal a none card.")
+	EndIf
+EndFunction
+
+
+Function BehaviorPlay()
+	int selected = BehaviorTurn()
+	If (selected == OptionHit)
+		WriteLine(self, "Has chosen to hit with "+Score)
+		Draw()
+		self.BehaviorPlay()
+	EndIf
+EndFunction
+
+
+int Function BehaviorTurn()
+	{Return th decision for this turn.}
+	If (Player.Score <= 16)
+		return OptionHit
+	Else
+		return OptionStand
 	EndIf
 EndFunction
 
@@ -184,13 +193,13 @@ Group Player
 
 	int Property Score Hidden
 		int Function Get()
-			return Session.Score
+			return Player.Score
 		EndFunction
 	EndProperty
 
 	int Property Wager Hidden
 		int Function Get()
-			return Session.Wager
+			return Player.Wager
 		EndFunction
 	EndProperty
 
@@ -204,18 +213,4 @@ EndGroup
 Group Turn
 	int Property OptionHit = 0 AutoReadOnly
 	int Property OptionStand = 1 AutoReadOnly
-EndGroup
-
-Group Hand
-	ObjectReference Property Hand_CardMarker01 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker02 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker03 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker04 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker05 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker06 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker07 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker08 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker09 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker10 Auto Const Mandatory
-	ObjectReference Property Hand_CardMarker11 Auto Const Mandatory
 EndGroup

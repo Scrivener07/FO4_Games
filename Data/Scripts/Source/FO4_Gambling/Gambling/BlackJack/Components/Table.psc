@@ -18,30 +18,38 @@ EndEvent
 ; Component
 ;---------------------------------------------
 
-Function GameBegin()
-	Game.SetPlayerAIDriven()
+State Starting
+	Event OnBeginState(string asOldState)
+		Game.SetPlayerAIDriven()
 
-	Player.MoveTo(Gambling_BlackJack_CellMarker)
+		Player.MoveTo(Gambling_BlackJack_CellMarker)
 
-	InputLayer = InputEnableLayer.Create()
-	InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
+		InputLayer = InputEnableLayer.Create()
+		InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
 
-	Game.StartDialogueCameraOrCenterOnTarget(Gambling_BlackJack_CameraMarker)
-EndFunction
+		Game.StartDialogueCameraOrCenterOnTarget(Gambling_BlackJack_CameraMarker)
+
+		ReleaseThread()
+	EndEvent
+EndState
 
 
-Function GameEnd()
-	Game.SetPlayerAIDriven(false)
+State Exiting
+	Event OnBeginState(string asOldState)
+		Game.SetPlayerAIDriven(false)
 
-	If (PlayAction)
-		Player.MoveTo(PlayAction as ObjectReference)
-	EndIf
+		If (PlayAction)
+			Player.MoveTo(PlayAction as ObjectReference)
+		EndIf
 
-	If (InputLayer)
-		InputLayer.Delete()
-		InputLayer = none
-	EndIf
-EndFunction
+		If (InputLayer)
+			InputLayer.Delete()
+			InputLayer = none
+		EndIf
+
+		ReleaseThread()
+	EndEvent
+EndState
 
 
 ; Properties

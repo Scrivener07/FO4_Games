@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Game extends Gambling:BlackJack:Object
+ScriptName Gambling:BlackJack:Game extends Gambling:BlackJack:Component
 import Gambling
 import Gambling:BlackJack
 import Gambling:Shared
@@ -16,9 +16,9 @@ State Starting
 		{Session Begin}
 
 		If (GUI.PromptPlay())
-			Table.GameBegin()
-			Cards.GameBegin()
-			Players.GameBegin()
+			Table.StartAndWait()
+			Cards.StartAndWait()
+			Players.StartAndWait()
 
 			ChangeState(self, WageringPhase)
 			SendPhase(self, StartingPhase, Begun)
@@ -37,9 +37,9 @@ EndState
 
 State Wagering
 	Event OnBeginState(string asOldState)
-		{Session State}
+		{Game State}
 
-		Players.GameWager()
+		Players.WagerAndWait()
 
 		ChangeState(self, DealingPhase)
 		SendPhase(self, WageringPhase, Begun)
@@ -53,10 +53,9 @@ EndState
 
 State Dealing
 	Event OnBeginState(string asOldState)
-		{Session State}
-
+		{Game State}
 		Cards.Shuffle()
-		Players.GameDeal()
+		Players.DealAndWait()
 
 		ChangeState(self, PlayingPhase)
 		SendPhase(self, DealingPhase, Begun)
@@ -70,9 +69,9 @@ EndState
 
 State Playing
 	Event OnBeginState(string asOldState)
-		{Session State}
-
-		Players.GamePlay()
+		{Game State}
+		Players.PlayAndWait()
+		; after all players have taken all of their turns
 
 		ChangeState(self, ScoringPhase)
 		SendPhase(self, PlayingPhase, Begun)
@@ -86,19 +85,7 @@ EndState
 
 State Scoring
 	Event OnBeginState(string asOldState)
-		{Session State}
-
-		If (HasHuman)
-			int humanScore = Players.Human.Score
-			WriteLine(self, "Your final score is "+humanScore+".")
-
-			If (Rules.IsWin(humanScore))
-				GUI.ShowWinner(humanScore)
-
-			ElseIf (Rules.IsBust(humanScore))
-				GUI.ShowLoser(humanScore)
-			EndIf
-		EndIf
+		{Game State}
 
 		If (GUI.PromptPlayAgain())
 			ChangeState(self, WageringPhase)
@@ -119,9 +106,9 @@ EndState
 State Exiting
 	Event OnBeginState(string asOldState)
 		{Session End}
-
-		Table.GameEnd()
-		Players.GameEnd()
+		Table.ExitAndWait()
+		Cards.ExitAndWait()
+		Players.ExitAndWait()
 
 		ChangeState(self, IdlePhase)
 		SendPhase(self, ExitingPhase, Begun)
@@ -181,12 +168,6 @@ Group Object
 EndGroup
 
 Group Game
-	bool Property Idling Hidden
-		bool Function Get()
-			return self.GetState() == IdlePhase
-		EndFunction
-	EndProperty
-
 	bool Property HasHuman Hidden
 		bool Function Get()
 			return Players.Contains(Players.Human)

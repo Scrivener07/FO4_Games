@@ -77,9 +77,12 @@ EndEvent
 ; Component
 ;---------------------------------------------
 
-Function GameBegin()
-	CollectAll(true)
-EndFunction
+State Starting
+	Event OnBeginState(string asOldState)
+		CollectAll(true)
+		ReleaseThread()
+	EndEvent
+EndState
 
 
 ; Methods
