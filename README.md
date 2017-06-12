@@ -1,10 +1,8 @@
 # Fallout 4 Gambling
-Play classic games of chance or skill in Fallout 4.
+Play classic games in Fallout 4.
 
-At the current stage, this mod allows the player to visit a casino and gamble at a Blackjack table.
+At the current stage, this mod allows the player to visit bars around the Commonwealth and gamble at a Blackjack table.
 The casino can be found in a previously unused building across the street from the Goodneighbor entrance.
-The player will have to pass either a Strength, Charisma, or credit check to be allowed inside.
-Once inside, the basement of the casino contains the Blackjack table, with it's own dealer.
 
 Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaju0r1Zw4MTMmxLbc9ZQ1MOLJ) for work in progress footage.
 
@@ -34,7 +32,7 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Gambling/
 * [Scrivener07](https://github.com/Scrivener07) - Scripter, contact on discord `Scrivener07#4154`
 * Se7enRaven - Artist, created [playing card assets](http://www.nexusmods.com/fallout4/mods/23990/?) as a resource for this project.
 * Sarinia - Help, counsel regarding meshes, textures, and materials.
-
+* Jonathan Ostrus - Help, counsel regarding settlement objects in the Creation Kit.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
