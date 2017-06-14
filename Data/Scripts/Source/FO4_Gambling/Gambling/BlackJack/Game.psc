@@ -1,11 +1,22 @@
 ScriptName Gambling:BlackJack:Game extends Gambling:BlackJack:Component
 import Gambling
 import Gambling:BlackJack
+import Gambling:BlackJack:Players
 import Gambling:Shared
 import Gambling:Shared:Common
 
 
 CustomEvent PhaseEvent
+
+Player[] Players
+
+
+; Events
+;---------------------------------------------
+
+Event OnInit()
+	Players = new Player[0]
+EndEvent
 
 
 ; Component
@@ -25,9 +36,24 @@ State Starting
 			If (Cards.StartAndWait())
 				WriteLine(self, "Cards component has finished the Starting thread.")
 			EndIf
-			If (Players.StartAndWait())
-				WriteLine(self, "Players component has finished the Starting thread.")
-			EndIf
+
+			Add(Human)
+			Human.StartAndWait()
+
+			Add(BotWhale)
+			BotWhale.StartAndWait()
+
+			Add(BotSwatter)
+			BotSwatter.StartAndWait()
+
+			Add(BotC)
+			BotC.StartAndWait()
+
+			Add(BotD)
+			BotD.StartAndWait()
+
+			Add(Dealer)
+			Dealer.StartAndWait()
 
 			ChangeState(self, WageringPhase)
 		Else
@@ -49,8 +75,16 @@ State Wagering
 		WriteLine(self, "Wagering")
 		SendPhase(self, WageringPhase, Begun)
 
-		If (Players.WagerAndWait())
-			WriteLine(self, "Players component has finished the Wagering thread.")
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Player gambler = Players[index]
+				gambler.WagerAndWait()
+				WriteLine(self, "Has chosen to wager "+gambler.Wager)
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to wager.")
 		EndIf
 
 		ChangeState(self, DealingPhase)
@@ -69,8 +103,14 @@ State Dealing
 		SendPhase(self, DealingPhase, Begun)
 
 		Cards.Shuffle()
-		If (Players.DealAndWait())
-			WriteLine(self, "Players component has finished the Dealing thread.")
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Players[index].DealAndWait()
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to deal.")
 		EndIf
 
 		ChangeState(self, PlayingPhase)
@@ -89,9 +129,16 @@ State Playing
 		WriteLine(self, "Playing")
 		SendPhase(self, PlayingPhase, Begun)
 
-		If (Players.PlayAndWait())
-			WriteLine(self, "Players component has finished the Playing thread.")
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Players[index].PlayAndWait()
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to play.")
 		EndIf
+
 
 		ChangeState(self, ScoringPhase)
 	EndEvent
@@ -108,8 +155,30 @@ State Scoring
 		WriteLine(self, "Scoring")
 		SendPhase(self, ScoringPhase, Begun)
 
-		If (Players.ScoreAndWait())
-			WriteLine(self, "Players component has finished the Scoring thread.")
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Player gambler = Players[index]
+				gambler.ScoreAndWait()
+
+				; after the player has taken all of their turns
+				If (gambler is Human)
+					int score = gambler.Score
+
+					If (Rules.IsWin(score))
+						WriteLine(self, "Player final score of "+score+" is a winner.")
+						GUI.ShowWinner(score)
+
+					ElseIf (Rules.IsBust(score))
+						WriteLine(self, "Player final score of "+score+" is a loser.")
+						GUI.ShowLoser(score)
+					EndIf
+				EndIf
+
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to score.")
 		EndIf
 
 		If (GUI.PromptPlayAgain())
@@ -137,9 +206,8 @@ State Exiting
 		If (Cards.ExitAndWait())
 			WriteLine(self, "Cards component has finished the Exiting thread.")
 		EndIf
-		If (Players.ExitAndWait())
-			WriteLine(self, "Players component has finished the Exiting thread.")
-		EndIf
+
+		Clear()
 
 		ChangeState(self, IdlePhase)
 	EndEvent
@@ -188,21 +256,89 @@ Function SendPhase(BlackJack:Game sender, string name, bool change) Global
 EndFunction
 
 
+int Function IndexOf(Player value)
+	{Determines the index of a specific player in the collection.}
+	If (value)
+		return Players.Find(value)
+	Else
+		return Invalid
+	EndIf
+EndFunction
+
+
+bool Function Contains(Player value)
+	{Determines whether a player is in the collection.}
+	return IndexOf(value) > Invalid
+EndFunction
+
+
+bool Function Remove(Player value)
+	{Removes a player from the collection.}
+	int index = IndexOf(value)
+
+	If (index > Invalid)
+		Players.Remove(index)
+		return true
+	Else
+		WriteLine(self, "Could not find the '"+value+"' player for abort.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function Add(Player value)
+	{Adds a player to the collection.}
+	If (value)
+		If (Contains(value) == false)
+			Players.Add(value)
+			return true
+		Else
+			WriteLine(self, "The players already contain '"+value+"'.")
+			return false
+		EndIf
+	Else
+		WriteLine(self, "Cannot add a none value.")
+		return false
+	EndIf
+EndFunction
+
+
+Function Clear()
+	{Removes all players from the collection.}
+	If (Players)
+		Players.Clear()
+	Else
+		WriteLine(self, "Cannot clear empty or none players.")
+	EndIf
+EndFunction
+
 ; Properties
 ;---------------------------------------------
 
-Group Object
+Group Game
 	Components:Rules Property Rules Auto Const Mandatory
 	Components:GUI Property GUI Auto Const Mandatory
 	Components:Table Property Table Auto Const Mandatory
 	Components:Cards Property Cards Auto Const Mandatory
-	Components:Players Property Players Auto Const Mandatory
 EndGroup
 
-Group Game
-	bool Property HasHuman Hidden
-		bool Function Get()
-			return Players.Contains(Players.Human)
+Group Players
+	int Property Count Hidden
+		int Function Get()
+			return Players.Length
 		EndFunction
 	EndProperty
+
+	bool Property HasHuman Hidden
+		bool Function Get()
+			return Contains(Human)
+		EndFunction
+	EndProperty
+
+	Players:BotWhale Property BotWhale Auto Const Mandatory
+	Players:BotSwatter Property BotSwatter Auto Const Mandatory
+	Players:BotC Property BotC Auto Const Mandatory
+	Players:BotD Property BotD Auto Const Mandatory
+	Players:Human Property Human Auto Const Mandatory
+	Players:Dealer Property Dealer Auto Const Mandatory
 EndGroup
