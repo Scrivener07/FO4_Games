@@ -27,7 +27,7 @@ EndFunction
 
 int Function AskWager()
 	; TODO: expose the highest bet
-	return (BlackJack.Players.Human.Wager * 3) + 50
+	return (BlackJack.Human.Wager * 3) + 50
 EndFunction
 
 
