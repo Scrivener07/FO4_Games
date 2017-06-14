@@ -12,20 +12,6 @@ Player[] Players
 
 Event OnInit()
 	Players = new Player[0]
-	RegisterForPhaseEvent(BlackJack)
-EndEvent
-
-
-Event OnGamePhase(PhaseEventArgs e)
-	If (e.Name == WageringPhase && e.Change == Ended)
-		If (Human.Abort)
-			If (Remove(Human))
-				WriteLine(self, "The human has aborted the game.")
-			Else
-				WriteLine(self, "The human could not abort the game.")
-			EndIf
-		EndIf
-	EndIf
 EndEvent
 
 
@@ -62,7 +48,9 @@ State Wagering
 		If (Players)
 			int index = 0
 			While (index < Count)
-				Players[index].WagerAndWait()
+				Player gambler = Players[index]
+				gambler.WagerAndWait()
+				WriteLine(self, "Has chosen to wager "+gambler.Wager)
 				index += 1
 			EndWhile
 		Else
@@ -96,23 +84,7 @@ State Playing
 		If (Players)
 			int index = 0
 			While (index < Count)
-				Player gambler = Players[index]
-				gambler.PlayAndWait()
-
-				; after the player has taken all of their turns
-				If (gambler is Human)
-					int score = gambler.Score
-
-					If (BlackJack.Rules.IsWin(score))
-						WriteLine(self, "Player final score is "+score+" is a winner.")
-						BlackJack.GUI.ShowWinner(score)
-
-					ElseIf (BlackJack.Rules.IsBust(score))
-						WriteLine(self, "Player final score is "+score+" is a loser.")
-						BlackJack.GUI.ShowLoser(score)
-					EndIf
-				EndIf
-
+				Players[index].PlayAndWait()
 				index += 1
 			EndWhile
 		Else
@@ -127,6 +99,39 @@ EndState
 State Exiting
 	Event OnBeginState(string asOldState)
 		Clear()
+		ReleaseThread()
+	EndEvent
+EndState
+
+
+State Scoring
+	Event OnBeginState(string asOldState)
+		If (Players)
+			int index = 0
+			While (index < Count)
+				Player gambler = Players[index]
+				gambler.ScoreAndWait()
+
+				; after the player has taken all of their turns
+				If (gambler is Human)
+					int score = gambler.Score
+
+					If (BlackJack.Rules.IsWin(score))
+						WriteLine(self, "Player final score of "+score+" is a winner.")
+						BlackJack.GUI.ShowWinner(score)
+
+					ElseIf (BlackJack.Rules.IsBust(score))
+						WriteLine(self, "Player final score of "+score+" is a loser.")
+						BlackJack.GUI.ShowLoser(score)
+					EndIf
+				EndIf
+
+				index += 1
+			EndWhile
+		Else
+			WriteLine(self, "There are no players to score.")
+		EndIf
+
 		ReleaseThread()
 	EndEvent
 EndState

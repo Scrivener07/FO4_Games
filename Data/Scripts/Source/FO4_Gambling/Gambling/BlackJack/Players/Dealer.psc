@@ -1,13 +1,11 @@
 ScriptName Gambling:BlackJack:Players:Dealer extends Gambling:BlackJack:Player
-import Gambling
-import Gambling:Shared
 import Gambling:Shared:Common
 
 
-; Player
+; Personality
 ;---------------------------------------------
 
-MarkerData Function GetMarkerData()
+MarkerData Function CreateMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Gambling_BlackJack_D1C01
 	marker.Card02 = Gambling_BlackJack_D1C02
@@ -24,24 +22,21 @@ MarkerData Function GetMarkerData()
 EndFunction
 
 
-Function BehaviorPlay()
+int Function AskWager()
+	WriteLine(self, "Skipping, a dealer does not wager a bet.")
+	return Invalid
+EndFunction
+
+
+bool Function PlayNext()
+	PlayDefault()
+
 	If (Turn == 1)
 		; reveal the face down card
 		Motion.Translate(Hand[0].Reference, Gambling_BlackJack_D1C01B)
 	EndIf
 
-	int selected = BehaviorTurn()
-	If (selected == OptionHit)
-		WriteLine(self, "Has chosen to hit with "+Score)
-		Draw()
-		self.BehaviorPlay()
-	EndIf
-EndFunction
-
-
-int Function GetWager()
-	WriteLine(self, "Skipping, a dealer does not wager a bet.")
-	return Invalid
+	return PlayProcess()
 EndFunction
 
 

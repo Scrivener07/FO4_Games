@@ -1,13 +1,11 @@
 ScriptName Gambling:BlackJack:Players:Human extends Gambling:BlackJack:Player
-import Gambling
-import Gambling:Shared
 import Gambling:Shared:Common
 
 
-; Player
+; Personality
 ;---------------------------------------------
 
-MarkerData Function GetMarkerData()
+MarkerData Function CreateMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Gambling_BlackJack_P1C01
 	marker.Card02 = Gambling_BlackJack_P1C02
@@ -24,22 +22,23 @@ MarkerData Function GetMarkerData()
 EndFunction
 
 
-int Function GetWager()
+int Function AskWager()
 	return BlackJack.GUI.PromptWager()
 EndFunction
 
 
-int Function BehaviorTurn() ; hit or stand
+int Function PlayChoice()
+	int selected = Invalid
+
 	If (Turn == 1)
-		int Card1 = Hand[0].Rank
-		int Card2 = Hand[1].Rank
-		int selected = BlackJack.GUI.ShowDealt(Card1, Card2, Score)
-		return selected
+		; show last two drawn cards
+		selected = BlackJack.GUI.ShowTurn(Hand[0].Rank, Hand[1].Rank, Score)
 	ElseIf (Turn >= 2)
-		Deck:Card card = Hand[Turn]
-		int selected = BlackJack.GUI.ShowTurn(card.Rank, Score)
-		return selected
+		; show last drawn card
+		selected = BlackJack.GUI.ShowTurnDealt(Hand[Last].Rank, Score)
 	EndIf
+
+	return selected
 EndFunction
 
 

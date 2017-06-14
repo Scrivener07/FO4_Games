@@ -98,10 +98,28 @@ Card Function Draw()
 EndFunction
 
 
-Function Collect(Player gambler)
+Function Collect(Card aCard)
+	Deck.Collect(aCard)
+EndFunction
+
+
+Function CollectEach(Card[] aCards)
+	If (aCards)
+		int index = 0
+		While (index < aCards.Length)
+			Collect(aCards[index])
+			index += 1
+		EndWhile
+	Else
+		WriteLine(self, "Cannot collect none or empty cards.")
+	EndIf
+EndFunction
+
+
+Function CollectFrom(Player gambler, Controllers:Motion aMotion)
 	If (gambler)
-		ObjectReference[] values = ToReferences(gambler.Hand)
-		Motion.TranslateEach(values, Gambling_BlackJack_DeckMarker)
+		CollectEach(gambler.Hand)
+		aMotion.TranslateEach(ToReferences(gambler.Hand), Gambling_BlackJack_DeckMarker)
 	Else
 		WriteLine(self, "Cannot collect cards from a none player.")
 	EndIf

@@ -61,13 +61,13 @@ int Function PromptWager()
 EndFunction
 
 
-int Function ShowDealt(float card1, float card2, float score)
-	return Gambling_BlackJack_MessageDealt.Show(card1, card2, score)
+int Function ShowTurn(float card1, float card2, float score)
+	return Gambling_BlackJack_MessageTurn.Show(card1, card2, score)
 EndFunction
 
 
-int Function ShowTurn(float card, float score)
-	return Gambling_BlackJack_MessageTurn.Show(card, score)
+int Function ShowTurnDealt(float card, float score)
+	return Gambling_BlackJack_MessageTurnDealt.Show(card, score)
 EndFunction
 
 
@@ -86,8 +86,8 @@ EndFunction
 
 Group Messages
 	Message Property Gambling_BlackJack_MessageWager Auto Const Mandatory
-	Message Property Gambling_BlackJack_MessageDealt Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageTurn Auto Const Mandatory
+	Message Property Gambling_BlackJack_MessageTurnDealt Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessagePlay Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessagePlayAgain Auto Const Mandatory
 	Message Property Gambling_BlackJack_MessageWin Auto Const Mandatory

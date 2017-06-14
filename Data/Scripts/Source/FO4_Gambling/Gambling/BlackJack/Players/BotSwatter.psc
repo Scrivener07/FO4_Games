@@ -1,14 +1,15 @@
 ScriptName Gambling:BlackJack:Players:BotSwatter extends Gambling:BlackJack:Player
+import Gambling:Shared:Common
 
 ;/ Personality
 	Swatter
 	Really likes to hit on their turn.
 /;
 
-; Player
+; Personality
 ;---------------------------------------------
 
-MarkerData Function GetMarkerData()
+MarkerData Function CreateMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Gambling_BlackJack_P3C01
 	marker.Card02 = Gambling_BlackJack_P3C02
@@ -25,11 +26,11 @@ MarkerData Function GetMarkerData()
 EndFunction
 
 
-int Function BehaviorTurn()
+int Function PlayChoice()
 	If (Score <= 18)
-		return OptionHit
+		return ChoiceHit
 	Else
-		return OptionStand
+		return ChoiceStand
 	EndIf
 EndFunction
 

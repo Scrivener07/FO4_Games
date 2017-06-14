@@ -8,20 +8,28 @@ import Gambling:Shared:Common
 CustomEvent PhaseEvent
 
 
-; Methods
+; Component
 ;---------------------------------------------
 
 State Starting
 	Event OnBeginState(string asOldState)
 		{Session Begin}
+		WriteLine(self, "Starting")
+		SendPhase(self, StartingPhase, Begun)
 
 		If (GUI.PromptPlay())
-			Table.StartAndWait()
-			Cards.StartAndWait()
-			Players.StartAndWait()
+
+			If (Table.StartAndWait())
+				WriteLine(self, "Table component has finished the Starting thread.")
+			EndIf
+			If (Cards.StartAndWait())
+				WriteLine(self, "Cards component has finished the Starting thread.")
+			EndIf
+			If (Players.StartAndWait())
+				WriteLine(self, "Players component has finished the Starting thread.")
+			EndIf
 
 			ChangeState(self, WageringPhase)
-			SendPhase(self, StartingPhase, Begun)
 		Else
 			ChangeState(self, IdlePhase)
 		EndIf
@@ -38,11 +46,14 @@ EndState
 State Wagering
 	Event OnBeginState(string asOldState)
 		{Game State}
+		WriteLine(self, "Wagering")
+		SendPhase(self, WageringPhase, Begun)
 
-		Players.WagerAndWait()
+		If (Players.WagerAndWait())
+			WriteLine(self, "Players component has finished the Wagering thread.")
+		EndIf
 
 		ChangeState(self, DealingPhase)
-		SendPhase(self, WageringPhase, Begun)
 	EndEvent
 
 	Event OnEndState(string asNewState)
@@ -54,11 +65,16 @@ EndState
 State Dealing
 	Event OnBeginState(string asOldState)
 		{Game State}
+		WriteLine(self, "Dealing")
+		SendPhase(self, DealingPhase, Begun)
+
 		Cards.Shuffle()
-		Players.DealAndWait()
+		If (Players.DealAndWait())
+			WriteLine(self, "Players component has finished the Dealing thread.")
+		EndIf
 
 		ChangeState(self, PlayingPhase)
-		SendPhase(self, DealingPhase, Begun)
+
 	EndEvent
 
 	Event OnEndState(string asNewState)
@@ -70,11 +86,14 @@ EndState
 State Playing
 	Event OnBeginState(string asOldState)
 		{Game State}
-		Players.PlayAndWait()
-		; after all players have taken all of their turns
+		WriteLine(self, "Playing")
+		SendPhase(self, PlayingPhase, Begun)
+
+		If (Players.PlayAndWait())
+			WriteLine(self, "Players component has finished the Playing thread.")
+		EndIf
 
 		ChangeState(self, ScoringPhase)
-		SendPhase(self, PlayingPhase, Begun)
 	EndEvent
 
 	Event OnEndState(string asNewState)
@@ -86,18 +105,21 @@ EndState
 State Scoring
 	Event OnBeginState(string asOldState)
 		{Game State}
+		WriteLine(self, "Scoring")
+		SendPhase(self, ScoringPhase, Begun)
+
+		If (Players.ScoreAndWait())
+			WriteLine(self, "Players component has finished the Scoring thread.")
+		EndIf
 
 		If (GUI.PromptPlayAgain())
 			ChangeState(self, WageringPhase)
 		Else
 			ChangeState(self, ExitingPhase)
 		EndIf
-
-		SendPhase(self, ScoringPhase, Begun)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		Cards.CollectAll()
 		SendPhase(self, ScoringPhase, Ended)
 	EndEvent
 EndState
@@ -106,22 +128,29 @@ EndState
 State Exiting
 	Event OnBeginState(string asOldState)
 		{Session End}
-		Table.ExitAndWait()
-		Cards.ExitAndWait()
-		Players.ExitAndWait()
+		WriteLine(self, "Exiting")
+		SendPhase(self, ExitingPhase, Begun)
+
+		If (Table.ExitAndWait())
+			WriteLine(self, "Table component has finished the Exiting thread.")
+		EndIf
+		If (Cards.ExitAndWait())
+			WriteLine(self, "Cards component has finished the Exiting thread.")
+		EndIf
+		If (Players.ExitAndWait())
+			WriteLine(self, "Players component has finished the Exiting thread.")
+		EndIf
 
 		ChangeState(self, IdlePhase)
-		SendPhase(self, ExitingPhase, Begun)
 	EndEvent
 
 	Event OnEndState(string asNewState)
-		; final chance to clean up
 		SendPhase(self, ExitingPhase, Ended)
 	EndEvent
 EndState
 
 
-; Functions
+; Methods
 ;---------------------------------------------
 
 bool Function Play(Actions:Play playAction)
@@ -136,6 +165,9 @@ bool Function Play(Actions:Play playAction)
 	EndIf
 EndFunction
 
+
+; Functions
+;---------------------------------------------
 
 Function SendPhase(BlackJack:Game sender, string name, bool change) Global
 	string stateName = sender.GetState()

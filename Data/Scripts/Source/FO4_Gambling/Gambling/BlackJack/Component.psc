@@ -1,8 +1,6 @@
 ScriptName Gambling:BlackJack:Component extends Gambling:BlackJack:Object Hidden
 import Gambling:Shared:Common
 
-; provides blocking game states
-
 
 ; Component
 ;---------------------------------------------

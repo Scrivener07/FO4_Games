@@ -32,13 +32,8 @@ bool Function Collect(Card value)
 	{Collects the given card by marking it undrawn.}
 	If (Cards)
 		If (value)
-			If (value.Drawn)
-				value.Drawn = false
-				return true
-			Else
-				WriteLine(self, "The card is already collected.")
-				return false
-			EndIf
+			value.Drawn = false
+			return true
 		Else
 			WriteLine(self, "Cannot collect none card.")
 			return false

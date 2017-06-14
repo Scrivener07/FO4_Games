@@ -23,7 +23,12 @@ EndFunction
 
 
 bool Function WriteMessage(string prefix, string text) Global DebugOnly
-	Debug.MessageBox(prefix+"\n"+text)
+	string title
+	If (prefix)
+		title = prefix+"\n"
+	EndIf
+
+	Debug.MessageBox(title+text)
 	return WriteLine(prefix, text)
 EndFunction
 

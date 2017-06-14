@@ -1,13 +1,13 @@
 ScriptName Gambling:BlackJack:Players:BotC extends Gambling:BlackJack:Player
 
 ;/ Personality
-	-
+	none, simple AI
 /;
 
-; Player
+; Personality
 ;---------------------------------------------
 
-MarkerData Function GetMarkerData()
+MarkerData Function CreateMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Gambling_BlackJack_P4C01
 	marker.Card02 = Gambling_BlackJack_P4C02

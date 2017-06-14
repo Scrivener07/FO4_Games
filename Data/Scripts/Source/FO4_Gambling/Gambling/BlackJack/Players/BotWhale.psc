@@ -5,10 +5,10 @@ ScriptName Gambling:BlackJack:Players:BotWhale extends Gambling:BlackJack:Player
 	Be the highest betting player at the table.
 /;
 
-; Player
+; Personality
 ;---------------------------------------------
 
-MarkerData Function GetMarkerData()
+MarkerData Function CreateMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Gambling_BlackJack_P2C01
 	marker.Card02 = Gambling_BlackJack_P2C02
@@ -25,7 +25,7 @@ MarkerData Function GetMarkerData()
 EndFunction
 
 
-int Function GetWager()
+int Function AskWager()
 	; TODO: expose the highest bet
 	return (BlackJack.Players.Human.Wager * 3) + 50
 EndFunction
