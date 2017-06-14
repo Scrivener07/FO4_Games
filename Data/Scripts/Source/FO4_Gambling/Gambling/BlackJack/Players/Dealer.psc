@@ -28,15 +28,11 @@ int Function AskWager()
 EndFunction
 
 
-bool Function PlayNext()
-	PlayDefault()
-
+Function PlayBegin()
 	If (Turn == 1)
 		; reveal the face down card
 		Motion.Translate(Hand[0].Reference, Gambling_BlackJack_D1C01B)
 	EndIf
-
-	return PlayProcess()
 EndFunction
 
 

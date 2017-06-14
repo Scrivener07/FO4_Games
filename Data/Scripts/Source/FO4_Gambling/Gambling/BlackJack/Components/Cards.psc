@@ -116,10 +116,10 @@ Function CollectEach(Card[] aCards)
 EndFunction
 
 
-Function CollectFrom(Player gambler, Controllers:Motion aMotion)
+Function CollectFrom(Player gambler)
 	If (gambler)
 		CollectEach(gambler.Hand)
-		aMotion.TranslateEach(ToReferences(gambler.Hand), Gambling_BlackJack_DeckMarker)
+		gambler.Motion.TranslateEach(ToReferences(gambler.Hand), Gambling_BlackJack_DeckMarker)
 	Else
 		WriteLine(self, "Cannot collect cards from a none player.")
 	EndIf

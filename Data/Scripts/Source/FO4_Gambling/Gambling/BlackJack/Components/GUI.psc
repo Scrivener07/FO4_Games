@@ -77,7 +77,7 @@ EndFunction
 
 
 Function ShowLoser(float score)
-	Gambling_BlackJack_MessageWinNatural.Show(score)
+	Gambling_BlackJack_MessageBust.Show(score)
 EndFunction
 
 

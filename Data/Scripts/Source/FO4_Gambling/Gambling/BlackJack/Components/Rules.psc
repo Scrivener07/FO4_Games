@@ -6,7 +6,6 @@ import Gambling:Shared:Deck
 ; Functions
 ;---------------------------------------------
 
-
 bool Function IsWin(int aScore)
 	return aScore == Win
 EndFunction

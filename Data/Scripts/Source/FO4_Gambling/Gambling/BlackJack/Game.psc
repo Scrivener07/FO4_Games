@@ -6,9 +6,8 @@ import Gambling:Shared
 import Gambling:Shared:Common
 
 
-CustomEvent PhaseEvent
-
 Player[] Players
+CustomEvent PhaseEvent
 
 
 ; Events
@@ -25,35 +24,35 @@ EndEvent
 State Starting
 	Event OnBeginState(string asOldState)
 		{Session Begin}
-		WriteLine(self, "Starting")
+		WriteLine("Phase", "Starting")
 		SendPhase(self, StartingPhase, Begun)
 
 		If (GUI.PromptPlay())
 
-			If (Table.StartAndWait())
+			If (Table.CallAndWait(StartingPhase))
 				WriteLine(self, "Table component has finished the Starting thread.")
 			EndIf
-			If (Cards.StartAndWait())
+			If (Cards.CallAndWait(StartingPhase))
 				WriteLine(self, "Cards component has finished the Starting thread.")
 			EndIf
 
 			Add(Human)
-			Human.StartAndWait()
+			Human.CallAndWait(StartingPhase)
 
 			Add(BotWhale)
-			BotWhale.StartAndWait()
+			BotWhale.CallAndWait(StartingPhase)
 
 			Add(BotSwatter)
-			BotSwatter.StartAndWait()
+			BotSwatter.CallAndWait(StartingPhase)
 
 			Add(BotC)
-			BotC.StartAndWait()
+			BotC.CallAndWait(StartingPhase)
 
 			Add(BotD)
-			BotD.StartAndWait()
+			BotD.CallAndWait(StartingPhase)
 
 			Add(Dealer)
-			Dealer.StartAndWait()
+			Dealer.CallAndWait(StartingPhase)
 
 			ChangeState(self, WageringPhase)
 		Else
@@ -72,15 +71,15 @@ EndState
 State Wagering
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine(self, "Wagering")
+		WriteLine("Phase", "Wagering")
 		SendPhase(self, WageringPhase, Begun)
 
 		If (Players)
 			int index = 0
 			While (index < Count)
 				Player gambler = Players[index]
-				gambler.WagerAndWait()
-				WriteLine(self, "Has chosen to wager "+gambler.Wager)
+				gambler.CallAndWait(WageringPhase)
+				WriteLine(self, gambler.Name+" has chosen to wager "+gambler.Wager)
 				index += 1
 			EndWhile
 		Else
@@ -99,14 +98,14 @@ EndState
 State Dealing
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine(self, "Dealing")
+		WriteLine("Phase", "Dealing")
 		SendPhase(self, DealingPhase, Begun)
 
 		Cards.Shuffle()
 		If (Players)
 			int index = 0
 			While (index < Count)
-				Players[index].DealAndWait()
+				Players[index].CallAndWait(DealingPhase)
 				index += 1
 			EndWhile
 		Else
@@ -126,19 +125,18 @@ EndState
 State Playing
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine(self, "Playing")
+		WriteLine("Phase", "Playing")
 		SendPhase(self, PlayingPhase, Begun)
 
 		If (Players)
 			int index = 0
 			While (index < Count)
-				Players[index].PlayAndWait()
+				Players[index].CallAndWait(PlayingPhase)
 				index += 1
 			EndWhile
 		Else
 			WriteLine(self, "There are no players to play.")
 		EndIf
-
 
 		ChangeState(self, ScoringPhase)
 	EndEvent
@@ -152,29 +150,41 @@ EndState
 State Scoring
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine(self, "Scoring")
+		WriteLine("Phase", "Scoring")
 		SendPhase(self, ScoringPhase, Begun)
 
 		If (Players)
+			bool houseWins = Rules.IsWin(Dealer.Score)
+
 			int index = 0
 			While (index < Count)
 				Player gambler = Players[index]
-				gambler.ScoreAndWait()
 
-				; after the player has taken all of their turns
-				If (gambler is Human)
-					int score = gambler.Score
+				If (gambler is Players:Dealer)
+					WriteLine(Dealer, "Skipping, already scored.")
+				Else
+					If (houseWins)
+						WriteMessage(gambler.Name, "The house wins with "+Dealer.Score)
+					Else
 
-					If (Rules.IsWin(score))
-						WriteLine(self, "Player final score of "+score+" is a winner.")
-						GUI.ShowWinner(score)
+						If (Rules.IsWin(gambler.Score))
+							WriteMessage(gambler.Name, "Final score of "+gambler.Score+" is a winner.")
+						;	GUI.ShowWinner(gambler.Score)
 
-					ElseIf (Rules.IsBust(score))
-						WriteLine(self, "Player final score of "+score+" is a loser.")
-						GUI.ShowLoser(score)
+						ElseIf (Rules.IsBust(gambler.Score))
+							WriteMessage(gambler.Name, "Final score of "+gambler.Score+" is a bust.")
+						;	GUI.ShowLoser(gambler.Score)
+
+						ElseIf (gambler.Score > Dealer.Score)
+							WriteMessage(gambler.Name, "Final score of "+gambler.Score+" beats dealers "+Dealer.Score+".")
+						Else
+							WriteMessage(gambler.Name, "Warning, cannot determine score!")
+						EndIf
+
 					EndIf
 				EndIf
 
+				Cards.CollectFrom(gambler)
 				index += 1
 			EndWhile
 		Else
@@ -197,13 +207,13 @@ EndState
 State Exiting
 	Event OnBeginState(string asOldState)
 		{Session End}
-		WriteLine(self, "Exiting")
+		WriteLine("Phase", "Exiting")
 		SendPhase(self, ExitingPhase, Begun)
 
-		If (Table.ExitAndWait())
+		If (Table.CallAndWait(ExitingPhase))
 			WriteLine(self, "Table component has finished the Exiting thread.")
 		EndIf
-		If (Cards.ExitAndWait())
+		If (Cards.CallAndWait(ExitingPhase))
 			WriteLine(self, "Cards component has finished the Exiting thread.")
 		EndIf
 
@@ -335,10 +345,10 @@ Group Players
 		EndFunction
 	EndProperty
 
+	Players:Human Property Human Auto Const Mandatory
+	Players:Dealer Property Dealer Auto Const Mandatory
 	Players:BotWhale Property BotWhale Auto Const Mandatory
 	Players:BotSwatter Property BotSwatter Auto Const Mandatory
 	Players:BotC Property BotC Auto Const Mandatory
 	Players:BotD Property BotD Auto Const Mandatory
-	Players:Human Property Human Auto Const Mandatory
-	Players:Dealer Property Dealer Auto Const Mandatory
 EndGroup

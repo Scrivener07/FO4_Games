@@ -5,13 +5,15 @@ import Gambling:Shared
 import Gambling:Shared:Common
 import Gambling:Shared:Deck
 
-; TODO: cannot abort
 
 MatchData Match
 SessionData Session
 MarkerData Marker
 Card[] Cards
 
+bool Success = true const
+bool Failure = false const
+bool Continue = true const
 
 Struct MatchData
 	int Turn = 0
@@ -46,7 +48,6 @@ State Starting
 		Session = new SessionData
 		Marker = CreateMarkers()
 
-		WriteLine(self, "Has completed the starting state.")
 		ReleaseThread()
 	EndEvent
 EndState
@@ -54,11 +55,11 @@ EndState
 
 State Wagering
 	Event OnBeginState(string asOldState)
-		Cards = new Deck:Card[0]
+		Cards = new Card[0]
 		Match = new MatchData
 		Match.Wager = AskWager()
 
-		WriteLine(self, "Has completed the wagering state with "+Wager+" wager.")
+		WriteLine(self, "Has completed the wagering state "+ToString())
 		ReleaseThread()
 	EndEvent
 EndState
@@ -69,7 +70,7 @@ State Dealing
 		Hit()
 		Hit()
 
-		WriteLine(self, "Has completed the dealing state with "+Score+" score.")
+		WriteLine(self, "Has completed the dealing state with "+ToString())
 		ReleaseThread()
 	EndEvent
 EndState
@@ -77,26 +78,15 @@ EndState
 
 State Playing
 	Event OnBeginState(string asOldState)
-		If (BlackJack.Rules.IsWin(Match.Score))
-			WriteMessage("DEBUG","This player has a natural black jack.")
-		Else
-			PlayNext()
-		EndIf
+		PlayNext()
 
-		WriteLine(self, "Has completed the playing state.")
+		WriteLine(self, "Has completed the playing state with "+ToString())
 		ReleaseThread()
 	EndEvent
 EndState
 
 
-State Scoring
-	Event OnBeginState(string asOldState)
-		WriteLine(self, "No Scoring has been implemented for state.")
-		BlackJack.Cards.CollectFrom(self, Motion)
 
-		ReleaseThread()
-	EndEvent
-EndState
 
 
 ; Personality
@@ -117,34 +107,69 @@ EndFunction
 
 bool Function PlayNext()
 	{Plays the next turn, recursive.}
-	PlayDefault()
-	return PlayProcess()
+	Match.Turn += 1
+	PlayBegin()
+	If (PlayDefault())
+		return PlayProcess()
+	Else
+		return Ended
+	EndIf
 EndFunction
 
 
-Function PlayDefault()
-	Match.Turn += 1
+Function PlayBegin()
+	{Virtual}
+EndFunction
+
+
+bool Function PlayDefault()
+	{Evaluates rules.}
+
+	If (Turn == 1)
+		If (BlackJack.Rules.IsWin(Match.Score))
+			WriteMessage(Name, "Won a black jack!\n"+ToString())
+			return Ended
+		Else
+			WriteMessage(Name, "Turn "+Turn+"..\n"+ToString())
+			return Continue
+		EndIf
+	Else
+		If (BlackJack.Rules.IsWin(Match.Score))
+			WriteMessage(Name, "Won!\n"+ToString())
+			return Ended
+
+		ElseIf (BlackJack.Rules.IsBust(Score))
+			WriteMessage(Name, "Busted!\n"+ToString())
+			return Ended
+
+		ElseIf (BlackJack.Rules.IsInPlay(Score))
+			WriteMessage(Name, "Continuing with turn "+Turn+"..\n"+ToString())
+			return Continue
+		Else
+			WriteMessage(Name, "Ended Unexpectedly!\n"+ToString())
+			return Ended
+		EndIf
+	EndIf
 EndFunction
 
 
 bool Function PlayProcess()
-	{The default logic of a turn.}
+	{The process that occurs when play happens.}
 	int choice = PlayChoice()
 
 	If (choice == ChoiceHit)
-		WriteLine(self, "Chose to hit with "+Score+" score.")
-
 		If (Hit())
+			WriteMessage(Name, "Chose to hit for another card.\n"+ToString())
 			return self.PlayNext()
 		Else
 			WriteLine(self, "Problem hitting for another card!")
 			return Ended
 		EndIf
 	ElseIf (choice == ChoiceStand)
-		WriteLine(self, "Chose to stand with "+Score+" score.")
+		WriteMessage(Name, "Chose to stand.\n"+ToString())
 		return Ended
 	Else
-		WriteLine(self, "The play choice was out of range.")
+		WriteMessage(Name, "The play choice "+choice+" was out of range.")
 		return Ended
 	EndIf
 EndFunction
@@ -195,6 +220,12 @@ EndFunction
 ; Functions
 ;---------------------------------------------
 
+
+
+
+; Functions
+;---------------------------------------------
+
 ObjectReference Function NextMarker()
 	If (Marker)
 		If (Last == Invalid)
@@ -230,6 +261,11 @@ ObjectReference Function NextMarker()
 EndFunction
 
 
+string Function ToString()
+	return Match + " " + Session
+EndFunction
+
+
 ; Properties
 ;---------------------------------------------
 
@@ -239,6 +275,12 @@ Group Object
 EndGroup
 
 Group Player
+	string Property Name Hidden
+		string Function Get()
+			return self.GetName()
+		EndFunction
+	EndProperty
+
 	Card[] Property Hand Hidden
 		Card[] Function Get()
 			return Cards

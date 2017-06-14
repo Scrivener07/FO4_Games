@@ -69,10 +69,6 @@ EndFunction
 
 Group Properties
 	int Property Invalid = -1 AutoReadOnly
-	bool Property Completed = true AutoReadOnly
-	bool Property Incomplete = false AutoReadOnly
-	bool Property Success = true AutoReadOnly
-	bool Property Failure = false AutoReadOnly
 EndGroup
 
 Group Game

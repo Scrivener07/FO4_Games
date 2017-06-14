@@ -51,128 +51,26 @@ EndState
 ; Methods
 ;---------------------------------------------
 
-bool Function StartAndWait()
+bool Function CallAndWait(string thread)
 	If (IsBusy)
-		WriteLine(self, "StartAndWait cannot be called while busy.")
+		WriteLine(self, "Cannot start the '"+thread+"'' thread while busy.")
 		return Incomplete
 	Else
-		If (ChangeState(self, StartingPhase))
+		If (ChangeState(self, thread))
 			If (LockThread())
+				WriteLine(self, "The '"+thread+"'' thread has completed.")
 				return Completed
 			Else
-				WriteLine(self, "StartAndWait was unable to lock a thread.")
+				WriteLine(self, "Unable to lock the '"+thread+"'' thread.")
 				return Incomplete
 			EndIf
 		Else
-			WriteLine(self, "StartAndWait was unable to start a thread.")
+			WriteLine(self, "Cannot change state for the '"+thread+"'' thread.")
 			return Incomplete
 		EndIf
 	EndIf
 EndFunction
 
-
-bool Function WagerAndWait()
-	If (IsBusy)
-		WriteLine(self, "WagerAndWait cannot be called while busy.")
-		return Incomplete
-	Else
-		If (ChangeState(self, WageringPhase))
-			If (LockThread())
-				return Completed
-			Else
-				WriteLine(self, "WagerAndWait was unable to lock a thread.")
-				return Incomplete
-			EndIf
-		Else
-			WriteLine(self, "WagerAndWait was unable to start a thread.")
-			return Incomplete
-		EndIf
-	EndIf
-EndFunction
-
-
-bool Function DealAndWait()
-	If (IsBusy)
-		WriteLine(self, "DealAndWait cannot be called while busy.")
-		return Incomplete
-	Else
-		If (ChangeState(self, DealingPhase))
-			If (LockThread())
-				return Completed
-			Else
-				WriteLine(self, "DealAndWait was unable to lock a thread.")
-				return Incomplete
-			EndIf
-		Else
-			WriteLine(self, "DealAndWait was unable to start a thread.")
-			return Incomplete
-		EndIf
-	EndIf
-EndFunction
-
-
-bool Function PlayAndWait()
-	If (IsBusy)
-		WriteLine(self, "PlayAndWait cannot be called while busy.")
-		return Incomplete
-	Else
-		If (ChangeState(self, PlayingPhase))
-			If (LockThread())
-				return Completed
-			Else
-				WriteLine(self, "PlayAndWait was unable to lock a thread.")
-				return Incomplete
-			EndIf
-		Else
-			WriteLine(self, "PlayAndWait was unable to start a thread.")
-			return Incomplete
-		EndIf
-	EndIf
-EndFunction
-
-
-bool Function ScoreAndWait()
-	If (IsBusy)
-		WriteLine(self, "ScoreAndWait cannot be called while busy.")
-		return Incomplete
-	Else
-		If (ChangeState(self, ScoringPhase))
-			If (LockThread())
-				return Completed
-			Else
-				WriteLine(self, "ScoreAndWait was unable to lock a thread.")
-				return Incomplete
-			EndIf
-		Else
-			WriteLine(self, "ScoreAndWait was unable to start a thread.")
-			return Incomplete
-		EndIf
-	EndIf
-EndFunction
-
-
-bool Function ExitAndWait()
-	If (IsBusy)
-		WriteLine(self, "ExitAndWait cannot be called while busy.")
-		return Incomplete
-	Else
-		If (ChangeState(self, ExitingPhase))
-			If (LockThread())
-				return Completed
-			Else
-				WriteLine(self, "ExitAndWait was unable to lock a thread.")
-				return Incomplete
-			EndIf
-		Else
-			WriteLine(self, "ExitAndWait was unable to start a thread.")
-			return Incomplete
-		EndIf
-	EndIf
-EndFunction
-
-
-; Functions
-;---------------------------------------------
 
 bool Function LockThread()
 	While (IsBusy)
@@ -185,3 +83,12 @@ EndFunction
 bool Function ReleaseThread()
 	return ChangeState(self, IdlePhase)
 EndFunction
+
+
+; Properties
+;---------------------------------------------
+
+Group Properties
+	bool Property Completed = true AutoReadOnly
+	bool Property Incomplete = false AutoReadOnly
+EndGroup

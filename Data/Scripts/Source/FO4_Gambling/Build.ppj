@@ -12,6 +12,7 @@
 	>
 	<Imports>
 		<Import>.</Import>
+		<Import>..\F4SE</Import>
 		<Import>..\Base</Import>
 	</Imports>
 	<Folders>

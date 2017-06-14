@@ -3,6 +3,7 @@ ScriptName Gambling:BlackJack:Players:BotWhale extends Gambling:BlackJack:Player
 ;/ Personality
 	High Roller (Whale)
 	Be the highest betting player at the table.
+	TODO: expose the highest bet among players
 /;
 
 ; Personality
@@ -26,7 +27,6 @@ EndFunction
 
 
 int Function AskWager()
-	; TODO: expose the highest bet
 	return (BlackJack.Human.Wager * 3) + 50
 EndFunction
 
