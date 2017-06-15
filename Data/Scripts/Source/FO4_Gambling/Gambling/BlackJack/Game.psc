@@ -39,17 +39,17 @@ State Starting
 			Add(Human)
 			Human.CallAndWait(StartingPhase)
 
-			Add(BotWhale)
-			BotWhale.CallAndWait(StartingPhase)
+			Add(Abraham)
+			Abraham.CallAndWait(StartingPhase)
 
-			Add(BotSwatter)
-			BotSwatter.CallAndWait(StartingPhase)
+			Add(Baxter)
+			Baxter.CallAndWait(StartingPhase)
 
-			Add(BotC)
-			BotC.CallAndWait(StartingPhase)
+			Add(Chester)
+			Chester.CallAndWait(StartingPhase)
 
-			Add(BotD)
-			BotD.CallAndWait(StartingPhase)
+			Add(Dewey)
+			Dewey.CallAndWait(StartingPhase)
 
 			Add(Dealer)
 			Dealer.CallAndWait(StartingPhase)
@@ -347,8 +347,8 @@ Group Players
 
 	Players:Human Property Human Auto Const Mandatory
 	Players:Dealer Property Dealer Auto Const Mandatory
-	Players:BotWhale Property BotWhale Auto Const Mandatory
-	Players:BotSwatter Property BotSwatter Auto Const Mandatory
-	Players:BotC Property BotC Auto Const Mandatory
-	Players:BotD Property BotD Auto Const Mandatory
+	Players:Abraham Property Abraham Auto Const Mandatory
+	Players:Baxter Property Baxter Auto Const Mandatory
+	Players:Chester Property Chester Auto Const Mandatory
+	Players:Dewey Property Dewey Auto Const Mandatory
 EndGroup

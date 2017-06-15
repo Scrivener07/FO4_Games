@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Players:BotC extends Gambling:BlackJack:Player
+ScriptName Gambling:BlackJack:Players:Chester extends Gambling:BlackJack:Player
 
 ;/ Personality
 	none, simple AI

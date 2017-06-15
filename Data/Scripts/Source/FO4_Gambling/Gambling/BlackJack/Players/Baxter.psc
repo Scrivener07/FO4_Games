@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Players:BotSwatter extends Gambling:BlackJack:Player
+ScriptName Gambling:BlackJack:Players:Baxter extends Gambling:BlackJack:Player
 import Gambling:Shared:Common
 
 ;/ Personality

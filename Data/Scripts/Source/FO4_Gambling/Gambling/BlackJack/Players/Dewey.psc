@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Players:BotD extends Gambling:BlackJack:Player
+ScriptName Gambling:BlackJack:Players:Dewey extends Gambling:BlackJack:Player
 
 ;/ Personality
 	none, simple AI

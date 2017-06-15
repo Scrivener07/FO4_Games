@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Players:BotWhale extends Gambling:BlackJack:Player
+ScriptName Gambling:BlackJack:Players:Abraham extends Gambling:BlackJack:Player
 
 ;/ Personality
 	High Roller (Whale)

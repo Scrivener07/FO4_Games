@@ -86,9 +86,6 @@ State Playing
 EndState
 
 
-
-
-
 ; Personality
 ;---------------------------------------------
 
@@ -215,12 +212,6 @@ bool Function Hit()
 		return Failure
 	EndIf
 EndFunction
-
-
-; Functions
-;---------------------------------------------
-
-
 
 
 ; Functions
