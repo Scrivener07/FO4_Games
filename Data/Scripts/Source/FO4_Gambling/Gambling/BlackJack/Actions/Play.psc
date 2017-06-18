@@ -1,4 +1,4 @@
-Scriptname Gambling:BlackJack:Actions:Play extends ObjectReference
+Scriptname Gambling:Blackjack:Actions:Play extends ObjectReference
 import Gambling
 
 
@@ -6,12 +6,12 @@ import Gambling
 ;---------------------------------------------
 
 Event OnActivate(ObjectReference akActionRef)
-	BlackJack.Play(self)
+	Blackjack.Play(self)
 EndEvent
 
 ; Properties
 ;---------------------------------------------
 
 Group Properties
-	BlackJack:Game Property BlackJack Auto Const Mandatory
+	Blackjack:Game Property Blackjack Auto Const Mandatory
 EndGroup

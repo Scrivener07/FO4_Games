@@ -1,6 +1,6 @@
-ScriptName Gambling:BlackJack:Player extends Gambling:BlackJack:Component Hidden
+ScriptName Gambling:Blackjack:Player extends Gambling:Blackjack:Component Hidden
 import Gambling
-import Gambling:BlackJack
+import Gambling:Blackjack
 import Gambling:Shared
 import Gambling:Shared:Common
 import Gambling:Shared:Deck
@@ -123,7 +123,7 @@ bool Function PlayDefault()
 	{Evaluates rules.}
 
 	If (Turn == 1)
-		If (BlackJack.Rules.IsWin(Match.Score))
+		If (Blackjack.Rules.IsWin(Match.Score))
 			WriteMessage(Name, "Won a black jack!\n"+ToString())
 			return Ended
 		Else
@@ -131,15 +131,15 @@ bool Function PlayDefault()
 			return Continue
 		EndIf
 	Else
-		If (BlackJack.Rules.IsWin(Match.Score))
+		If (Blackjack.Rules.IsWin(Match.Score))
 			WriteMessage(Name, "Won!\n"+ToString())
 			return Ended
 
-		ElseIf (BlackJack.Rules.IsBust(Score))
+		ElseIf (Blackjack.Rules.IsBust(Score))
 			WriteMessage(Name, "Busted!\n"+ToString())
 			return Ended
 
-		ElseIf (BlackJack.Rules.IsInPlay(Score))
+		ElseIf (Blackjack.Rules.IsInPlay(Score))
 			WriteMessage(Name, "Continuing with turn "+Turn+"..\n"+ToString())
 			return Continue
 		Else
@@ -184,23 +184,23 @@ EndFunction
 
 bool Function Hit()
 	If (CanHit)
-		Card drawn = BlackJack.Cards.Draw()
+		Card drawn = Blackjack.Cards.Draw()
 		If (drawn)
 			If (drawn.Reference)
 				ObjectReference turnMarker = NextMarker()
 				If (turnMarker)
 					Cards.Add(drawn)
-					Match.Score = BlackJack.Rules.GetScore(Cards, Match.Score)
+					Match.Score = Blackjack.Rules.GetScore(Cards, Match.Score)
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
 					WriteLine(self, "Cannot hit without a marker.")
-					BlackJack.Cards.Collect(drawn)
+					Blackjack.Cards.Collect(drawn)
 					return Failure
 				EndIf
 			Else
 				WriteLine(self, "Cannot deal a none card reference.")
-				BlackJack.Cards.Collect(drawn)
+				Blackjack.Cards.Collect(drawn)
 				return Failure
 			EndIf
 		Else
@@ -261,7 +261,7 @@ EndFunction
 ;---------------------------------------------
 
 Group Object
-	BlackJack:Game Property BlackJack Auto Const Mandatory
+	Blackjack:Game Property Blackjack Auto Const Mandatory
 	Controllers:Motion Property Motion Auto Const Mandatory
 EndGroup
 
@@ -304,7 +304,7 @@ Group Player
 
 	bool Property CanHit Hidden
 		bool Function Get()
-			return BlackJack.Rules.IsInPlay(Match.Score)
+			return Blackjack.Rules.IsInPlay(Match.Score)
 		EndFunction
 	EndProperty
 EndGroup

@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Components:Rules extends Gambling:BlackJack:Component
+ScriptName Gambling:Blackjack:Components:Rules extends Gambling:Blackjack:Component
 import Gambling
 import Gambling:Shared:Deck
 
@@ -33,13 +33,13 @@ EndFunction
 
 
 int Function ToScore(Card aCard, int aScore)
-	If (aCard.Rank == BlackJack.Cards.Deck.Ace)
+	If (aCard.Rank == Blackjack.Cards.Deck.Ace)
 		If (aScore + 11 > Win)
 			return 1
 		Else
 			return 11
 		EndIf
-	ElseIf (BlackJack.Cards.Deck.IsFaceCard(aCard))
+	ElseIf (Blackjack.Cards.Deck.IsFaceCard(aCard))
 		return 10
 	Else
 		return aCard.Rank
@@ -51,7 +51,7 @@ EndFunction
 ;---------------------------------------------
 
 Group Game
-	BlackJack:Game Property BlackJack Auto Const Mandatory
+	Blackjack:Game Property Blackjack Auto Const Mandatory
 EndGroup
 
 Group ReadOnly

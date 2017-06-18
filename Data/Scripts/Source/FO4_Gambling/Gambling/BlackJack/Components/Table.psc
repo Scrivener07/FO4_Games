@@ -1,6 +1,6 @@
-ScriptName Gambling:BlackJack:Components:Table extends Gambling:BlackJack:Component
+ScriptName Gambling:Blackjack:Components:Table extends Gambling:Blackjack:Component
 import Gambling
-import Gambling:BlackJack
+import Gambling:Blackjack
 import Gambling:Shared:Common
 
 Actor Player
@@ -22,12 +22,12 @@ State Starting
 	Event OnBeginState(string asOldState)
 		Game.SetPlayerAIDriven()
 
-		Player.MoveTo(Gambling_BlackJack_CellMarker)
+		Player.MoveTo(Gambling_Blackjack_CellMarker)
 
 		InputLayer = InputEnableLayer.Create()
 		InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
 
-		Game.StartDialogueCameraOrCenterOnTarget(Gambling_BlackJack_CameraMarker)
+		Game.StartDialogueCameraOrCenterOnTarget(Gambling_Blackjack_CameraMarker)
 
 		ReleaseThread()
 	EndEvent
@@ -60,8 +60,8 @@ Group Actions
 EndGroup
 
 Group Markers
-	ObjectReference Property Gambling_BlackJack_CellMarker Auto Const Mandatory
-	ObjectReference Property Gambling_BlackJack_CameraMarker Auto Const Mandatory
+	ObjectReference Property Gambling_Blackjack_CellMarker Auto Const Mandatory
+	ObjectReference Property Gambling_Blackjack_CameraMarker Auto Const Mandatory
 EndGroup
 
 ; Group Zoom

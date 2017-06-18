@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Component extends Gambling:BlackJack:Object Hidden
+ScriptName Gambling:Blackjack:Component extends Gambling:Blackjack:Object Hidden
 import Gambling:Shared:Common
 
 

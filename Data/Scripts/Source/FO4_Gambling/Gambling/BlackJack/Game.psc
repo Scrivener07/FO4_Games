@@ -1,7 +1,7 @@
-ScriptName Gambling:BlackJack:Game extends Gambling:BlackJack:Component
+ScriptName Gambling:Blackjack:Game extends Gambling:Blackjack:Component
 import Gambling
-import Gambling:BlackJack
-import Gambling:BlackJack:Players
+import Gambling:Blackjack
+import Gambling:Blackjack:Players
 import Gambling:Shared
 import Gambling:Shared:Common
 
@@ -247,7 +247,7 @@ EndFunction
 ; Functions
 ;---------------------------------------------
 
-Function SendPhase(BlackJack:Game sender, string name, bool change) Global
+Function SendPhase(Blackjack:Game sender, string name, bool change) Global
 	string stateName = sender.GetState()
 	If (stateName == name)
 

@@ -1,4 +1,4 @@
-ScriptName Gambling:BlackJack:Object extends Quest Native Const Hidden
+ScriptName Gambling:Blackjack:Object extends Quest Native Const Hidden
 import Gambling
 import Gambling:Shared:Common
 
@@ -35,7 +35,7 @@ Event OnGamePhase(PhaseEventArgs e)
 EndEvent
 
 
-Event Gambling:BlackJack:Game.PhaseEvent(BlackJack:Game sender, var[] arguments)
+Event Gambling:Blackjack:Game.PhaseEvent(Blackjack:Game sender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
 		self.OnGamePhase(e)
@@ -54,12 +54,12 @@ PhaseEventArgs Function GetPhaseEventArgs(var[] arguments)
 EndFunction
 
 
-Function RegisterForPhaseEvent(BlackJack:Game sender)
+Function RegisterForPhaseEvent(Blackjack:Game sender)
 	self.RegisterForCustomEvent(sender, "PhaseEvent")
 EndFunction
 
 
-Function UnregisterForPhaseEvent(BlackJack:Game sender)
+Function UnregisterForPhaseEvent(Blackjack:Game sender)
 	self.UnregisterForCustomEvent(sender, "PhaseEvent")
 EndFunction
 
