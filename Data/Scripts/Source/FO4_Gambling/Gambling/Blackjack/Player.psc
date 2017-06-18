@@ -124,7 +124,7 @@ bool Function PlayDefault()
 
 	If (Turn == 1)
 		If (Blackjack.Rules.IsWin(Match.Score))
-			WriteMessage(Name, "Won a black jack!\n"+ToString())
+			WriteMessage(Name, "Won a Blackjack!\n"+ToString())
 			return Ended
 		Else
 			WriteMessage(Name, "Turn "+Turn+"..\n"+ToString())

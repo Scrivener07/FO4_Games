@@ -17,7 +17,7 @@ bool Function PromptPlay()
 		return true
 
 	ElseIf (selected == OptionExit || selected == Invalid)
-		WriteLine(self, "Chose not to play Black Jack.")
+		WriteLine(self, "Chose not to play Blackjack.")
 		return false
 	Else
 		WriteLine(self, "The option '"+selected+"' is unhandled.")
