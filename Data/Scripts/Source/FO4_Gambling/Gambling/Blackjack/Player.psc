@@ -68,7 +68,6 @@ EndState
 State Dealing
 	Event OnBeginState(string asOldState)
 		Hit()
-		Hit()
 
 		WriteLine(self, "Has completed the dealing state with "+ToString())
 		ReleaseThread()

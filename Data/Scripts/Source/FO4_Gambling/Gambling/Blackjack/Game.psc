@@ -108,6 +108,12 @@ State Dealing
 				Players[index].CallAndWait(DealingPhase)
 				index += 1
 			EndWhile
+
+			index = 0
+			While (index < Count)
+				Players[index].CallAndWait(DealingPhase)
+				index += 1
+			EndWhile
 		Else
 			WriteLine(self, "There are no players to deal.")
 		EndIf
@@ -163,6 +169,8 @@ State Scoring
 				If (gambler is Players:Dealer)
 					WriteLine(Dealer, "Skipping, already scored.")
 				Else
+
+
 					If (houseWins)
 						WriteMessage(gambler.Name, "The house wins with "+Dealer.Score)
 					Else
@@ -180,8 +188,10 @@ State Scoring
 						Else
 							WriteMessage(gambler.Name, "Warning, cannot determine score!")
 						EndIf
-
 					EndIf
+
+
+
 				EndIf
 
 				Cards.CollectFrom(gambler)
