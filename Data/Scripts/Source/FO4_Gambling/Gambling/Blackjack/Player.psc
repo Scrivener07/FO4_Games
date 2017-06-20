@@ -13,7 +13,10 @@ Card[] Cards
 
 bool Success = true const
 bool Failure = false const
+
 bool Continue = true const
+bool Stay = false const
+
 
 Struct MatchData
 	int Turn = 0
@@ -67,7 +70,7 @@ EndState
 
 State Dealing
 	Event OnBeginState(string asOldState)
-		Hit()
+		TryDraw()
 
 		WriteLine(self, "Has completed the dealing state with "+ToString())
 		ReleaseThread()
@@ -82,7 +85,47 @@ State Playing
 		WriteLine(self, "Has completed the playing state with "+ToString())
 		ReleaseThread()
 	EndEvent
+
+
+	bool Function PlayNext()
+		{Recursively play the next turn until a stand.}
+		Match.Turn += 1
+
+		PlayBegin()
+
+		If (Blackjack.IsWin(Match.Score))
+			WriteMessage(Name, "Standing with 21.\n"+ToString())
+			return Stay
+
+		ElseIf (Blackjack.IsBust(Score))
+			WriteMessage(Name, "Busted!\n"+ToString())
+			return Stay
+		Else
+			int choice = AskChoice()
+
+			If (choice == ChoiceHit)
+				If (TryDraw())
+					return self.PlayNext()
+				Else
+					WriteMessage(Name, "Warning\nStanding, problem hitting for another card!\n"+ToString())
+					return Stay
+				EndIf
+			ElseIf (choice == ChoiceStand)
+				WriteMessage(Name, "Chose to stand.\n"+ToString())
+				return Stay
+			Else
+				WriteMessage(Name, "Warning\nStanding, the play choice "+choice+" was out of range.\n"+ToString())
+				return Stay
+			EndIf
+		EndIf
+	EndFunction
 EndState
+
+
+bool Function PlayNext()
+	{Private}
+	return false
+EndFunction
 
 
 ; Personality
@@ -101,77 +144,12 @@ int Function AskWager()
 EndFunction
 
 
-bool Function PlayNext()
-	{Plays the next turn, recursive.}
-	Match.Turn += 1
-	PlayBegin()
-	If (PlayDefault())
-		return PlayProcess()
-	Else
-		return Ended
-	EndIf
-EndFunction
-
-
 Function PlayBegin()
-	{Virtual}
+	{What happens when a turn begins.}
 EndFunction
 
 
-bool Function PlayDefault()
-	{Evaluates rules.}
-
-	If (Turn == 1)
-		If (Blackjack.Rules.IsWin(Match.Score))
-			WriteMessage(Name, "Won a Blackjack!\n"+ToString())
-			return Ended
-		Else
-			WriteMessage(Name, "Turn "+Turn+"..\n"+ToString())
-			return Continue
-		EndIf
-	Else
-		If (Blackjack.Rules.IsWin(Match.Score))
-			WriteMessage(Name, "Won!\n"+ToString())
-			return Ended
-
-		ElseIf (Blackjack.Rules.IsBust(Score))
-			WriteMessage(Name, "Busted!\n"+ToString())
-			return Ended
-
-		ElseIf (Blackjack.Rules.IsInPlay(Score))
-			WriteMessage(Name, "Continuing with turn "+Turn+"..\n"+ToString())
-			return Continue
-		Else
-			WriteMessage(Name, "Ended Unexpectedly!\n"+ToString())
-			return Ended
-		EndIf
-	EndIf
-EndFunction
-
-
-bool Function PlayProcess()
-	{The process that occurs when play happens.}
-	int choice = PlayChoice()
-
-	If (choice == ChoiceHit)
-		If (Hit())
-			WriteMessage(Name, "Chose to hit for another card.\n"+ToString())
-			return self.PlayNext()
-		Else
-			WriteLine(self, "Problem hitting for another card!")
-			return Ended
-		EndIf
-	ElseIf (choice == ChoiceStand)
-		WriteMessage(Name, "Chose to stand.\n"+ToString())
-		return Ended
-	Else
-		WriteMessage(Name, "The play choice "+choice+" was out of range.")
-		return Ended
-	EndIf
-EndFunction
-
-
-int Function PlayChoice()
+int Function AskChoice()
 	{Returns the choice for this play.}
 	If (Match.Score <= 16)
 		return ChoiceHit
@@ -181,40 +159,41 @@ int Function PlayChoice()
 EndFunction
 
 
-bool Function Hit()
-	If (CanHit)
+; Functions
+;---------------------------------------------
+
+bool Function TryDraw()
+	If (CanDraw)
 		Card drawn = Blackjack.Cards.Draw()
 		If (drawn)
 			If (drawn.Reference)
 				ObjectReference turnMarker = NextMarker()
 				If (turnMarker)
 					Cards.Add(drawn)
-					Match.Score = Blackjack.Rules.GetScore(Cards, Match.Score)
+					Match.Score = Blackjack.Score(self)
 					Motion.Translate(drawn.Reference, turnMarker)
+					WriteMessage(Name, "Drew a card.\n"+drawn)
 					return Success
 				Else
-					WriteLine(self, "Cannot hit without a marker.")
+					WriteLine(Name, "Cannot draw without a marker.")
 					Blackjack.Cards.Collect(drawn)
 					return Failure
 				EndIf
 			Else
-				WriteLine(self, "Cannot deal a none card reference.")
+				WriteLine(Name, "Cannot draw a none card reference.")
 				Blackjack.Cards.Collect(drawn)
 				return Failure
 			EndIf
 		Else
-			WriteLine(self, "Cannot deal a none card.")
+			WriteLine(Name, "Cannot draw a none card.")
 			return Failure
 		EndIf
 	Else
-		WriteLine(self, "Cannot hit for another card right now.")
+		WriteLine(Name, "Cannot draw another card right now.")
 		return Failure
 	EndIf
 EndFunction
 
-
-; Functions
-;---------------------------------------------
 
 ObjectReference Function NextMarker()
 	If (Marker)
@@ -271,18 +250,6 @@ Group Player
 		EndFunction
 	EndProperty
 
-	Card[] Property Hand Hidden
-		Card[] Function Get()
-			return Cards
-		EndFunction
-	EndProperty
-
-	int Property Last Hidden
-		int Function Get()
-			return Cards.Length - 1
-		EndFunction
-	EndProperty
-
 	int Property Turn Hidden
 		int Function Get()
 			return Match.Turn
@@ -301,9 +268,23 @@ Group Player
 		EndFunction
 	EndProperty
 
-	bool Property CanHit Hidden
+	bool Property CanDraw Hidden
 		bool Function Get()
-			return Blackjack.Rules.IsInPlay(Match.Score)
+			return Blackjack.IsInPlay(Match.Score)
+		EndFunction
+	EndProperty
+EndGroup
+
+Group Hand
+	Card[] Property Hand Hidden
+		Card[] Function Get()
+			return Cards
+		EndFunction
+	EndProperty
+
+	int Property Last Hidden
+		int Function Get()
+			return Cards.Length - 1
 		EndFunction
 	EndProperty
 EndGroup
@@ -312,3 +293,5 @@ Group Choice
 	int Property ChoiceHit = 0 AutoReadOnly
 	int Property ChoiceStand = 1 AutoReadOnly
 EndGroup
+
+

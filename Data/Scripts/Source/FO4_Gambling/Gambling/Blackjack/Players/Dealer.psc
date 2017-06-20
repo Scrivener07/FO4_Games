@@ -36,6 +36,15 @@ Function PlayBegin()
 EndFunction
 
 
+int Function AskChoice()
+	If (Score <= 17)
+		return ChoiceHit
+	Else
+		return ChoiceStand
+	EndIf
+EndFunction
+
+
 ; Properties
 ;---------------------------------------------
 

@@ -4,7 +4,7 @@ import Gambling:Blackjack
 import Gambling:Blackjack:Players
 import Gambling:Shared
 import Gambling:Shared:Common
-
+import Gambling:Shared:Deck
 
 Player[] Players
 CustomEvent PhaseEvent
@@ -102,6 +102,7 @@ State Dealing
 		SendPhase(self, DealingPhase, Begun)
 
 		Cards.Shuffle()
+
 		If (Players)
 			int index = 0
 			While (index < Count)
@@ -119,7 +120,6 @@ State Dealing
 		EndIf
 
 		ChangeState(self, PlayingPhase)
-
 	EndEvent
 
 	Event OnEndState(string asNewState)
@@ -160,50 +160,40 @@ State Scoring
 		SendPhase(self, ScoringPhase, Begun)
 
 		If (Players)
-			bool houseWins = Rules.IsWin(Dealer.Score)
-
 			int index = 0
 			While (index < Count)
 				Player gambler = Players[index]
 
 				If (gambler is Players:Dealer)
-					WriteLine(Dealer, "Skipping, already scored.")
+					WriteLine(Dealer, "Skipped for scoring.")
 				Else
-
-
-					If (houseWins)
-						WriteMessage(gambler.Name, "The house wins with "+Dealer.Score)
+					If (IsBust(gambler.Score))
+						WriteMessage(gambler.Name, "Score of "+gambler.Score+" is a bust.")
 					Else
-
-						If (Rules.IsWin(gambler.Score))
-							WriteMessage(gambler.Name, "Final score of "+gambler.Score+" is a winner.")
-						;	GUI.ShowWinner(gambler.Score)
-
-						ElseIf (Rules.IsBust(gambler.Score))
-							WriteMessage(gambler.Name, "Final score of "+gambler.Score+" is a bust.")
-						;	GUI.ShowLoser(gambler.Score)
-
-						ElseIf (gambler.Score > Dealer.Score)
-							WriteMessage(gambler.Name, "Final score of "+gambler.Score+" beats dealers "+Dealer.Score+".")
+						If (gambler.Score > Dealer.Score)
+							WriteMessage(gambler.Name, "Score of "+gambler.Score+" beats dealers "+Dealer.Score+".")
 						Else
-							WriteMessage(gambler.Name, "Warning, cannot determine score!")
+							If (gambler.Score == Dealer.Score)
+								WriteMessage(gambler.Name, "Score of "+gambler.Score+" pushes dealers "+Dealer.Score+".")
+							Else
+								WriteMessage(gambler.Name, "Warning, problem handling score "+gambler.Score+" against dealers "+Dealer.Score+".")
+							EndIf
 						EndIf
 					EndIf
-
-
-
 				EndIf
 
 				Cards.CollectFrom(gambler)
 				index += 1
 			EndWhile
+
+
+			If (GUI.PromptPlayAgain())
+				ChangeState(self, WageringPhase)
+			Else
+				ChangeState(self, ExitingPhase)
+			EndIf
 		Else
 			WriteLine(self, "There are no players to score.")
-		EndIf
-
-		If (GUI.PromptPlayAgain())
-			ChangeState(self, WageringPhase)
-		Else
 			ChangeState(self, ExitingPhase)
 		EndIf
 	EndEvent
@@ -276,6 +266,9 @@ Function SendPhase(Blackjack:Game sender, string name, bool change) Global
 EndFunction
 
 
+; Players
+;---------------------------------------------
+
 int Function IndexOf(Player value)
 	{Determines the index of a specific player in the collection.}
 	If (value)
@@ -332,11 +325,64 @@ Function Clear()
 	EndIf
 EndFunction
 
+
+; Scoring
+;---------------------------------------------
+
+bool Function IsWin(int aScore)
+	return aScore == Win
+EndFunction
+
+
+bool Function IsInPlay(int aScore)
+	return aScore < Win
+EndFunction
+
+
+bool Function IsBust(int aScore)
+	return aScore > Win
+EndFunction
+
+
+int Function Score(Player gambler)
+	int score = 0
+
+	int index = 0
+	While (index < gambler.Hand.Length)
+		Card item = gambler.Hand[index]
+
+		If (item.Rank == Cards.Deck.Ace)
+			score += 11
+		ElseIf (Cards.Deck.IsFaceCard(item))
+			score += 10
+		Else
+			score += item.Rank
+		EndIf
+
+		index += 1
+	EndWhile
+
+	index = 0
+	While (index < gambler.Hand.Length)
+		Card item = gambler.Hand[index]
+
+		If (item.Rank == Cards.Deck.Ace)
+			If (IsBust(score))
+				score -= 10
+			EndIf
+		EndIf
+
+		index += 1
+	EndWhile
+
+	return score
+EndFunction
+
+
 ; Properties
 ;---------------------------------------------
 
 Group Game
-	Components:Rules Property Rules Auto Const Mandatory
 	Components:GUI Property GUI Auto Const Mandatory
 	Components:Table Property Table Auto Const Mandatory
 	Components:Cards Property Cards Auto Const Mandatory
@@ -361,4 +407,8 @@ Group Players
 	Players:Baxter Property Baxter Auto Const Mandatory
 	Players:Chester Property Chester Auto Const Mandatory
 	Players:Dewey Property Dewey Auto Const Mandatory
+EndGroup
+
+Group Scoring
+	int Property Win = 21 AutoReadOnly
 EndGroup

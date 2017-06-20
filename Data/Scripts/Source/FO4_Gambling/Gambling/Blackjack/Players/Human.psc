@@ -27,7 +27,7 @@ int Function AskWager()
 EndFunction
 
 
-int Function PlayChoice()
+int Function AskChoice()
 	int selected = Invalid
 
 	If (Turn == 1)

@@ -26,7 +26,7 @@ MarkerData Function CreateMarkers()
 EndFunction
 
 
-int Function PlayChoice()
+int Function AskChoice()
 	If (Score <= 18)
 		return ChoiceHit
 	Else
