@@ -1,8 +1,5 @@
 ScriptName Gambling:Blackjack:Game extends Gambling:Blackjack:Component
 import Gambling
-import Gambling:Blackjack
-import Gambling:Blackjack:Players
-import Gambling:Shared
 import Gambling:Shared:Common
 import Gambling:Shared:Deck
 
@@ -168,15 +165,23 @@ State Scoring
 					WriteLine(Dealer, "Skipped for scoring.")
 				Else
 					If (IsBust(gambler.Score))
-						WriteMessage(gambler.Name, "Score of "+gambler.Score+" is a bust.")
+						WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" is a bust.")
 					Else
-						If (gambler.Score > Dealer.Score)
-							WriteMessage(gambler.Name, "Score of "+gambler.Score+" beats dealers "+Dealer.Score+".")
+						If (IsBust(Dealer.Score))
+							WriteMessage(gambler.Name, "Winner\nThe dealer busted with "+Dealer.Score+".")
 						Else
-							If (gambler.Score == Dealer.Score)
-								WriteMessage(gambler.Name, "Score of "+gambler.Score+" pushes dealers "+Dealer.Score+".")
+							If (gambler.Score > Dealer.Score)
+								WriteMessage(gambler.Name, "Winner\nScore of "+gambler.Score+" beats dealers "+Dealer.Score+".")
+
+							ElseIf (gambler.Score < Dealer.Score)
+								WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" loses to dealers "+Dealer.Score+".")
+
+							ElseIf (gambler.Score == Dealer.Score)
+								WriteMessage(gambler.Name, "Push\nScore of "+gambler.Score+" pushes dealers "+Dealer.Score+".")
+
 							Else
-								WriteMessage(gambler.Name, "Warning, problem handling score "+gambler.Score+" against dealers "+Dealer.Score+".")
+								WriteMessage(gambler.Name, "Warning\nProblem handling score "+gambler.Score+" against dealers "+Dealer.Score+".")
+								; derp, i dont know what happened
 							EndIf
 						EndIf
 					EndIf
@@ -185,7 +190,6 @@ State Scoring
 				Cards.CollectFrom(gambler)
 				index += 1
 			EndWhile
-
 
 			If (GUI.PromptPlayAgain())
 				ChangeState(self, WageringPhase)

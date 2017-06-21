@@ -63,8 +63,3 @@ Group Markers
 	ObjectReference Property Gambling_Blackjack_CellMarker Auto Const Mandatory
 	ObjectReference Property Gambling_Blackjack_CameraMarker Auto Const Mandatory
 EndGroup
-
-; Group Zoom
-; 	Perk Property Gambling_TablePerk Auto Const Mandatory
-; 	Weapon Property Gambling_ZoomWeapon Auto Const Mandatory
-; EndGroup

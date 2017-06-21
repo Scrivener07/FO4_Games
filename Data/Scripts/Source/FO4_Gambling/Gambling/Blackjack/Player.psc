@@ -105,6 +105,7 @@ State Playing
 
 			If (choice == ChoiceHit)
 				If (TryDraw())
+					WriteMessage(Name, "Drew a card.\n"+Hand[Last])
 					return self.PlayNext()
 				Else
 					WriteMessage(Name, "Warning\nStanding, problem hitting for another card!\n"+ToString())
@@ -172,7 +173,6 @@ bool Function TryDraw()
 					Cards.Add(drawn)
 					Match.Score = Blackjack.Score(self)
 					Motion.Translate(drawn.Reference, turnMarker)
-					WriteMessage(Name, "Drew a card.\n"+drawn)
 					return Success
 				Else
 					WriteLine(Name, "Cannot draw without a marker.")
@@ -293,5 +293,3 @@ Group Choice
 	int Property ChoiceHit = 0 AutoReadOnly
 	int Property ChoiceStand = 1 AutoReadOnly
 EndGroup
-
-
