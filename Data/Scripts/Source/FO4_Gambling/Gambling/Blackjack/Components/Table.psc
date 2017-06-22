@@ -23,6 +23,7 @@ State Starting
 		Game.SetPlayerAIDriven()
 
 		Player.MoveTo(Gambling_Blackjack_CellMarker)
+		Player.SetScale(0.5)
 
 		InputLayer = InputEnableLayer.Create()
 		InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
@@ -40,6 +41,9 @@ State Exiting
 
 		If (PlayAction)
 			Player.MoveTo(PlayAction as ObjectReference)
+			Player.SetScale(1.0)
+		Else
+			WriteLine(self, "Cannot send the player back to where they came from.")
 		EndIf
 
 		If (InputLayer)

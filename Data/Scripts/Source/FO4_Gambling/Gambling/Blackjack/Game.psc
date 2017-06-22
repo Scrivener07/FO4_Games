@@ -71,6 +71,10 @@ State Wagering
 		WriteLine("Phase", "Wagering")
 		SendPhase(self, WageringPhase, Begun)
 
+		If (Wager.CallAndWait(WageringPhase))
+			WriteLine(self, "Wager component has finished the Wagering thread.")
+		EndIf
+
 		If (Players)
 			int index = 0
 			While (index < Count)
@@ -390,6 +394,7 @@ Group Game
 	Components:GUI Property GUI Auto Const Mandatory
 	Components:Table Property Table Auto Const Mandatory
 	Components:Cards Property Cards Auto Const Mandatory
+	Components:Wager Property Wager Auto Const Mandatory
 EndGroup
 
 Group Players
