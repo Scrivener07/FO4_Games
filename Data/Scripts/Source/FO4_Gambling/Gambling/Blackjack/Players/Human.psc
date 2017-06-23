@@ -23,7 +23,7 @@ EndFunction
 
 
 int Function AskWager()
-	return Blackjack.GUI.PromptWager()
+	return Blackjack.Wager.Bet
 EndFunction
 
 
