@@ -117,7 +117,7 @@ State Wagering
 				While (index < Count)
 					Player gambler = Players[index]
 					gambler.CallAndWait(WageringPhase)
-					PayWager(gambler)
+					gambler.PayWager()
 
 					WriteLine(self, gambler.Name+" has chosen to wager "+gambler.Wager)
 					index += 1
@@ -136,14 +136,6 @@ State Wagering
 			WriteMessage("Warning", "Your all out of caps. Better luck next time.")
 		EndIf
 	EndEvent
-
-
-	Function PayWager(Player gambler)
-		If (gambler is Players:Human)
-			Game.RemovePlayerCaps(gambler.Wager)
-			WriteMessage(gambler.Name, "Bet "+gambler.Wager+" caps.")
-		EndIf
-	EndFunction
 
 
 	Event OnEndState(string asNewState)
@@ -229,18 +221,18 @@ State Scoring
 					Else
 						If (IsBust(Dealer.Score))
 							WriteMessage(gambler.Name, "Winner\nThe dealer busted with "+Dealer.Score+".")
-							PayWager(gambler)
+							gambler.WinWager()
 						Else
 							If (gambler.Score > Dealer.Score)
 								WriteMessage(gambler.Name, "Winner\nScore of "+gambler.Score+" beats dealers "+Dealer.Score+".")
-								PayWager(gambler)
+								gambler.WinWager()
 
 							ElseIf (gambler.Score < Dealer.Score)
 								WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" loses to dealers "+Dealer.Score+".")
 
 							ElseIf (gambler.Score == Dealer.Score)
 								WriteMessage(gambler.Name, "Push\nScore of "+gambler.Score+" pushes dealers "+Dealer.Score+".")
-
+								gambler.PushWager()
 							Else
 								WriteMessage(gambler.Name, "Warning\nProblem handling score "+gambler.Score+" against dealers "+Dealer.Score+".")
 								; derp, i dont know what happened
@@ -253,25 +245,21 @@ State Scoring
 				index += 1
 			EndWhile
 
-			If (GUI.PromptPlayAgain())
-				ChangeState(self, WageringPhase)
+			If (Human.HasCaps)
+				If (GUI.PromptPlayAgain())
+					ChangeState(self, WageringPhase)
+				Else
+					ChangeState(self, ExitingPhase)
+				EndIf
 			Else
 				ChangeState(self, ExitingPhase)
+				WriteMessage("Kicked", "Your all out of caps. Better luck next time.")
 			EndIf
 		Else
 			WriteLine(self, "There are no players to score.")
 			ChangeState(self, ExitingPhase)
 		EndIf
 	EndEvent
-
-
-	Function PayWager(Player gambler)
-		If (gambler is Players:Human)
-			int winnings = gambler.Wager * 2
-			Game.GivePlayerCaps(winnings)
-			WriteMessage(gambler.Name, "Won "+winnings+" caps.")
-		EndIf
-	EndFunction
 
 
 	Event OnEndState(string asNewState)
@@ -302,11 +290,6 @@ State Exiting
 		SendPhase(self, ExitingPhase, Ended)
 	EndEvent
 EndState
-
-
-Function PayWager(Player gambler)
-	{EMPTY}
-EndFunction
 
 
 ; Players

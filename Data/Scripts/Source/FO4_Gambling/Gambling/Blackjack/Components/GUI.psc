@@ -1,5 +1,6 @@
 ScriptName Gambling:Blackjack:Components:GUI extends Gambling:Blackjack:Component
 import Gambling
+import Gambling:Blackjack
 import Gambling:Shared:Common
 
 
@@ -31,8 +32,8 @@ bool Function PromptPlayAgain()
 EndFunction
 
 
-int Function PromptWager()
-	int selected = Gambling_Blackjack_MessageWager.Show()
+int Function PromptWager(Players:Human human)
+	int selected = Gambling_Blackjack_MessageWager.Show(human.Caps, human.Winnings)
 	int OptionWager1 = 1 const
 	int OptionWager5 = 2 const
 	int OptionWager10 = 3 const

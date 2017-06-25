@@ -33,7 +33,7 @@ EndFunction
 
 
 int Function AskWager()
-	return Blackjack.GUI.PromptWager()
+	return Blackjack.GUI.PromptWager(self)
 EndFunction
 
 
@@ -55,12 +55,19 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-bool Property HasCaps Hidden
-	bool Function Get()
-		return Player.GetGoldAmount() > 0
-	EndFunction
-EndProperty
+Group Human
+	int Property Caps Hidden
+		int Function Get()
+			return Player.GetGoldAmount()
+		EndFunction
+	EndProperty
 
+	bool Property HasCaps Hidden
+		bool Function Get()
+			return Caps > 0
+		EndFunction
+	EndProperty
+EndGroup
 
 Group Markers
 	ObjectReference Property Gambling_Blackjack_P1C01 Auto Const Mandatory

@@ -163,6 +163,37 @@ EndFunction
 ; Functions
 ;---------------------------------------------
 
+Function PayWager()
+	Session.Winnings -= Wager
+	If (self is Players:Human)
+		Game.RemovePlayerCaps(Wager)
+	EndIf
+
+	WriteMessage(Name, "Bet "+Wager+" caps.")
+EndFunction
+
+
+Function WinWager()
+	int winAmount = Wager * 2
+	Session.Winnings += winAmount
+	If (self is Players:Human)
+		Game.GivePlayerCaps(winAmount)
+	EndIf
+
+	WriteMessage(Name, "Won "+winAmount+" caps.")
+EndFunction
+
+
+Function PushWager()
+	Session.Winnings += Wager
+	If (self is Players:Human)
+		Game.GivePlayerCaps(Wager)
+	EndIf
+
+	WriteMessage(Name, "Won "+Wager+" caps.")
+EndFunction
+
+
 bool Function TryDraw()
 	If (CanDraw)
 		Card drawn = Blackjack.Cards.Draw()
@@ -265,6 +296,12 @@ Group Player
 	int Property Wager Hidden
 		int Function Get()
 			return Match.Wager
+		EndFunction
+	EndProperty
+
+	int Property Winnings Hidden
+		int Function Get()
+			return Session.Winnings
 		EndFunction
 	EndProperty
 
