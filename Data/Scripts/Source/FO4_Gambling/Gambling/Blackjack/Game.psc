@@ -141,7 +141,7 @@ State Wagering
 	Function PayWager(Player gambler)
 		If (gambler is Players:Human)
 			Game.RemovePlayerCaps(gambler.Wager)
-			WriteNotification(self, "Bet "+gambler.Wager+" caps.")
+			WriteMessage(gambler.Name, "Bet "+gambler.Wager+" caps.")
 		EndIf
 	EndFunction
 
@@ -269,7 +269,7 @@ State Scoring
 		If (gambler is Players:Human)
 			int winnings = gambler.Wager * 2
 			Game.GivePlayerCaps(winnings)
-			WriteNotification(self, "Won "+winnings+" caps.")
+			WriteMessage(gambler.Name, "Won "+winnings+" caps.")
 		EndIf
 	EndFunction
 
