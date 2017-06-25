@@ -3,6 +3,8 @@ import Gambling
 import Gambling:Shared:Common
 import Gambling:Shared:Deck
 
+
+ObjectReference Entry
 Player[] Players
 CustomEvent PhaseEvent
 
@@ -15,16 +17,53 @@ Event OnInit()
 EndEvent
 
 
+; Methods
+;---------------------------------------------
+
+bool Function Play(ObjectReference aEntryPoint)
+	If (Idling)
+		If (aEntryPoint)
+			Entry = aEntryPoint
+			return ChangeState(self, StartingPhase)
+		Else
+			WriteLine(self, "The game needs an entry point reference to play.")
+			return false
+		EndIf
+	Else
+		WriteLine(self, "The game is not ready to play right now.")
+		return false
+	EndIf
+EndFunction
+
+
+Function SendPhase(Blackjack:Game sender, string name, bool change) Global
+	string stateName = sender.GetState()
+	If (stateName == name)
+
+		PhaseEventArgs phase = new PhaseEventArgs
+		phase.Name = name
+		phase.Change = change
+
+		var[] arguments = new var[1]
+		arguments[0] = phase
+
+		WriteLine(sender, "Sending phase event:" + phase)
+		sender.SendCustomEvent("PhaseEvent", arguments)
+	Else
+		WriteLine(sender, "Cannot not send the phase '"+name+"' while in the '"+stateName+"' state.")
+	EndIf
+EndFunction
+
+
 ; Component
 ;---------------------------------------------
 
 State Starting
 	Event OnBeginState(string asOldState)
 		{Session Begin}
-		WriteLine("Phase", "Starting")
-		SendPhase(self, StartingPhase, Begun)
-
-		If (GUI.PromptPlay())
+		If (Human.HasCaps)
+			WriteLine("Phase", "Starting")
+			SendPhase(self, StartingPhase, Begun)
 
 			If (Table.CallAndWait(StartingPhase))
 				WriteLine(self, "Table component has finished the Starting thread.")
@@ -54,6 +93,7 @@ State Starting
 			ChangeState(self, WageringPhase)
 		Else
 			ChangeState(self, IdlePhase)
+			WriteMessage("Warning", "You dont have any caps to play.")
 		EndIf
 	EndEvent
 
@@ -68,27 +108,43 @@ EndState
 State Wagering
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine("Phase", "Wagering")
-		SendPhase(self, WageringPhase, Begun)
+		If (Human.HasCaps)
+			WriteLine("Phase", "Wagering")
+			SendPhase(self, WageringPhase, Begun)
 
-		If (Wager.CallAndWait(WageringPhase))
-			WriteLine(self, "Wager component has finished the Wagering thread.")
-		EndIf
+			If (Players)
+				int index = 0
+				While (index < Count)
+					Player gambler = Players[index]
+					gambler.CallAndWait(WageringPhase)
+					PayWager(gambler)
 
-		If (Players)
-			int index = 0
-			While (index < Count)
-				Player gambler = Players[index]
-				gambler.CallAndWait(WageringPhase)
-				WriteLine(self, gambler.Name+" has chosen to wager "+gambler.Wager)
-				index += 1
-			EndWhile
+					WriteLine(self, gambler.Name+" has chosen to wager "+gambler.Wager)
+					index += 1
+				EndWhile
+			Else
+				WriteLine(self, "There are no players to wager.")
+			EndIf
+
+			If (Human.Wager == Invalid)
+				ChangeState(self, ExitingPhase)
+			Else
+				ChangeState(self, DealingPhase)
+			EndIf
 		Else
-			WriteLine(self, "There are no players to wager.")
+			ChangeState(self, ExitingPhase)
+			WriteMessage("Warning", "Your all out of caps. Better luck next time.")
 		EndIf
-
-		ChangeState(self, DealingPhase)
 	EndEvent
+
+
+	Function PayWager(Player gambler)
+		If (gambler is Players:Human)
+			Game.RemovePlayerCaps(gambler.Wager)
+			WriteNotification(self, "Bet "+gambler.Wager+" caps.")
+		EndIf
+	EndFunction
+
 
 	Event OnEndState(string asNewState)
 		SendPhase(self, WageringPhase, Ended)
@@ -173,9 +229,11 @@ State Scoring
 					Else
 						If (IsBust(Dealer.Score))
 							WriteMessage(gambler.Name, "Winner\nThe dealer busted with "+Dealer.Score+".")
+							PayWager(gambler)
 						Else
 							If (gambler.Score > Dealer.Score)
 								WriteMessage(gambler.Name, "Winner\nScore of "+gambler.Score+" beats dealers "+Dealer.Score+".")
+								PayWager(gambler)
 
 							ElseIf (gambler.Score < Dealer.Score)
 								WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" loses to dealers "+Dealer.Score+".")
@@ -205,6 +263,16 @@ State Scoring
 			ChangeState(self, ExitingPhase)
 		EndIf
 	EndEvent
+
+
+	Function PayWager(Player gambler)
+		If (gambler is Players:Human)
+			int winnings = gambler.Wager * 2
+			Game.GivePlayerCaps(winnings)
+			WriteNotification(self, "Won "+winnings+" caps.")
+		EndIf
+	EndFunction
+
 
 	Event OnEndState(string asNewState)
 		SendPhase(self, ScoringPhase, Ended)
@@ -236,41 +304,8 @@ State Exiting
 EndState
 
 
-; Methods
-;---------------------------------------------
-
-bool Function Play(Actions:Play playAction)
-	If (Idling)
-		If (playAction)
-			Table.PlayAction = playAction
-		EndIf
-		return ChangeState(self, StartingPhase)
-	Else
-		WriteLine(self, "The game is not ready to play right now.")
-		return false
-	EndIf
-EndFunction
-
-
-; Functions
-;---------------------------------------------
-
-Function SendPhase(Blackjack:Game sender, string name, bool change) Global
-	string stateName = sender.GetState()
-	If (stateName == name)
-
-		PhaseEventArgs phase = new PhaseEventArgs
-		phase.Name = name
-		phase.Change = change
-
-		var[] arguments = new var[1]
-		arguments[0] = phase
-
-		WriteLine(sender, "Sending phase event:" + phase)
-		sender.SendCustomEvent("PhaseEvent", arguments)
-	Else
-		WriteLine(sender, "Cannot not send the phase '"+name+"' while in the '"+stateName+"' state.")
-	EndIf
+Function PayWager(Player gambler)
+	{EMPTY}
 EndFunction
 
 
@@ -290,20 +325,6 @@ EndFunction
 bool Function Contains(Player value)
 	{Determines whether a player is in the collection.}
 	return IndexOf(value) > Invalid
-EndFunction
-
-
-bool Function Remove(Player value)
-	{Removes a player from the collection.}
-	int index = IndexOf(value)
-
-	If (index > Invalid)
-		Players.Remove(index)
-		return true
-	Else
-		WriteLine(self, "Could not find the '"+value+"' player for abort.")
-		return false
-	EndIf
 EndFunction
 
 
@@ -390,11 +411,18 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Game
+Group Object
 	Components:GUI Property GUI Auto Const Mandatory
 	Components:Table Property Table Auto Const Mandatory
 	Components:Cards Property Cards Auto Const Mandatory
-	Components:Wager Property Wager Auto Const Mandatory
+EndGroup
+
+Group Actions
+	ObjectReference Property EntryPoint Hidden
+		ObjectReference Function Get()
+			return Entry
+		EndFunction
+	EndProperty
 EndGroup
 
 Group Players

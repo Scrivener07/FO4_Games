@@ -39,12 +39,8 @@ State Exiting
 	Event OnBeginState(string asOldState)
 		Game.SetPlayerAIDriven(false)
 
-		If (PlayAction)
-			Player.MoveTo(PlayAction as ObjectReference)
-			Player.SetScale(1.0)
-		Else
-			WriteLine(self, "Cannot send the player back to where they came from.")
-		EndIf
+		Player.MoveTo(Blackjack.EntryPoint)
+		Player.SetScale(1.0)
 
 		If (InputLayer)
 			InputLayer.Delete()
@@ -58,9 +54,8 @@ EndState
 
 ; Properties
 ;---------------------------------------------
-
-Group Actions
-	Actions:Play Property PlayAction Auto Hidden
+Group Object
+	Blackjack:Game Property Blackjack Auto Const Mandatory
 EndGroup
 
 Group Markers

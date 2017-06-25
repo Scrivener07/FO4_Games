@@ -1,6 +1,16 @@
 ScriptName Gambling:Blackjack:Players:Human extends Gambling:Blackjack:Player
 import Gambling:Shared:Common
 
+Actor Player
+
+
+; Events
+;---------------------------------------------
+
+Event OnInit()
+	Player = Game.GetPlayer()
+EndEvent
+
 
 ; Personality
 ;---------------------------------------------
@@ -44,6 +54,13 @@ EndFunction
 
 ; Properties
 ;---------------------------------------------
+
+bool Property HasCaps Hidden
+	bool Function Get()
+		return Player.GetGoldAmount() > 0
+	EndFunction
+EndProperty
+
 
 Group Markers
 	ObjectReference Property Gambling_Blackjack_P1C01 Auto Const Mandatory
