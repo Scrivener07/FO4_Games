@@ -93,7 +93,7 @@ State Starting
 			ChangeState(self, WageringPhase)
 		Else
 			ChangeState(self, IdlePhase)
-			WriteMessage("Warning", "You dont have any caps to play.")
+			GUI.ShowKicked()
 		EndIf
 	EndEvent
 
@@ -133,7 +133,7 @@ State Wagering
 			EndIf
 		Else
 			ChangeState(self, ExitingPhase)
-			WriteMessage("Warning", "Your all out of caps. Better luck next time.")
+			GUI.ShowKicked()
 		EndIf
 	EndEvent
 
@@ -217,21 +217,21 @@ State Scoring
 					WriteLine(Dealer, "Skipped for scoring.")
 				Else
 					If (IsBust(gambler.Score))
-						WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" is a bust.")
+						GUI.PlayerBusted(gambler)
 					Else
 						If (IsBust(Dealer.Score))
-							WriteMessage(gambler.Name, "Winner\nThe dealer busted with "+Dealer.Score+".")
+							GUI.DealerBusted(gambler, Dealer)
 							gambler.WinWager()
 						Else
 							If (gambler.Score > Dealer.Score)
-								WriteMessage(gambler.Name, "Winner\nScore of "+gambler.Score+" beats dealers "+Dealer.Score+".")
+								GUI.PlayersWins(gambler, Dealer)
 								gambler.WinWager()
 
 							ElseIf (gambler.Score < Dealer.Score)
-								WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" loses to dealers "+Dealer.Score+".")
+								GUI.PlayerLoses(gambler, Dealer)
 
 							ElseIf (gambler.Score == Dealer.Score)
-								WriteMessage(gambler.Name, "Push\nScore of "+gambler.Score+" pushes dealers "+Dealer.Score+".")
+								GUI.PlayerPushed(gambler, Dealer)
 								gambler.PushWager()
 							Else
 								WriteMessage(gambler.Name, "Warning\nProblem handling score "+gambler.Score+" against dealers "+Dealer.Score+".")
@@ -253,7 +253,7 @@ State Scoring
 				EndIf
 			Else
 				ChangeState(self, ExitingPhase)
-				WriteMessage("Kicked", "Your all out of caps. Better luck next time.")
+				GUI.ShowKicked()
 			EndIf
 		Else
 			WriteLine(self, "There are no players to score.")

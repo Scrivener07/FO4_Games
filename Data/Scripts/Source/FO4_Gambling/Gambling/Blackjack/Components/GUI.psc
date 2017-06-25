@@ -82,6 +82,51 @@ Function ShowLoser(float score)
 EndFunction
 
 
+Function ShowKicked()
+	WriteMessage("Sorry", "Your all out of caps. Better luck next time.")
+EndFunction
+
+
+Function PlayerBusted(Player gambler)
+	WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" is a bust.")
+EndFunction
+
+
+Function DealerBusted(Player gambler, Player dealer)
+	WriteMessage(gambler.Name, "Winner\nThe dealer busted with "+dealer.Score+".")
+EndFunction
+
+
+Function PlayersWins(Player gambler, Player dealer)
+	WriteMessage(gambler.Name, "Winner\nScore of "+gambler.Score+" beats dealers "+dealer.Score+".")
+EndFunction
+
+
+Function PlayerLoses(Player gambler, Player dealer)
+	WriteMessage(gambler.Name, "Loser\nScore of "+gambler.Score+" loses to dealers "+dealer.Score+".")
+EndFunction
+
+
+Function PlayerPushed(Player gambler, Player dealer)
+	WriteMessage(gambler.Name, "Push\nScore of "+gambler.Score+" pushes dealers "+dealer.Score+".")
+EndFunction
+
+
+Function WagerPaid(Player gambler)
+	WriteMessage(gambler.Name, "Bet "+gambler.Wager+" caps.")
+EndFunction
+
+
+Function WagerWon(Player gambler, int caps)
+	WriteMessage(gambler.Name, "Won "+caps+" caps.")
+EndFunction
+
+
+Function WagerRefunded(Player gambler)
+	WriteMessage(gambler.Name, "Refunded "+gambler.Wager+" caps.")
+EndFunction
+
+
 ; Properties
 ;---------------------------------------------
 

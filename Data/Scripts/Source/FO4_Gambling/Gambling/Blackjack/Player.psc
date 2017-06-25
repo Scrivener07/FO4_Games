@@ -167,20 +167,18 @@ Function PayWager()
 	Session.Winnings -= Wager
 	If (self is Players:Human)
 		Game.RemovePlayerCaps(Wager)
+		Blackjack.GUI.WagerPaid(self)
 	EndIf
-
-	WriteMessage(Name, "Bet "+Wager+" caps.")
 EndFunction
 
 
 Function WinWager()
-	int winAmount = Wager * 2
-	Session.Winnings += winAmount
+	int caps = Wager * 2
+	Session.Winnings += caps
 	If (self is Players:Human)
-		Game.GivePlayerCaps(winAmount)
+		Game.GivePlayerCaps(caps)
+		Blackjack.GUI.WagerWon(self, caps)
 	EndIf
-
-	WriteMessage(Name, "Won "+winAmount+" caps.")
 EndFunction
 
 
@@ -188,9 +186,8 @@ Function PushWager()
 	Session.Winnings += Wager
 	If (self is Players:Human)
 		Game.GivePlayerCaps(Wager)
+		Blackjack.GUI.WagerRefunded(self)
 	EndIf
-
-	WriteMessage(Name, "Won "+Wager+" caps.")
 EndFunction
 
 
