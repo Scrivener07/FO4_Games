@@ -12,8 +12,6 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 - - [ ] [Wager a bet with caps or goods.](https://github.com/Scrivener07/FO4_Gambling/issues/6)
 - - [ ] [Top-down presentation of a gaming table](https://github.com/Scrivener07/FO4_Gambling/issues/11)
 - - [ ] [An in-game tutorial.](https://github.com/Scrivener07/FO4_Gambling/issues/15)
-- [ ] [Casino](https://github.com/Scrivener07/FO4_Gambling/issues/1).
-- - [ ] [An introductory quest.](https://github.com/Scrivener07/FO4_Gambling/issues/14)
 - [ ] [Award perks for performing well at games.](https://github.com/Scrivener07/FO4_Gambling/issues/2)
 
 <img src="Documents/Screenshot01.png" height="300">
