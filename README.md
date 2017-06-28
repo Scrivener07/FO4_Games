@@ -21,5 +21,6 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Gambling/
 * Sarinia - Help, counsel regarding meshes, textures, and materials.
 * Jonathan Ostrus - Help, counsel regarding settlement objects in the Creation Kit.
 * Kinggath - Help regarding scripting for adding game tables to settlements. [YouTube](https://www.youtube.com/channel/UCrJVV5zL_CBWD4KbAptNi7w), [Nexus Page](http://www.nexusmods.com/fallout4/mods/21872/?), [Sim Settlements Site](https://www.simsettlements.com/)
+* Spooknik (Fallout Cascadia: Co-Lead Assets) - Help regarding creation of custom material swaps. [Fallout Cascadia Site](http://www.falloutcascadia.com/)
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
