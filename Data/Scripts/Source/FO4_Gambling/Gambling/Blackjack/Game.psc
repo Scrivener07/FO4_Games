@@ -119,7 +119,10 @@ State Wagering
 					gambler.CallAndWait(WageringPhase)
 					gambler.PayWager()
 
-					WriteLine(self, gambler.Name+" has chosen to wager "+gambler.Wager)
+					If (gambler.Wager != Invalid)
+						WriteLine(self, gambler.Name+" has chosen to wager "+gambler.Wager)
+					EndIf
+
 					index += 1
 				EndWhile
 			Else

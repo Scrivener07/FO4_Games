@@ -6,6 +6,9 @@ import Gambling:Shared:Common
 Actor Player
 InputEnableLayer InputLayer
 
+int HudStandard = 0 const
+int HudHidden = 3 const
+
 
 ; Events
 ;---------------------------------------------
@@ -20,8 +23,11 @@ EndEvent
 
 State Starting
 	Event OnBeginState(string asOldState)
-		Game.SetPlayerAIDriven()
+		Game.ShowFirstPersonGeometry(false)
+		Game.SetInChargen(true, true, false)
+		Game.SetCharGenHUDMode(HudHidden)
 
+		Game.SetPlayerAIDriven()
 		Player.MoveTo(Gambling_Blackjack_CellMarker)
 		Player.SetScale(0.5)
 
@@ -30,6 +36,7 @@ State Starting
 
 		Game.StartDialogueCameraOrCenterOnTarget(Gambling_Blackjack_CameraMarker)
 
+		Utility.Wait(1.0)
 		ReleaseThread()
 	EndEvent
 EndState
@@ -37,8 +44,13 @@ EndState
 
 State Exiting
 	Event OnBeginState(string asOldState)
-		Game.SetPlayerAIDriven(false)
+		Utility.Wait(1.0)
 
+		Game.ShowFirstPersonGeometry(true)
+		Game.SetInChargen(false, false, false)
+		Game.SetCharGenHUDMode(HudStandard)
+
+		Game.SetPlayerAIDriven(false)
 		Player.MoveTo(Blackjack.EntryPoint)
 		Player.SetScale(1.0)
 
@@ -54,6 +66,7 @@ EndState
 
 ; Properties
 ;---------------------------------------------
+
 Group Object
 	Blackjack:Game Property Blackjack Auto Const Mandatory
 EndGroup
