@@ -28,13 +28,13 @@ State Starting
 		Game.SetCharGenHUDMode(HudHidden)
 
 		Game.SetPlayerAIDriven()
-		Player.MoveTo(Gambling_Blackjack_CellMarker)
+		Player.MoveTo(Games_Blackjack_CellMarker)
 		Player.SetScale(0.5)
 
 		InputLayer = InputEnableLayer.Create()
 		InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
 
-		Game.StartDialogueCameraOrCenterOnTarget(Gambling_Blackjack_CameraMarker)
+		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
 
 		Utility.Wait(1.0)
 		ReleaseThread()
@@ -72,6 +72,6 @@ Group Object
 EndGroup
 
 Group Markers
-	ObjectReference Property Gambling_Blackjack_CellMarker Auto Const Mandatory
-	ObjectReference Property Gambling_Blackjack_CameraMarker Auto Const Mandatory
+	ObjectReference Property Games_Blackjack_CellMarker Auto Const Mandatory
+	ObjectReference Property Games_Blackjack_CameraMarker Auto Const Mandatory
 EndGroup

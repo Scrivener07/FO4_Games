@@ -12,7 +12,7 @@ int OptionStart = 1 const
 ;---------------------------------------------
 
 bool Function PromptPlay()
-	int selected = Gambling_Blackjack_MessagePlay.Show()
+	int selected = Games_Blackjack_MessagePlay.Show()
 
 	If (selected == OptionStart)
 		return true
@@ -28,12 +28,12 @@ EndFunction
 
 
 bool Function PromptPlayAgain()
-	return Gambling_Blackjack_MessagePlayAgain.Show() == 1
+	return Games_Blackjack_MessagePlayAgain.Show() == 1
 EndFunction
 
 
 int Function PromptWager(Players:Human human)
-	int selected = Gambling_Blackjack_MessageWager.Show(human.Caps, human.Winnings)
+	int selected = Games_Blackjack_MessageWager.Show(human.Caps, human.Winnings)
 	int OptionWager1 = 1 const
 	int OptionWager5 = 2 const
 	int OptionWager10 = 3 const
@@ -63,22 +63,22 @@ EndFunction
 
 
 int Function ShowTurn(float card1, float card2, float score)
-	return Gambling_Blackjack_MessageTurn.Show(card1, card2, score)
+	return Games_Blackjack_MessageTurn.Show(card1, card2, score)
 EndFunction
 
 
 int Function ShowTurnDealt(float card, float score)
-	return Gambling_Blackjack_MessageTurnDealt.Show(card, score)
+	return Games_Blackjack_MessageTurnDealt.Show(card, score)
 EndFunction
 
 
 Function ShowWinner(float score)
-	Gambling_Blackjack_MessageWinNatural.Show(score)
+	Games_Blackjack_MessageWinNatural.Show(score)
 EndFunction
 
 
 Function ShowLoser(float score)
-	Gambling_Blackjack_MessageBust.Show(score)
+	Games_Blackjack_MessageBust.Show(score)
 EndFunction
 
 
@@ -131,12 +131,12 @@ EndFunction
 ;---------------------------------------------
 
 Group Messages
-	Message Property Gambling_Blackjack_MessageWager Auto Const Mandatory
-	Message Property Gambling_Blackjack_MessageTurn Auto Const Mandatory
-	Message Property Gambling_Blackjack_MessageTurnDealt Auto Const Mandatory
-	Message Property Gambling_Blackjack_MessagePlay Auto Const Mandatory
-	Message Property Gambling_Blackjack_MessagePlayAgain Auto Const Mandatory
-	Message Property Gambling_Blackjack_MessageWin Auto Const Mandatory
-	Message Property Gambling_Blackjack_MessageWinNatural Auto Const Mandatory
-	Message Property Gambling_Blackjack_MessageBust Auto Const Mandatory
+	Message Property Games_Blackjack_MessageWager Auto Const Mandatory
+	Message Property Games_Blackjack_MessageTurn Auto Const Mandatory
+	Message Property Games_Blackjack_MessageTurnDealt Auto Const Mandatory
+	Message Property Games_Blackjack_MessagePlay Auto Const Mandatory
+	Message Property Games_Blackjack_MessagePlayAgain Auto Const Mandatory
+	Message Property Games_Blackjack_MessageWin Auto Const Mandatory
+	Message Property Games_Blackjack_MessageWinNatural Auto Const Mandatory
+	Message Property Games_Blackjack_MessageBust Auto Const Mandatory
 EndGroup
