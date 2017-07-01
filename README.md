@@ -10,9 +10,7 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing to this project.
-To make a request, report a bug, or ask a question, submit an issue on the tracker.
-
-Github [Issue Tracker](https://github.com/Scrivener07/FO4_Games/issues)
+To make a request, report a bug, or ask a question, submit an issue on the github [issue tracker](https://github.com/Scrivener07/FO4_Games/issues).
 
 See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/contributors) who participated in this project.
 
@@ -27,6 +25,5 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/con
 
 ## License
 This project is licensed under the permissive MIT License. 
-Please see the respective license for resources included within this project.
-
+Please respect the license for each resource or asset used by this project.
 See the [LICENSE.md](LICENSE.md) file for details.
