@@ -24,6 +24,7 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/con
 * Spooknik - Help regarding creation of custom material swaps.
 
 ## License
-This project is licensed under the permissive MIT License. 
-Please respect the license for each resource or asset used by this project.
+This project is licensed under the permissive MIT License.
 See the [LICENSE.md](LICENSE.md) file for details.
+
+Please respect the license for each resource or asset used by this project.
