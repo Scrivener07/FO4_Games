@@ -17,7 +17,7 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/con
 #### Acknowledgments
 * The White Collar Players - Creator, contact on discord `TheWhiteCollarPlayers#7879`
 * Scrivener07 - Scripter, contact on discord `Scrivener07#4154`
-* Se7enRaven - Artist, created playing card assets as a resource for this project. See [LICENSE.md](LICENSE.md).
+* Se7enRaven - Artist, created playing card assets as a resource for this project. See [LICENSE.RESOURCE.md](LICENSE.RESOURCE.md).
 * Sarinia - Help, counsel regarding meshes, textures, and materials.
 * Jonathan Ostrus - Help, counsel regarding settlement objects in the Creation Kit.
 * Kinggath - Help regarding scripting for adding game tables to settlements.
