@@ -6,6 +6,7 @@ import Games:Shared:Common
 Actor Player
 InputEnableLayer InputLayer
 
+float TimeWait = 2.0 const
 int HudStandard = 0 const
 int HudHidden = 3 const
 
@@ -23,20 +24,18 @@ EndEvent
 
 State Starting
 	Event OnBeginState(string asOldState)
-		Game.ShowFirstPersonGeometry(false)
-		Game.SetInChargen(true, true, false)
-		Game.SetCharGenHUDMode(HudHidden)
-
-		Game.SetPlayerAIDriven()
 		Player.MoveTo(Games_Blackjack_CellMarker)
-		Player.SetScale(0.5)
 
-		InputLayer = InputEnableLayer.Create()
-		InputLayer.DisablePlayerControls(true, true, true, true, true, true, true, true, true, true, true)
-
+		Game.SetInChargen(true, true, false)
+		Game.ShowFirstPersonGeometry(false)
+		; InputLayer = InputEnableLayer.Create()
+		; InputLayer.DisablePlayerControls(true, true, true, true, true, true, false, true, true, true, true)
+		; Game.SetPlayerAIDriven()
+		; Game.SetCharGenHUDMode(HudHidden)
+		Player.SetScale(0.75)
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
 
-		Utility.Wait(1.0)
+		Utility.Wait(TimeWait)
 		ReleaseThread()
 	EndEvent
 EndState
@@ -44,7 +43,7 @@ EndState
 
 State Exiting
 	Event OnBeginState(string asOldState)
-		Utility.Wait(1.0)
+		Utility.Wait(TimeWait)
 
 		Game.ShowFirstPersonGeometry(true)
 		Game.SetInChargen(false, false, false)

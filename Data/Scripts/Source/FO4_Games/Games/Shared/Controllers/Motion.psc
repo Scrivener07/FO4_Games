@@ -1,4 +1,4 @@
-ScriptName Games:Shared:Controllers:Motion extends Form
+ScriptName Games:Shared:Controllers:Motion extends Games:Shared:Controller
 import Games:Shared:Common
 
 
@@ -8,12 +8,28 @@ ObjectReference[] Objects
 ObjectReference Destination
 float Speed = -1.0
 
-string EmptyState = "" const
-string BusyState = "Busy" const
 int Motion_Keyframed = 2 const
 
 
 ; Methods
+;---------------------------------------------
+
+Function Translate(ObjectReference aObject, ObjectReference aDestination, float aSpeed = 100.0)
+	ObjectReference[] array = new ObjectReference[1]
+	array[0] = aObject
+	TranslateEach(array, aDestination, aSpeed)
+EndFunction
+
+
+Function TranslateEach(ObjectReference[] aObjects, ObjectReference aDestination, float aSpeed = 100.0)
+	Objects = aObjects
+	Destination = aDestination
+	Speed = aSpeed
+	self.WaitFor(BusyState)
+EndFunction
+
+
+; Controller
 ;---------------------------------------------
 
 State Busy
@@ -30,7 +46,7 @@ State Busy
 			EndWhile
 		Else
 			WriteLine(self,  "No objects to translate.")
-			ChangeState(self, EmptyState)
+			self.WaitEnd()
 		EndIf
 	EndEvent
 
@@ -51,7 +67,7 @@ State Busy
 		int last = Objects.Length - 1
 
 		If (Index >= last)
-			ChangeState(self, EmptyState)
+			self.WaitEnd()
 		EndIf
 	EndFunction
 
@@ -85,39 +101,3 @@ EndEvent
 Function Evaluate()
 	{EMPTY}
 EndFunction
-
-
-; Functions
-;---------------------------------------------
-
-Function Translate(ObjectReference aObject, ObjectReference aDestination, float aSpeed = 100.0)
-	ObjectReference[] array = new ObjectReference[1]
-	array[0] = aObject
-	TranslateEach(array, aDestination, aSpeed)
-EndFunction
-
-
-Function TranslateEach(ObjectReference[] aObjects, ObjectReference aDestination, float aSpeed = 100.0)
-	Objects = aObjects
-	Destination = aDestination
-	Speed = aSpeed
-	ChangeState(self, BusyState)
-	Lock()
-EndFunction
-
-
-Function Lock()
-	While (IsBusy)
-		Utility.Wait(0.1)
-	EndWhile
-EndFunction
-
-
-; Properties
-;---------------------------------------------
-
-bool Property IsBusy Hidden
-	bool Function Get()
-		return GetState() == BusyState
-	EndFunction
-EndProperty

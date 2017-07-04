@@ -62,7 +62,7 @@ State Wagering
 		Match = new MatchData
 		Match.Wager = AskWager()
 
-		WriteLine(self, "Has completed the wagering state "+ToString())
+		; WriteLine(self, "Has completed the wagering state "+ToString())
 		ReleaseThread()
 	EndEvent
 EndState
@@ -72,7 +72,7 @@ State Dealing
 	Event OnBeginState(string asOldState)
 		TryDraw()
 
-		WriteLine(self, "Has completed the dealing state with "+ToString())
+		; WriteLine(self, "Has completed the dealing state with "+ToString())
 		ReleaseThread()
 	EndEvent
 EndState
@@ -82,7 +82,7 @@ State Playing
 	Event OnBeginState(string asOldState)
 		PlayNext()
 
-		WriteLine(self, "Has completed the playing state with "+ToString())
+		; WriteLine(self, "Has completed the playing state with "+ToString())
 		ReleaseThread()
 	EndEvent
 
@@ -94,28 +94,28 @@ State Playing
 		PlayBegin()
 
 		If (Blackjack.IsWin(Match.Score))
-			WriteMessage(Name, "Standing with 21.\n"+ToString())
+			Blackjack.GUI.TurnStanding(self)
 			return Stay
 
 		ElseIf (Blackjack.IsBust(Score))
-			WriteMessage(Name, "Busted!\n"+ToString())
+			Blackjack.GUI.TurnBusted(self)
 			return Stay
 		Else
 			int choice = AskChoice()
 
 			If (choice == ChoiceHit)
 				If (TryDraw())
-					WriteMessage(Name, "Drew a card.\n"+Hand[Last])
+					Blackjack.GUI.TurnDrew(self, Hand[Last])
 					return self.PlayNext()
 				Else
-					WriteMessage(Name, "Warning\nStanding, problem hitting for another card!\n"+ToString())
+					Blackjack.GUI.TurnDrawWarning(self)
 					return Stay
 				EndIf
 			ElseIf (choice == ChoiceStand)
-				WriteMessage(Name, "Chose to stand.\n"+ToString())
+				Blackjack.GUI.TurnStand(self)
 				return Stay
 			Else
-				WriteMessage(Name, "Warning\nStanding, the play choice "+choice+" was out of range.\n"+ToString())
+				Blackjack.GUI.TurnChoiceWarning(self, choice)
 				return Stay
 			EndIf
 		EndIf
@@ -168,6 +168,7 @@ Function PayWager()
 	If (self is Players:Human)
 		Game.RemovePlayerCaps(Wager)
 		Blackjack.GUI.WagerPaid(self)
+		Utility.Wait(3.0) ; dummy wait
 	EndIf
 EndFunction
 
@@ -178,6 +179,7 @@ Function WinWager()
 	If (self is Players:Human)
 		Game.GivePlayerCaps(caps)
 		Blackjack.GUI.WagerWon(self, caps)
+		Utility.Wait(3.0) ; dummy wait
 	EndIf
 EndFunction
 
@@ -187,6 +189,7 @@ Function PushWager()
 	If (self is Players:Human)
 		Game.GivePlayerCaps(Wager)
 		Blackjack.GUI.WagerRefunded(self)
+		Utility.Wait(3.0) ; dummy wait
 	EndIf
 EndFunction
 

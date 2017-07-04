@@ -1,14 +1,14 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
 import Games:Shared:Common
 
-Actor Player
+Actor PlayerRef
 
 
 ; Events
 ;---------------------------------------------
 
 Event OnInit()
-	Player = Game.GetPlayer()
+	PlayerRef = Game.GetPlayer()
 EndEvent
 
 
@@ -56,6 +56,12 @@ EndFunction
 ;---------------------------------------------
 
 Group Human
+	Actor Property Player Hidden
+		Actor Function Get()
+			return PlayerRef
+		EndFunction
+	EndProperty
+
 	int Property Caps Hidden
 		int Function Get()
 			return Player.GetGoldAmount()

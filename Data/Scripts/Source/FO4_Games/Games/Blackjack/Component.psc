@@ -58,7 +58,7 @@ bool Function CallAndWait(string thread)
 	Else
 		If (ChangeState(self, thread))
 			If (LockThread())
-				WriteLine(self, "The '"+thread+"'' thread has completed.")
+				; WriteLine(self, "The '"+thread+"'' thread has completed.")
 				return Completed
 			Else
 				WriteLine(self, "Unable to lock the '"+thread+"'' thread.")

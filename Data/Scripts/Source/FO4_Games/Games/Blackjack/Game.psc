@@ -8,6 +8,8 @@ ObjectReference Entry
 Player[] Players
 CustomEvent PhaseEvent
 
+float TimeWait = 10.0 const
+
 
 ; Events
 ;---------------------------------------------
@@ -36,7 +38,7 @@ bool Function Play(ObjectReference aEntryPoint)
 EndFunction
 
 
-Function SendPhase(Blackjack:Game sender, string name, bool change) Global
+bool Function SendPhase(Blackjack:Game sender, string name, bool change) Global
 	string stateName = sender.GetState()
 	If (stateName == name)
 
@@ -49,8 +51,10 @@ Function SendPhase(Blackjack:Game sender, string name, bool change) Global
 
 		WriteLine(sender, "Sending phase event:" + phase)
 		sender.SendCustomEvent("PhaseEvent", arguments)
+		return true
 	Else
 		WriteLine(sender, "Cannot not send the phase '"+name+"' while in the '"+stateName+"' state.")
+		return false
 	EndIf
 EndFunction
 
@@ -61,16 +65,21 @@ EndFunction
 State Starting
 	Event OnBeginState(string asOldState)
 		{Session Begin}
-		If (Human.HasCaps)
-			WriteLine("Phase", "Starting")
-			SendPhase(self, StartingPhase, Begun)
+		WriteLine("Phase", "Starting")
 
-			If (Table.CallAndWait(StartingPhase))
-				WriteLine(self, "Table component has finished the Starting thread.")
-			EndIf
-			If (Cards.CallAndWait(StartingPhase))
-				WriteLine(self, "Cards component has finished the Starting thread.")
-			EndIf
+		If (Human.HasCaps == false)
+			; go straight to idle phase
+			ChangeState(self, IdlePhase)
+			GUI.ShowKickedEntry()
+			return
+		EndIf
+
+		If (SendPhase(self, StartingPhase, Begun))
+			Utility.Wait(TimeWait)
+
+			Table.CallAndWait(StartingPhase)
+			Cards.CallAndWait(StartingPhase)
+			GUI.CallAndWait(StartingPhase)
 
 			Add(Human)
 			Human.CallAndWait(StartingPhase)
@@ -92,8 +101,7 @@ State Starting
 
 			ChangeState(self, WageringPhase)
 		Else
-			ChangeState(self, IdlePhase)
-			GUI.ShowKicked()
+			ChangeState(self, ExitingPhase)
 		EndIf
 	EndEvent
 
@@ -108,9 +116,19 @@ EndState
 State Wagering
 	Event OnBeginState(string asOldState)
 		{Game State}
-		If (Human.HasCaps)
-			WriteLine("Phase", "Wagering")
-			SendPhase(self, WageringPhase, Begun)
+		WriteLine("Phase", "Wagering")
+
+		If (Human.HasCaps == false)
+			ChangeState(self, ExitingPhase)
+			GUI.ShowKickedWager()
+			return
+		EndIf
+
+
+		If (SendPhase(self, WageringPhase, Begun))
+			Utility.Wait(TimeWait)
+
+			GUI.CallAndWait(WageringPhase)
 
 			If (Players)
 				int index = 0
@@ -123,11 +141,13 @@ State Wagering
 						WriteLine(self, gambler.Name+" has chosen to wager "+gambler.Wager)
 					EndIf
 
+					Utility.Wait(TimeWait)
 					index += 1
 				EndWhile
 			Else
 				WriteLine(self, "There are no players to wager.")
 			EndIf
+
 
 			If (Human.Wager == Invalid)
 				ChangeState(self, ExitingPhase)
@@ -136,7 +156,6 @@ State Wagering
 			EndIf
 		Else
 			ChangeState(self, ExitingPhase)
-			GUI.ShowKicked()
 		EndIf
 	EndEvent
 
@@ -151,27 +170,33 @@ State Dealing
 	Event OnBeginState(string asOldState)
 		{Game State}
 		WriteLine("Phase", "Dealing")
-		SendPhase(self, DealingPhase, Begun)
 
-		Cards.Shuffle()
+		If (SendPhase(self, DealingPhase, Begun))
+			Utility.Wait(TimeWait)
 
-		If (Players)
-			int index = 0
-			While (index < Count)
-				Players[index].CallAndWait(DealingPhase)
-				index += 1
-			EndWhile
+			GUI.CallAndWait(DealingPhase)
+			Cards.Shuffle()
 
-			index = 0
-			While (index < Count)
-				Players[index].CallAndWait(DealingPhase)
-				index += 1
-			EndWhile
+			If (Players)
+				int index = 0
+				While (index < Count)
+					Players[index].CallAndWait(DealingPhase)
+					index += 1
+				EndWhile
+
+				index = 0
+				While (index < Count)
+					Players[index].CallAndWait(DealingPhase)
+					index += 1
+				EndWhile
+			Else
+				WriteLine(self, "There are no players to deal.")
+			EndIf
+
+			ChangeState(self, PlayingPhase)
 		Else
-			WriteLine(self, "There are no players to deal.")
+			ChangeState(self, ExitingPhase)
 		EndIf
-
-		ChangeState(self, PlayingPhase)
 	EndEvent
 
 	Event OnEndState(string asNewState)
@@ -184,19 +209,26 @@ State Playing
 	Event OnBeginState(string asOldState)
 		{Game State}
 		WriteLine("Phase", "Playing")
-		SendPhase(self, PlayingPhase, Begun)
 
-		If (Players)
-			int index = 0
-			While (index < Count)
-				Players[index].CallAndWait(PlayingPhase)
-				index += 1
-			EndWhile
+		If (SendPhase(self, PlayingPhase, Begun))
+			Utility.Wait(TimeWait)
+
+			GUI.CallAndWait(PlayingPhase)
+
+			If (Players)
+				int index = 0
+				While (index < Count)
+					Players[index].CallAndWait(PlayingPhase)
+					index += 1
+				EndWhile
+			Else
+				WriteLine(self, "There are no players to play.")
+			EndIf
+
+			ChangeState(self, ScoringPhase)
 		Else
-			WriteLine(self, "There are no players to play.")
+			ChangeState(self, ExitingPhase)
 		EndIf
-
-		ChangeState(self, ScoringPhase)
 	EndEvent
 
 	Event OnEndState(string asNewState)
@@ -209,57 +241,64 @@ State Scoring
 	Event OnBeginState(string asOldState)
 		{Game State}
 		WriteLine("Phase", "Scoring")
-		SendPhase(self, ScoringPhase, Begun)
 
-		If (Players)
-			int index = 0
-			While (index < Count)
-				Player gambler = Players[index]
+		If (SendPhase(self, ScoringPhase, Begun))
+			Utility.Wait(TimeWait)
 
-				If (gambler is Players:Dealer)
-					WriteLine(Dealer, "Skipped for scoring.")
-				Else
-					If (IsBust(gambler.Score))
-						GUI.PlayerBusted(gambler)
+			GUI.CallAndWait(ScoringPhase)
+
+			If (Players)
+				int index = 0
+				While (index < Count)
+					Player gambler = Players[index]
+
+					If (gambler is Players:Dealer)
+						WriteLine(Dealer, "Skipped for scoring.")
 					Else
-						If (IsBust(Dealer.Score))
-							GUI.DealerBusted(gambler, Dealer)
-							gambler.WinWager()
+						If (IsBust(gambler.Score))
+							GUI.PlayerBusted(gambler)
 						Else
-							If (gambler.Score > Dealer.Score)
-								GUI.PlayersWins(gambler, Dealer)
+							If (IsBust(Dealer.Score))
+								GUI.DealerBusted(gambler, Dealer)
 								gambler.WinWager()
-
-							ElseIf (gambler.Score < Dealer.Score)
-								GUI.PlayerLoses(gambler, Dealer)
-
-							ElseIf (gambler.Score == Dealer.Score)
-								GUI.PlayerPushed(gambler, Dealer)
-								gambler.PushWager()
 							Else
-								WriteMessage(gambler.Name, "Warning\nProblem handling score "+gambler.Score+" against dealers "+Dealer.Score+".")
-								; derp, i dont know what happened
+								If (gambler.Score > Dealer.Score)
+									GUI.PlayersWins(gambler, Dealer)
+									gambler.WinWager()
+
+								ElseIf (gambler.Score < Dealer.Score)
+									GUI.PlayerLoses(gambler, Dealer)
+
+								ElseIf (gambler.Score == Dealer.Score)
+									GUI.PlayerPushed(gambler, Dealer)
+									gambler.PushWager()
+								Else
+									GUI.ScoreWarning(gambler, Dealer)
+									; derp, i dont know what happened
+								EndIf
 							EndIf
 						EndIf
 					EndIf
-				EndIf
 
-				Cards.CollectFrom(gambler)
-				index += 1
-			EndWhile
+					Cards.CollectFrom(gambler)
+					index += 1
+				EndWhile
 
-			If (Human.HasCaps)
-				If (GUI.PromptPlayAgain())
-					ChangeState(self, WageringPhase)
+				If (Human.HasCaps)
+					If (GUI.PromptPlayAgain())
+						ChangeState(self, WageringPhase)
+					Else
+						ChangeState(self, ExitingPhase)
+					EndIf
 				Else
 					ChangeState(self, ExitingPhase)
+					GUI.ShowKickedWager()
 				EndIf
 			Else
+				WriteLine(self, "There are no players to score.")
 				ChangeState(self, ExitingPhase)
-				GUI.ShowKicked()
 			EndIf
 		Else
-			WriteLine(self, "There are no players to score.")
 			ChangeState(self, ExitingPhase)
 		EndIf
 	EndEvent
@@ -275,16 +314,16 @@ State Exiting
 	Event OnBeginState(string asOldState)
 		{Session End}
 		WriteLine("Phase", "Exiting")
-		SendPhase(self, ExitingPhase, Begun)
 
-		If (Table.CallAndWait(ExitingPhase))
-			WriteLine(self, "Table component has finished the Exiting thread.")
-		EndIf
-		If (Cards.CallAndWait(ExitingPhase))
-			WriteLine(self, "Cards component has finished the Exiting thread.")
-		EndIf
+		If (SendPhase(self, ExitingPhase, Begun))
+			Utility.Wait(TimeWait)
 
-		Clear()
+			GUI.CallAndWait(ExitingPhase)
+			Table.CallAndWait(ExitingPhase)
+			Cards.CallAndWait(ExitingPhase)
+
+			Clear()
+		EndIf
 
 		ChangeState(self, IdlePhase)
 	EndEvent
