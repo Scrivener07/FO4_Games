@@ -219,6 +219,8 @@ State Playing
 				int index = 0
 				While (index < Count)
 					Players[index].CallAndWait(PlayingPhase)
+
+					Utility.Wait(TimeWait)
 					index += 1
 				EndWhile
 			Else

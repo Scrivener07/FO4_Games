@@ -2,12 +2,14 @@ ScriptName Games:Shared:Controllers:Prompt extends Games:Shared:Controller
 import Games:Shared:Common
 
 ; TODO: auiEntryID, is this an index or ID?
-; TODO: Support for multi-input such as the bet increase would use.
+; TODO: Support for multi-input such as the bet increase would use. (OnSelected)
 
 Actor Player
-Perk Menu
-int Choice = -1
+CustomEvent OnSelected
 
+Perk MenuValue
+int SelectedValue = -1
+ObjectReference ActivatorValue
 
 ; Events
 ;---------------------------------------------
@@ -20,25 +22,35 @@ EndEvent
 ; Methods
 ;---------------------------------------------
 
-int Function Show(Perk aMenu)
+bool Function Display(ObjectReference aActivator, Perk aMenu)
+	{Displays a perk activation menu.}
 	If (aMenu)
-		Menu = aMenu
+		Clear()
+
+		MenuValue = aMenu
+		ActivatorValue = aActivator
+
 		Player.AddPerk(aMenu)
+		RegisterForRemoteEvent(aActivator, "OnActivate")
 		RegisterForRemoteEvent(aMenu, "OnEntryRun")
+
 		self.WaitFor(BusyState)
-		return Selected
+		return true
 	Else
 		WriteLine(self, "Cannot show a none activate menu perk.")
-		return -1
+		return false
 	EndIf
 EndFunction
 
 
-Function Hide()
-	If (Menu)
-		Player.RemovePerk(Menu)
-		UnregisterForRemoteEvent(Menu, "OnEntryRun")
-		Menu = none
+Function Clear()
+	{Clears the last displayed perk activation menu.}
+	If (MenuValue)
+		Player.RemovePerk(MenuValue)
+		UnregisterForRemoteEvent(ActivatorValue, "OnActivate")
+		UnregisterForRemoteEvent(MenuValue, "OnEntryRun")
+		ActivatorValue = none
+		MenuValue = none
 	EndIf
 
 	self.WaitEnd()
@@ -53,26 +65,38 @@ State Busy
 		WriteLine(self,  "Began the busy state.")
 	EndEvent
 
+	Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akActionRef)
+		SelectedValue = 0
+		SendCustomEvent("OnSelected")
+	EndEvent
+
+
 	Event Perk.OnEntryRun(Perk akSender, int auiEntryID, ObjectReference akTarget, Actor akOwner)
 		WriteLine(self, akSender+" perk has run the entryID "+auiEntryID)
-		Choice = auiEntryID
-		self.WaitEnd()
+
+		SelectedValue = auiEntryID
+		SendCustomEvent("OnSelected")
 	EndEvent
 
 
 	Event OnEndState(string asNewState)
-		Player.RemovePerk(Menu)
-		UnregisterForRemoteEvent(Menu, "OnEntryRun")
-		Menu = none
+		Player.RemovePerk(MenuValue)
+		UnregisterForRemoteEvent(ActivatorValue, "OnActivate")
+		UnregisterForRemoteEvent(MenuValue, "OnEntryRun")
+		ActivatorValue = none
+		MenuValue = none
 	EndEvent
 
 
-	int Function Show(Perk aMenu)
-		{EMPTY}
-		return -1
-	EndFunction
+	; bool Function Display(ObjectReference aActivator, Perk aMenu)
+	; 	return false
+	; EndFunction
 EndState
 
+
+Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akActionRef)
+	{EMPTY}
+EndEvent
 
 Event Perk.OnEntryRun(Perk akSender, int auiEntryID, ObjectReference akTarget, Actor akOwner)
 	{EMPTY}
@@ -83,9 +107,15 @@ EndEvent
 ;---------------------------------------------
 
 Group Prompt
+	Perk Property Menu Hidden
+		Perk Function Get()
+			return MenuValue
+		EndFunction
+	EndProperty
+
 	int Property Selected Hidden
 		int Function Get()
-			return Choice
+			return SelectedValue
 		EndFunction
 	EndProperty
 EndGroup

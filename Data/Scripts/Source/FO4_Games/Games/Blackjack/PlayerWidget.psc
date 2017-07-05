@@ -1,9 +1,9 @@
-ScriptName Games:Blackjack:StatusWidget extends Games:Shared:Widgets:HUDWidget
+ScriptName Games:Blackjack:PlayerWidget extends Games:Shared:Widgets:HUDWidget
 import Games
 import Games:Shared:Common
 import Games:Shared:PointType
 
-string WidgetID = "StatusWidget.swf" const
+string WidgetID = "PlayerWidget.swf" const
 int Step = 10 const
 
 ; Keys
@@ -31,7 +31,7 @@ WidgetData Function Create()
 	widget.ID = WidgetID
 	widget.LoadNow = true
 	widget.AutoLoad = true
-	widget.X = 0
+	widget.X = 920
 	widget.Y = 480
 	return widget
 EndFunction
@@ -95,33 +95,38 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
+Group Object
+	Blackjack:Game Property Blackjack Auto Const Mandatory
+EndGroup
+
+
 Group Values
-	int Property Bet Hidden
-		Function Set(int value)
+	string Property Name Hidden
+		Function Set(string value)
 			SendText("100", value)
 		EndFunction
 	EndProperty
 
-	int Property Caps Hidden
-		Function Set(int value)
+	string Property Turn Hidden
+		Function Set(string value)
 			SendText("200", value)
-		EndFunction
-	EndProperty
-
-	int Property Earnings Hidden
-		Function Set(int value)
-			SendText("300", value)
 		EndFunction
 	EndProperty
 
 	int Property Score Hidden
 		Function Set(int value)
+			SendText("300", value)
+		EndFunction
+	EndProperty
+
+	int Property Bet Hidden
+		Function Set(int value)
 			SendText("400", value)
 		EndFunction
 	EndProperty
 
-	string Property Phase Hidden
-		Function Set(string value)
+	int Property Earnings Hidden
+		Function Set(int value)
 			SendText("500", value)
 		EndFunction
 	EndProperty

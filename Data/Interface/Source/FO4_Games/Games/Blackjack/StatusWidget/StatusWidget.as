@@ -24,6 +24,7 @@
 		private static const Command_UpdatePhase:int = 500;
 		public var Phase_tf:TextField;
 
+
 		public function StatusWidget()
 		{
 			// constructor
@@ -41,17 +42,17 @@
 				}
 				case String(Command_UpdateCaps):
 				{
-					Caps_tf.text = String(params[0]);
+					Caps_tf.text = String(int(params[0]));
 					break;
 				}
 				case String(Command_UpdateEarnings):
 				{
-					Earnings_tf.text = String(params[0]);
+					Earnings_tf.text = String(int(params[0]));
 					break;
 				}
 				case String(Command_UpdateScore):
 				{
-					Score_tf.text = String(params[0]);
+					Score_tf.text = String(int(params[0]));
 					break;
 				}
 				case String(Command_UpdatePhase):
