@@ -1,7 +1,6 @@
-## Resources
 Please see the respective license for each resource.
 
-### Se7enraven FO4 Modder's Resources
+## Se7enraven FO4 Modder's Resources
 The playing card textures for this project were taken from `Se7enraven FO4 Modder's Resources` by Se7enraven.
 
 Resource: http://www.nexusmods.com/fallout4/mods/23990/
@@ -75,7 +74,7 @@ Textures\Games\Cards\Default\SpadeQueen_d.dds
 ```
 
 
-### Macfadden Publications Climax
+## Macfadden Publications Climax
 The cover art for a magazine was taken from `Climax: Exciting Stories for Men` by Macfadden Publications.
 
 Resource: https://en.wikipedia.org/wiki/Macfadden_Publications
