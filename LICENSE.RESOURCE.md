@@ -2,7 +2,7 @@
 Please see the respective license for each resource.
 
 ### Se7enraven FO4 Modder's Resources
-The playing card textures for this project were provided by `Se7enraven FO4 Modder's Resources` by Se7enraven.
+The playing card textures for this project were taken from `Se7enraven FO4 Modder's Resources` by Se7enraven.
 
 Resource: http://www.nexusmods.com/fallout4/mods/23990/
 >The textures and model are free to use as long as the proper credit is given with respect to the above mentioned; this means including >this files credit section, included in your readme with any work released using these resources. The contents in this file are NOT to be used for projects which earn money in any form. Non-Profit use only!
