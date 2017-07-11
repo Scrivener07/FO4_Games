@@ -6,7 +6,10 @@ This repository requires the use of GIT LFS to retreive large files. [Git Large 
 
 #### Required Resources
 * [F4SE](http://f4se.silverlock.org/)
+* * Papyrus: `Fallout 4\Data\Scripts\Source\F4SE`
 * [HUD Framework](http://www.nexusmods.com/fallout4/mods/20309/)
+* * Papyrus: `Fallout 4\Data\Scripts\Source\HUD_FRAMEWORK`
+* * Actionscript: `Fallout 4\Data\Interface\Source\HUD_FRAMEWORK`
 
 #### Papyrus
 To compile the papyrus scripts, start a command prompt and run the following. Adjust the path for your machine.
