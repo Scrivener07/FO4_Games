@@ -10,11 +10,27 @@ This project uses the following import and namespace for scripting and assets.
 * * Papyrus: `Fallout 4\Data\Scripts\Source\HUD_FRAMEWORK`
 * * Flash: `Fallout 4\Data\Interface\Source\HUD_FRAMEWORK`
 
+
+## Git
+
+#### GitHub Desktop
+If you use git on the command line or another git client then feel ignore this.
+
+You will need a git client to download files from the repository and stay in sync with any changes. Github has their own git client that I use and recommend.
+* Download the installer from [here](https://desktop.github.com/).
+* Run the installer.
+* On the github website, select the green `Clone or download` button, and then select `Open in Desktop`.
+
 #### Git Large File Storage
 This repository requires the use of GIT LFS to retreive large files. [Git Large File Storage (LFS)](https://git-lfs.github.com/) replaces large files with text pointers inside Git, while storing the file contents on GitHub.
 * Download the windows installer from [here](https://github.com/git-lfs/git-lfs/releases).
-* Run the windows installer
+* Run the windows installer.
 * Start a command prompt/or git for windows prompt and run `git lfs install`.
+
+## Compiling
+
+#### Data Plugin
+Rename to `Games.esm` and use xEdit to edit the files header with the `ESM` flag.
 
 #### Papyrus
 To compile this projects papyrus source code, start a command prompt and run the following. Adjust the path for your machine.
