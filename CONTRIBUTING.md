@@ -3,7 +3,7 @@ This project uses the following import and namespace for scripting and assets.
 * Papyrus: `Fallout 4\Data\Scripts\Source\FO4_Games`
 * Flash: `Fallout 4\Data\Interface\Source\FO4_Games`
 
-#### Required Resources
+#### Required
 * [F4SE](http://f4se.silverlock.org/)
 * * Papyrus: `Fallout 4\Data\Scripts\Source\F4SE`
 * [HUD Framework](http://www.nexusmods.com/fallout4/mods/20309/)
@@ -17,7 +17,8 @@ This repository requires the use of GIT LFS to retreive large files. [Git Large 
 * Start a command prompt/or git for windows prompt and run `git lfs install`.
 
 #### Papyrus
-To compile the papyrus scripts, start a command prompt and run the following. Adjust the path for your machine.
+To compile this projects papyrus source code, start a command prompt and run the following. Adjust the path for your machine.
 `PapyrusCompiler.exe "D:\Games\Steam\SteamApps\common\Fallout 4\Data\Scripts\Source\FO4_Games\Build.ppj"`
 
-
+#### Flash
+To publish this projects flash interface files, open the `FLA` file in Flash and publish the `SWF` file.
