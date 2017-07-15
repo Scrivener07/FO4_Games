@@ -9,7 +9,7 @@ ScriptName Games:Blackjack:Players:Abraham extends Games:Blackjack:Player
 ; Personality
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
+MarkerData Function GetMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Games_Blackjack_P2C01
 	marker.Card02 = Games_Blackjack_P2C02
@@ -26,7 +26,7 @@ MarkerData Function CreateMarkers()
 EndFunction
 
 
-int Function AskWager()
+int Function GetWager()
 	return (Blackjack.Human.Wager * 3) + 50
 EndFunction
 

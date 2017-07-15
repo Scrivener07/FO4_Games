@@ -14,10 +14,6 @@ Card[] Cards
 bool Success = true const
 bool Failure = false const
 
-bool Continue = true const
-bool Stay = false const
-
-
 Struct MatchData
 	int Turn = 0
 	int Score = 0
@@ -49,7 +45,10 @@ EndStruct
 State Starting
 	Event OnBeginState(string asOldState)
 		Session = new SessionData
-		Marker = CreateMarkers()
+		Marker = GetMarkers()
+
+		Blackjack.HUD.Text = "Joined"
+		Blackjack.HUD.Update(self)
 
 		ReleaseThread()
 	EndEvent
@@ -60,9 +59,15 @@ State Wagering
 	Event OnBeginState(string asOldState)
 		Cards = new Card[0]
 		Match = new MatchData
-		Match.Wager = AskWager()
+		Match.Wager = GetWager()
 
-		; WriteLine(self, "Has completed the wagering state "+ToString())
+		PayWager()
+
+		If (Wager != Invalid)
+			Blackjack.HUD.Text = "Wagered a bet of "+Wager
+			Blackjack.HUD.Update(self)
+		EndIf
+
 		ReleaseThread()
 	EndEvent
 EndState
@@ -72,7 +77,9 @@ State Dealing
 	Event OnBeginState(string asOldState)
 		TryDraw()
 
-		; WriteLine(self, "Has completed the dealing state with "+ToString())
+		Blackjack.HUD.Text = "Dealt a card.."
+		Blackjack.HUD.Update(self)
+
 		ReleaseThread()
 	EndEvent
 EndState
@@ -80,119 +87,54 @@ EndState
 
 State Playing
 	Event OnBeginState(string asOldState)
-		PlayNext()
+		{Play the next turn until a stand.}
+		bool Continue = true const
+		bool Break = false const
 
-		; WriteLine(self, "Has completed the playing state with "+ToString())
+		bool next = Continue
+		While (next)
+			Match.Turn += 1
+
+			self.PlayBegin()
+
+			If (Blackjack.IsWin(Match.Score))
+				Blackjack.HUD.Text = "Standing with 21."
+				next = Break
+
+			ElseIf (Blackjack.IsBust(Score))
+				Blackjack.HUD.Text = "Busted!"
+				next = Break
+			Else
+				int choice = self.GetPlay()
+
+				If (choice == ChoiceHit)
+					If (self.TryDraw())
+						Blackjack.HUD.Text = "Drew a card." + Hand[Last]
+						Blackjack.HUD.Update(self)
+						next = Continue
+					Else
+						WriteLine(self, "Error, problem hitting for another card. "+self.ToString())
+						next = Break
+					EndIf
+				ElseIf (choice == ChoiceStand)
+					Blackjack.HUD.Text = "Chose to stand."
+					next = Break
+				Else
+					WriteLine(self, "Error, the play choice "+choice+" was out of range. "+self.ToString())
+					next = Break
+				EndIf
+			EndIf
+		EndWhile
+
+		Blackjack.HUD.Update(self)
+
 		ReleaseThread()
 	EndEvent
-
-
-	bool Function PlayNext()
-		{Recursively play the next turn until a stand.}
-		Match.Turn += 1
-
-		PlayBegin()
-
-		If (Blackjack.IsWin(Match.Score))
-			Blackjack.GUI.TurnStanding(self)
-			return Stay
-
-		ElseIf (Blackjack.IsBust(Score))
-			Blackjack.GUI.TurnBusted(self)
-			return Stay
-		Else
-			int choice = AskChoice()
-
-			If (choice == ChoiceHit)
-				If (TryDraw())
-					Blackjack.GUI.TurnDrew(self, Hand[Last])
-					return self.PlayNext()
-				Else
-					Blackjack.GUI.TurnDrawWarning(self)
-					return Stay
-				EndIf
-			ElseIf (choice == ChoiceStand)
-				Blackjack.GUI.TurnStand(self)
-				return Stay
-			Else
-				Blackjack.GUI.TurnChoiceWarning(self, choice)
-				return Stay
-			EndIf
-		EndIf
-	EndFunction
 EndState
 
 
-bool Function PlayNext()
-	{Private}
-	return false
-EndFunction
-
-
-; Personality
+; Player
 ;---------------------------------------------
-
-MarkerData Function CreateMarkers()
-	{Required - Destination markers for motion.}
-	WriteMessage(self, "Error, I forgot to implement the CreateMarkers function!")
-	return none
-EndFunction
-
-
-int Function AskWager()
-	{Returns the amount of caps to wager.}
-	return 20
-EndFunction
-
-
-Function PlayBegin()
-	{What happens when a turn begins.}
-EndFunction
-
-
-int Function AskChoice()
-	{Returns the choice for this play.}
-	If (Match.Score <= 16)
-		return ChoiceHit
-	Else
-		return ChoiceStand
-	EndIf
-EndFunction
-
-
-; Functions
-;---------------------------------------------
-
-Function PayWager()
-	Session.Winnings -= Wager
-	If (self is Players:Human)
-		Game.RemovePlayerCaps(Wager)
-		Blackjack.GUI.WagerPaid(self)
-		Utility.Wait(3.0) ; dummy wait
-	EndIf
-EndFunction
-
-
-Function WinWager()
-	int caps = Wager * 2
-	Session.Winnings += caps
-	If (self is Players:Human)
-		Game.GivePlayerCaps(caps)
-		Blackjack.GUI.WagerWon(self, caps)
-		Utility.Wait(3.0) ; dummy wait
-	EndIf
-EndFunction
-
-
-Function PushWager()
-	Session.Winnings += Wager
-	If (self is Players:Human)
-		Game.GivePlayerCaps(Wager)
-		Blackjack.GUI.WagerRefunded(self)
-		Utility.Wait(3.0) ; dummy wait
-	EndIf
-EndFunction
-
 
 bool Function TryDraw()
 	If (CanDraw)
@@ -222,6 +164,77 @@ bool Function TryDraw()
 	Else
 		WriteLine(Name, "Cannot draw another card right now.")
 		return Failure
+	EndIf
+EndFunction
+
+
+; Virtual
+;---------------------------------------------
+
+int Function GetBank()
+	{The amount of caps the player has to play with.}
+	return 1000
+EndFunction
+
+
+MarkerData Function GetMarkers()
+	{Required - Destination markers for motion.}
+	WriteMessage(self, "Error, I forgot to implement the GetMarkers function!")
+	return none
+EndFunction
+
+
+int Function GetWager()
+	{Returns the amount of caps to wager.}
+	return 5
+EndFunction
+
+
+Function PlayBegin()
+	{What happens when a turn begins.}
+EndFunction
+
+
+int Function GetPlay()
+	{Returns the choice for this play.}
+	If (Match.Score <= 16)
+		return ChoiceHit
+	Else
+		return ChoiceStand
+	EndIf
+EndFunction
+
+
+; Functions
+;---------------------------------------------
+
+Function PayWager()
+	Session.Winnings -= Wager
+
+	If (self is Players:Human)
+		Game.RemovePlayerCaps(Wager)
+		Blackjack.HUD.Text = "Bet "+Wager+" caps."
+	EndIf
+EndFunction
+
+
+Function WinWager()
+	int value = Wager * 2
+	Session.Winnings += value
+
+	If (self is Players:Human)
+		Game.GivePlayerCaps(value)
+		Blackjack.HUD.Text = "Won "+value+" caps."
+	EndIf
+EndFunction
+
+
+Function PushWager()
+	Session.Winnings += Wager
+
+	If (self is Players:Human)
+		Game.GivePlayerCaps(Wager)
+		Blackjack.HUD.Text = "Refunded "+Wager+" caps."
 	EndIf
 EndFunction
 
@@ -277,7 +290,7 @@ EndGroup
 Group Player
 	string Property Name Hidden
 		string Function Get()
-			return self.GetName()
+			return self.GetName() ; F4SE
 		EndFunction
 	EndProperty
 
@@ -302,6 +315,18 @@ Group Player
 	int Property Winnings Hidden
 		int Function Get()
 			return Session.Winnings
+		EndFunction
+	EndProperty
+
+	int Property Caps Hidden
+		int Function Get()
+			return GetBank()
+		EndFunction
+	EndProperty
+
+	bool Property HasCaps Hidden
+		bool Function Get()
+			return Caps > 0
 		EndFunction
 	EndProperty
 

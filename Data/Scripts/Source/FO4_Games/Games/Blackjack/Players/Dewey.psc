@@ -7,7 +7,7 @@ ScriptName Games:Blackjack:Players:Dewey extends Games:Blackjack:Player
 ; Personality
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
+MarkerData Function GetMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Games_Blackjack_P5C01
 	marker.Card02 = Games_Blackjack_P5C02

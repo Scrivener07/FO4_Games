@@ -5,7 +5,7 @@ import Games:Shared:Common
 ; Personality
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
+MarkerData Function GetMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Games_Blackjack_D1C01
 	marker.Card02 = Games_Blackjack_D1C02
@@ -22,7 +22,7 @@ MarkerData Function CreateMarkers()
 EndFunction
 
 
-int Function AskWager()
+int Function GetWager()
 	WriteLine(self, "Skipping, a dealer does not wager a bet.")
 	return Invalid
 EndFunction
@@ -36,7 +36,7 @@ Function PlayBegin()
 EndFunction
 
 
-int Function AskChoice()
+int Function GetPlay()
 	If (Score <= 17)
 		return ChoiceHit
 	Else

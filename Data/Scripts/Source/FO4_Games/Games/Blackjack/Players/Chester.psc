@@ -7,7 +7,7 @@ ScriptName Games:Blackjack:Players:Chester extends Games:Blackjack:Player
 ; Personality
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
+MarkerData Function GetMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Games_Blackjack_P4C01
 	marker.Card02 = Games_Blackjack_P4C02

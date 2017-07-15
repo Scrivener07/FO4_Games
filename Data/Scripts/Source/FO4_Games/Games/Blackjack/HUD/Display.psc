@@ -1,9 +1,10 @@
-ScriptName Games:Blackjack:StatusWidget extends Games:Shared:Widgets:HUDWidget
+ScriptName Games:Blackjack:HUD:Display extends Games:Shared:Widgets:HUDWidget
 import Games
 import Games:Shared:Common
 import Games:Shared:PointType
 
-string WidgetID = "StatusWidget.swf" const
+
+string WidgetID = "Display.swf" const
 int Step = 10 const
 
 ; Keys
@@ -30,9 +31,9 @@ WidgetData Function Create()
 	WidgetData widget = new WidgetData
 	widget.ID = WidgetID
 	widget.LoadNow = true
-	widget.AutoLoad = true
+	widget.AutoLoad = false
 	widget.X = 0
-	widget.Y = 480
+	widget.Y = 0
 	return widget
 EndFunction
 
@@ -95,21 +96,23 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Values
-	int Property Bet Hidden
-		Function Set(int value)
+Group Game
+	string Property Phase Hidden
+		Function Set(string value)
 			SendText("100", value)
 		EndFunction
 	EndProperty
 
-	int Property Caps Hidden
-		Function Set(int value)
+	string Property Turn Hidden
+		Function Set(string value)
 			SendText("200", value)
 		EndFunction
 	EndProperty
+EndGroup
 
-	int Property Earnings Hidden
-		Function Set(int value)
+Group Status
+	string Property Name Hidden
+		Function Set(string value)
 			SendText("300", value)
 		EndFunction
 	EndProperty
@@ -120,9 +123,21 @@ Group Values
 		EndFunction
 	EndProperty
 
-	string Property Phase Hidden
-		Function Set(string value)
+	int Property Bet Hidden
+		Function Set(int value)
 			SendText("500", value)
+		EndFunction
+	EndProperty
+
+	int Property Caps Hidden
+		Function Set(int value)
+			SendText("600", value)
+		EndFunction
+	EndProperty
+
+	int Property Earnings Hidden
+		Function Set(int value)
+			SendText("700", value)
 		EndFunction
 	EndProperty
 EndGroup

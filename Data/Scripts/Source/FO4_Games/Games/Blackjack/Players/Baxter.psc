@@ -1,5 +1,4 @@
 ScriptName Games:Blackjack:Players:Baxter extends Games:Blackjack:Player
-import Games:Shared:Common
 
 ;/ Personality
 	Swatter
@@ -9,7 +8,7 @@ import Games:Shared:Common
 ; Personality
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
+MarkerData Function GetMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Games_Blackjack_P3C01
 	marker.Card02 = Games_Blackjack_P3C02
@@ -26,7 +25,7 @@ MarkerData Function CreateMarkers()
 EndFunction
 
 
-int Function AskChoice()
+int Function GetPlay()
 	If (Score <= 18)
 		return ChoiceHit
 	Else

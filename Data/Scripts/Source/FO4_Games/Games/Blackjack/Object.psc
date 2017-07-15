@@ -12,7 +12,7 @@ Struct PhaseEventArgs
 EndStruct
 
 
-Group PhaseNames
+Group StateNames
 	string Property IdlePhase = "" AutoReadOnly
 	string Property StartingPhase = "Starting" AutoReadOnly
 	string Property WageringPhase = "Wagering" AutoReadOnly
@@ -74,13 +74,19 @@ EndGroup
 Group Game
 	bool Property Idling Hidden
 		bool Function Get()
-			return self.GetState() == IdlePhase
+			return StateName == IdlePhase
 		EndFunction
 	EndProperty
 
 	bool Property IsBusy Hidden
 		bool Function Get()
-			return GetState() != IdlePhase
+			return StateName != IdlePhase
+		EndFunction
+	EndProperty
+
+	string Property StateName Hidden
+		string Function Get()
+			return GetState()
 		EndFunction
 	EndProperty
 EndGroup

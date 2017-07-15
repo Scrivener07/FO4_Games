@@ -12,10 +12,10 @@ Event OnInit()
 EndEvent
 
 
-; Personality
+; Player
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
+MarkerData Function GetMarkers()
 	MarkerData marker = new MarkerData
 	marker.Card01 = Games_Blackjack_P1C01
 	marker.Card02 = Games_Blackjack_P1C02
@@ -32,20 +32,25 @@ MarkerData Function CreateMarkers()
 EndFunction
 
 
-int Function AskWager()
-	return Blackjack.GUI.PromptWager(self)
+int Function GetBank()
+	return Player.GetGoldAmount()
 EndFunction
 
 
-int Function AskChoice()
+int Function GetWager()
+	return Blackjack.PromptWager()
+EndFunction
+
+
+int Function GetPlay()
 	int selected = Invalid
 
 	If (Turn == 1)
 		; show last two drawn cards
-		selected = Blackjack.GUI.ShowTurn(Hand[0].Rank, Hand[1].Rank, Score)
+		selected = Blackjack.ShowTurn(Hand[0].Rank, Hand[1].Rank, Score)
 	ElseIf (Turn >= 2)
 		; show last drawn card
-		selected = Blackjack.GUI.ShowTurnDealt(Hand[Last].Rank, Score)
+		selected = Blackjack.ShowTurnDealt(Hand[Last].Rank, Score)
 	EndIf
 
 	return selected
@@ -59,18 +64,6 @@ Group Human
 	Actor Property Player Hidden
 		Actor Function Get()
 			return PlayerRef
-		EndFunction
-	EndProperty
-
-	int Property Caps Hidden
-		int Function Get()
-			return Player.GetGoldAmount()
-		EndFunction
-	EndProperty
-
-	bool Property HasCaps Hidden
-		bool Function Get()
-			return Caps > 0
 		EndFunction
 	EndProperty
 EndGroup

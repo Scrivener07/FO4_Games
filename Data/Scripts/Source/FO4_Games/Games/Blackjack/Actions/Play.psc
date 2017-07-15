@@ -32,7 +32,7 @@ EndEvent
 Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akActionRef)
 	WriteLine(self, "ObjectReference.OnActivate")
 
-	If (Blackjack.GUI.PromptPlay())
+	If (Blackjack.PromptPlay())
 		Blackjack.Play(akSender)
 	EndIf
 EndEvent
