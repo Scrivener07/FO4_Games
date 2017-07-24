@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Components:Table extends Games:Blackjack:Component
+ScriptName Games:Blackjack:Objects:Table extends Games:Blackjack:Object
 import Games
 import Games:Blackjack
 import Games:Shared:Common
@@ -19,7 +19,7 @@ Event OnInit()
 EndEvent
 
 
-; Component
+; Task
 ;---------------------------------------------
 
 State Starting
@@ -36,7 +36,7 @@ State Starting
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
 
 		Utility.Wait(TimeWait)
-		ReleaseThread()
+		AwaitEnd()
 	EndEvent
 EndState
 
@@ -58,7 +58,7 @@ State Exiting
 			InputLayer = none
 		EndIf
 
-		ReleaseThread()
+		AwaitEnd()
 	EndEvent
 EndState
 

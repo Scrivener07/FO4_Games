@@ -1,4 +1,4 @@
-ScriptName Games:Shared:Controllers:Motion extends Games:Shared:Controller
+ScriptName Games:Shared:Tasks:Motion extends Games:Shared:Task
 import Games:Shared:Common
 
 
@@ -25,11 +25,11 @@ Function TranslateEach(ObjectReference[] aObjects, ObjectReference aDestination,
 	Objects = aObjects
 	Destination = aDestination
 	Speed = aSpeed
-	self.WaitFor(BusyState)
+	self.Await()
 EndFunction
 
 
-; Controller
+; Task
 ;---------------------------------------------
 
 State Busy
@@ -46,7 +46,7 @@ State Busy
 			EndWhile
 		Else
 			WriteLine(self,  "No objects to translate.")
-			self.WaitEnd()
+			self.AwaitEnd()
 		EndIf
 	EndEvent
 
@@ -67,7 +67,7 @@ State Busy
 		int last = Objects.Length - 1
 
 		If (Index >= last)
-			self.WaitEnd()
+			self.AwaitEnd()
 		EndIf
 	EndFunction
 

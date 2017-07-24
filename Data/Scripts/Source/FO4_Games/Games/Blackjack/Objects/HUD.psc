@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Components:HUD extends Games:Blackjack:Component
+ScriptName Games:Blackjack:Objects:HUD extends Games:Blackjack:Object
 import Games
 import Games:Blackjack
 import Games:Shared:Common
@@ -35,7 +35,7 @@ Function Update(Player gambler)
 	; TODO: TEMP ONLY
 	PlayerName = gambler.Name
 	PlayerScore = gambler.Score
-	PlayerBet = gambler.Wager
+	PlayerBet = gambler.Bet
 	PlayerCaps = gambler.Caps
 	PlayerEarnings = gambler.Winnings
 EndFunction

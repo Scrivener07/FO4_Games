@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Game extends Games:Blackjack:Component
+ScriptName Games:Blackjack:Game extends Games:Blackjack:Object
 import Games
 import Games:Shared:Common
 import Games:Shared:Deck
@@ -18,7 +18,6 @@ Event OnInit()
 	Players = new Player[0]
 	HUD.Widget()
 	RegisterForPhaseEvent(self)
-	RegisterForCustomEvent(Prompt, "OnSelected")
 EndEvent
 
 
@@ -27,28 +26,12 @@ Event OnQuestInit()
 EndEvent
 
 
-; Component
+; Object
 ;---------------------------------------------
 
 Event OnGamePhase(PhaseEventArgs e)
 	WriteLine(self, e)
 	HUD.Phase = e.Name
-
-	If (e.Change == Begun)
-		If (e.Name == WageringPhase)
-			Prompt.Display(Games_Blackjack_ActivateMenu, Games_Blackjack_Activate_Wager)
-		EndIf
-
-		If (e.Name == PlayingPhase)
-			Prompt.Display(Games_Blackjack_ActivateMenu, Games_Blackjack_Activate_Turn)
-		EndIf
-
-		If (e.Name == ScoringPhase)
-			Prompt.Display(Games_Blackjack_ActivateMenu, Games_Blackjack_Activate_Replay)
-		EndIf
-	Else
-		Prompt.Clear()
-	EndIf
 EndEvent
 
 
@@ -65,26 +48,26 @@ State Starting
 
 		If (SendPhase(self, StartingPhase, Begun))
 			HUD.Load()
-			Table.CallAndWait(StartingPhase)
-			Cards.CallAndWait(StartingPhase)
+			Table.Await(StartingPhase)
+			Cards.Await(StartingPhase)
 
 			Add(Human)
-			Human.CallAndWait(StartingPhase)
+			Human.Await(StartingPhase)
 
 			Add(Abraham)
-			Abraham.CallAndWait(StartingPhase)
+			Abraham.Await(StartingPhase)
 
 			Add(Baxter)
-			Baxter.CallAndWait(StartingPhase)
+			Baxter.Await(StartingPhase)
 
 			Add(Chester)
-			Chester.CallAndWait(StartingPhase)
+			Chester.Await(StartingPhase)
 
 			Add(Dewey)
-			Dewey.CallAndWait(StartingPhase)
+			Dewey.Await(StartingPhase)
 
 			Add(Dealer)
-			Dealer.CallAndWait(StartingPhase)
+			Dealer.Await(StartingPhase)
 
 			ChangeState(self, WageringPhase)
 		Else
@@ -125,7 +108,7 @@ State Wagering
 				WriteLine(self, "There are no players to wager.")
 			EndIf
 
-			If (Human.Wager == Invalid)
+			If (Human.Bet == Invalid)
 				ChangeState(self, ExitingPhase)
 			Else
 				ChangeState(self, DealingPhase)
@@ -137,7 +120,7 @@ State Wagering
 
 
 	Function For(Player gambler)
-		gambler.CallAndWait(WageringPhase)
+		gambler.Await(WageringPhase)
 	EndFunction
 
 
@@ -181,7 +164,7 @@ State Dealing
 
 
 	Function For(Player gambler)
-		gambler.CallAndWait(DealingPhase)
+		gambler.Await(DealingPhase)
 	EndFunction
 
 
@@ -218,7 +201,7 @@ State Playing
 
 
 	Function For(Player gambler)
-		gambler.CallAndWait(PlayingPhase)
+		gambler.Await(PlayingPhase)
 	EndFunction
 
 
@@ -236,14 +219,13 @@ State Scoring
 		If (SendPhase(self, ScoringPhase, Begun))
 			Utility.Wait(TimeWait)
 
-
-
 			If (Players)
 				int index = 0
 				While (index < Count)
 					For(Players[index])
 					index += 1
 				EndWhile
+
 
 				If (Human.HasCaps)
 					If (PromptPlayAgain())
@@ -255,6 +237,9 @@ State Scoring
 					ChangeState(self, ExitingPhase)
 					ShowKickedWager()
 				EndIf
+
+
+
 			Else
 				WriteLine(self, "There are no players to score.")
 				ChangeState(self, ExitingPhase)
@@ -266,32 +251,7 @@ State Scoring
 
 
 	Function For(Player gambler)
-		If (gambler is Players:Dealer)
-			WriteLine(Dealer, "Skipped for scoring.")
-		Else
-			If (IsBust(gambler.Score))
-				HUD.Text = "Score of "+gambler.Score+" is a bust."
-			Else
-				If (IsBust(Dealer.Score))
-					HUD.Text = "The dealer busted with "+Dealer.Score+"."
-					gambler.WinWager()
-				Else
-					If (gambler.Score > Dealer.Score)
-						HUD.Text = "Score of "+gambler.Score+" beats dealers "+Dealer.Score+"."
-						gambler.WinWager()
-					ElseIf (gambler.Score < Dealer.Score)
-						HUD.Text = "Score of "+gambler.Score+" loses to dealers "+Dealer.Score+"."
-					ElseIf (gambler.Score == Dealer.Score)
-						HUD.Text = "Score of "+gambler.Score+" pushes dealers "+Dealer.Score+"."
-						gambler.PushWager()
-					Else
-						; derp, i dont know what happened
-						WriteLine(self, "Error, problem handling score "+gambler.Score+" against dealers "+dealer.Score+".")
-					EndIf
-				EndIf
-			EndIf
-		EndIf
-
+		gambler.Await(ScoringPhase) ; refactor to Player.psc
 		Cards.CollectFrom(gambler)
 	EndFunction
 
@@ -312,8 +272,8 @@ State Exiting
 
 			HUD.Unload()
 
-			Table.CallAndWait(ExitingPhase)
-			Cards.CallAndWait(ExitingPhase)
+			Table.Await(ExitingPhase)
+			Cards.Await(ExitingPhase)
 
 			Clear()
 		EndIf
@@ -355,57 +315,6 @@ EndFunction
 ; HUD
 ;---------------------------------------------
 
-Event Games:Shared:Controllers:Prompt.OnSelected(Controllers:Prompt akSender, var[] arguments)
-	If (akSender.Menu == Games_Blackjack_Activate_Wager)
-		int OptionIncrease = 0 const
-		int OptionDecrease = 1 const
-		int OptionContinue = 2 const
-
-		If (akSender.Selected == OptionIncrease)
-			WriteMessage("Selected", "Increased Bet\nSelected:"+akSender.Selected)
-		EndIf
-		If (akSender.Selected == OptionDecrease)
-			WriteMessage("Selected", "Decreased Bet\nSelected:"+akSender.Selected)
-		EndIf
-		If (akSender.Selected == OptionContinue)
-			WriteMessage("Selected", "Continue with Bet\nSelected:"+akSender.Selected)
-		EndIf
-	EndIf
-
-	If (akSender.Menu == Games_Blackjack_Activate_Turn)
-		int OptionHit = 0 const
-		int OptionStay = 1 const
-		int OptionDouble = 2 const
-		int OptionSplit = 3 const
-
-		If (akSender.Selected == OptionHit)
-			WriteMessage("Selected", "Hit\nSelected:"+akSender.Selected)
-		EndIf
-		If (akSender.Selected == OptionStay)
-			WriteMessage("Selected", "Stay\nSelected:"+akSender.Selected)
-		EndIf
-		If (akSender.Selected == OptionDouble)
-			WriteMessage("Selected", "Double Down\nSelected:"+akSender.Selected)
-		EndIf
-		If (akSender.Selected == OptionSplit)
-			WriteMessage("Selected", "Split\nSelected:"+akSender.Selected)
-		EndIf
-	EndIf
-
-	If (akSender.Menu == Games_Blackjack_Activate_Replay)
-		int OptionNo = 0 const
-		int OptionYes = 1 const
-
-		If (akSender.Selected == OptionNo)
-			WriteMessage("Selected", "Replay No\nSelected:"+akSender.Selected)
-		EndIf
-		If (akSender.Selected == OptionYes)
-			WriteMessage("Selected", "Replay Yes\nSelected:"+akSender.Selected)
-		EndIf
-	EndIf
-EndEvent
-
-
 bool Function PromptPlay()
 	int selected = Games_Blackjack_MessagePlay.Show()
 	int OptionExit = 0 const
@@ -429,45 +338,45 @@ bool Function PromptPlayAgain()
 EndFunction
 
 
-int Function PromptWager()
-	int selected = Games_Blackjack_MessageWager.Show(Human.Caps, Human.Winnings)
-	int OptionExit = 0 const
-	int OptionWager1 = 1 const
-	int OptionWager5 = 2 const
-	int OptionWager10 = 3 const
-	int OptionWager20 = 4 const
-	int OptionWager50 = 5 const
-	int OptionWager100 = 6 const
+; int Function PromptWager()
+; 	int selected = Games_Blackjack_MessageWager.Show(Human.Caps, Human.Winnings)
+; 	int OptionExit = 0 const
+; 	int OptionWager1 = 1 const
+; 	int OptionWager5 = 2 const
+; 	int OptionWager10 = 3 const
+; 	int OptionWager20 = 4 const
+; 	int OptionWager50 = 5 const
+; 	int OptionWager100 = 6 const
 
-	If (selected == OptionExit || selected == Invalid)
-		return Invalid
-	ElseIf (selected == OptionWager1)
-		return 1
-	ElseIf (selected == OptionWager5)
-		return 5
-	ElseIf (selected == OptionWager10)
-		return 10
-	ElseIf (selected == OptionWager20)
-		return 20
-	ElseIf (selected == OptionWager50)
-		return 50
-	ElseIf (selected == OptionWager100)
-		return 100
-	Else
-		WriteLine(self, "The option '"+selected+"' is unhandled.")
-		return Invalid
-	EndIf
-EndFunction
-
-
-int Function ShowTurn(float card1, float card2, float score)
-	return Games_Blackjack_MessageTurn.Show(card1, card2, score)
-EndFunction
+; 	If (selected == OptionExit || selected == Invalid)
+; 		return Invalid
+; 	ElseIf (selected == OptionWager1)
+; 		return 1
+; 	ElseIf (selected == OptionWager5)
+; 		return 5
+; 	ElseIf (selected == OptionWager10)
+; 		return 10
+; 	ElseIf (selected == OptionWager20)
+; 		return 20
+; 	ElseIf (selected == OptionWager50)
+; 		return 50
+; 	ElseIf (selected == OptionWager100)
+; 		return 100
+; 	Else
+; 		WriteLine(self, "The option '"+selected+"' is unhandled.")
+; 		return Invalid
+; 	EndIf
+; EndFunction
 
 
-int Function ShowTurnDealt(float card, float score)
-	return Games_Blackjack_MessageTurnDealt.Show(card, score)
-EndFunction
+; int Function ShowTurn(float card1, float card2, float score)
+; 	return Games_Blackjack_MessageTurn.Show(card1, card2, score)
+; EndFunction
+
+
+; int Function ShowTurnDealt(float card, float score)
+; 	return Games_Blackjack_MessageTurnDealt.Show(card, score)
+; EndFunction
 
 
 Function ShowKickedWager()
@@ -595,9 +504,9 @@ EndFunction
 ;---------------------------------------------
 
 Group Object
-	Components:HUD Property HUD Auto Const Mandatory
-	Components:Table Property Table Auto Const Mandatory
-	Components:Cards Property Cards Auto Const Mandatory
+	Objects:HUD Property HUD Auto Const Mandatory
+	Objects:Table Property Table Auto Const Mandatory
+	Objects:Cards Property Cards Auto Const Mandatory
 EndGroup
 
 Group Actions
@@ -630,13 +539,6 @@ Group Players
 EndGroup
 
 Group HUD
-	Controllers:Prompt Property Prompt Auto Const Mandatory
-
-	ObjectReference Property Games_Blackjack_ActivateMenu Auto Const Mandatory
-	Perk Property Games_Blackjack_Activate_Replay Auto Const Mandatory
-	Perk Property Games_Blackjack_Activate_Turn Auto Const Mandatory
-	Perk Property Games_Blackjack_Activate_Wager Auto Const Mandatory
-
 	Message Property Games_Blackjack_MessageWager Auto Const Mandatory
 	Message Property Games_Blackjack_MessageTurn Auto Const Mandatory
 	Message Property Games_Blackjack_MessageTurnDealt Auto Const Mandatory

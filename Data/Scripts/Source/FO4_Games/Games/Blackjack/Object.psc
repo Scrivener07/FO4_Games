@@ -1,6 +1,63 @@
-ScriptName Games:Blackjack:Object extends Quest Native Const Hidden
+ScriptName Games:Blackjack:Object extends Games:Shared:Task Native Hidden
 import Games
 import Games:Shared:Common
+
+
+; Tasks
+;---------------------------------------------
+
+State Starting
+	Event OnBeginState(string asOldState)
+		Starting()
+		AwaitEnd()
+	EndEvent
+EndState
+Event Starting() Native
+
+
+State Wagering
+	Event OnBeginState(string asOldState)
+		Wagering()
+		AwaitEnd()
+	EndEvent
+EndState
+Event Wagering() Native
+
+
+State Dealing
+	Event OnBeginState(string asOldState)
+		Dealing()
+		AwaitEnd()
+	EndEvent
+EndState
+Event Dealing() Native
+
+
+State Playing
+	Event OnBeginState(string asOldState)
+		Playing()
+		AwaitEnd()
+	EndEvent
+EndState
+Event Playing() Native
+
+
+State Scoring
+	Event OnBeginState(string asOldState)
+		Scoring()
+		AwaitEnd()
+	EndEvent
+EndState
+Event Scoring() Native
+
+
+State Exiting
+	Event OnBeginState(string asOldState)
+		Exiting()
+		AwaitEnd()
+	EndEvent
+EndState
+Event Exiting() Native
 
 
 ; Phase Event
@@ -29,12 +86,7 @@ Group PhaseChanges
 EndGroup
 
 
-Event OnGamePhase(PhaseEventArgs e)
-	{Virtual}
-	WriteLine(self, "A phase event has been registered for but not implemented.")
-EndEvent
-
-
+Event OnGamePhase(PhaseEventArgs e) Native
 Event Games:Blackjack:Game.PhaseEvent(Blackjack:Game sender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
@@ -75,18 +127,6 @@ Group Game
 	bool Property Idling Hidden
 		bool Function Get()
 			return StateName == IdlePhase
-		EndFunction
-	EndProperty
-
-	bool Property IsBusy Hidden
-		bool Function Get()
-			return StateName != IdlePhase
-		EndFunction
-	EndProperty
-
-	string Property StateName Hidden
-		string Function Get()
-			return GetState()
 		EndFunction
 	EndProperty
 EndGroup

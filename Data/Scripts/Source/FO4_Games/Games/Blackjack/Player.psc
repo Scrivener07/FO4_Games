@@ -1,101 +1,118 @@
-ScriptName Games:Blackjack:Player extends Games:Blackjack:Component Hidden
+ScriptName Games:Blackjack:Player extends Games:Blackjack:PlayerType Hidden
 import Games
 import Games:Blackjack
 import Games:Shared
 import Games:Shared:Common
 import Games:Shared:Deck
 
-
-MatchData Match
-SessionData Session
-MarkerData Marker
 Card[] Cards
+
+SessionData Session
+MatchData Match
+
+MarkerValue Marker
+WagerValue Wager
+ChoiceValue Choice
 
 bool Success = true const
 bool Failure = false const
 
-Struct MatchData
-	int Turn = 0
-	int Score = 0
-	int Wager = 0
-EndStruct
 
-Struct SessionData
-	int Winnings = 0
-EndStruct
+; Events
+;---------------------------------------------
 
-Struct MarkerData
-	ObjectReference Card01
-	ObjectReference Card02
-	ObjectReference Card03
-	ObjectReference Card04
-	ObjectReference Card05
-	ObjectReference Card06
-	ObjectReference Card07
-	ObjectReference Card08
-	ObjectReference Card09
-	ObjectReference Card10
-	ObjectReference Card11
-EndStruct
+Event OnInit()
+	Cards = new Card[0]
+	Choice = new ChoiceValue
+	Marker = new MarkerValue
+	Match = new MatchData
+	Session = new SessionData
+	Wager = new WagerValue
+EndEvent
 
 
-; Component
+; Starting
 ;---------------------------------------------
 
 State Starting
-	Event OnBeginState(string asOldState)
+	Event Starting()
 		Session = new SessionData
-		Marker = GetMarkers()
+		Marker = new MarkerValue
+
+		self.SetMarkers(Marker)
+		self.StartBegin()
 
 		Blackjack.HUD.Text = "Joined"
 		Blackjack.HUD.Update(self)
-
-		ReleaseThread()
 	EndEvent
 EndState
 
+
+; Wagering
+;---------------------------------------------
 
 State Wagering
-	Event OnBeginState(string asOldState)
+	Event Wagering()
 		Cards = new Card[0]
 		Match = new MatchData
-		Match.Wager = GetWager()
+		Wager = new WagerValue
 
-		PayWager()
+		self.SetWager(Wager)
+		self.WagerBegin()
 
-		If (Wager != Invalid)
-			Blackjack.HUD.Text = "Wagered a bet of "+Wager
-			Blackjack.HUD.Update(self)
-		EndIf
+		Session.Winnings -= Bet
 
-		ReleaseThread()
+		Blackjack.HUD.Text = "Wagered a bet of "+Bet
+		Blackjack.HUD.Update(self)
 	EndEvent
+
+
+	Event SetWager(WagerValue set)
+		set.Bet = 5
+	EndEvent
+
+
+	Function IncreaseWager(int value)
+		Wager.Bet += value
+		Blackjack.HUD.PlayerBet = Bet
+	EndFunction
+
+
+	Function DecreaseWager(int value)
+		Wager.Bet -= value
+		Blackjack.HUD.PlayerBet = Bet
+	EndFunction
 EndState
 
 
+; Dealing
+;---------------------------------------------
+
 State Dealing
-	Event OnBeginState(string asOldState)
+	Event Dealing()
 		TryDraw()
+		self.DealBegin()
 
 		Blackjack.HUD.Text = "Dealt a card.."
 		Blackjack.HUD.Update(self)
-
-		ReleaseThread()
 	EndEvent
 EndState
 
 
+; Playing
+;---------------------------------------------
+
 State Playing
-	Event OnBeginState(string asOldState)
+	Event Playing()
 		{Play the next turn until a stand.}
+
 		bool Continue = true const
 		bool Break = false const
-
 		bool next = Continue
+
 		While (next)
 			Match.Turn += 1
-
-			self.PlayBegin()
+			self.PlayBegin(Match.Turn)
 
 			If (Blackjack.IsWin(Match.Score))
 				Blackjack.HUD.Text = "Standing with 21."
@@ -105,35 +122,108 @@ State Playing
 				Blackjack.HUD.Text = "Busted!"
 				next = Break
 			Else
-				int choice = self.GetPlay()
+				Choice = new ChoiceValue
+				self.SetChoice(Choice)
 
-				If (choice == ChoiceHit)
+				If (Choice.Selected == ChoiceHit)
 					If (self.TryDraw())
 						Blackjack.HUD.Text = "Drew a card." + Hand[Last]
 						Blackjack.HUD.Update(self)
 						next = Continue
 					Else
-						WriteLine(self, "Error, problem hitting for another card. "+self.ToString())
+						WriteMessage(self, "Error, problem drawing a card! "+self.ToString())
 						next = Break
 					EndIf
-				ElseIf (choice == ChoiceStand)
+
+				ElseIf (Choice.Selected == ChoiceStand)
 					Blackjack.HUD.Text = "Chose to stand."
 					next = Break
 				Else
-					WriteLine(self, "Error, the play choice "+choice+" was out of range. "+self.ToString())
+					WriteLine(self, "Error, the play choice "+Choice.Selected+" was out of range. "+self.ToString())
 					next = Break
 				EndIf
+
 			EndIf
 		EndWhile
 
 		Blackjack.HUD.Update(self)
+	EndEvent
 
-		ReleaseThread()
+
+	Event SetChoice(ChoiceValue set)
+		If (Score <= 16)
+			set.Selected = ChoiceHit
+		Else
+			set.Selected = ChoiceStand
+		EndIf
 	EndEvent
 EndState
 
 
-; Player
+; Scoring
+;---------------------------------------------
+
+State Scoring
+	Event Scoring()
+		self.ScoreBegin()
+
+		Player dealer = Blackjack.Dealer
+
+		If (self is Players:Dealer)
+			WriteLine(self, "Skipped dealer for scoring.")
+		Else
+			If (Blackjack.IsBust(Score))
+				Blackjack.HUD.Text = "Score of "+Score+" is a bust."
+			Else
+				If (Blackjack.IsBust(dealer.Score))
+					Blackjack.HUD.Text = "The dealer busted with "+dealer.Score+"."
+					WinWager()
+				Else
+					If (Score > dealer.Score)
+						Blackjack.HUD.Text = "Score of "+Score+" beats dealers "+dealer.Score+"."
+						WinWager()
+
+					ElseIf (Score < dealer.Score)
+						Blackjack.HUD.Text = "Score of "+Score+" loses to dealers "+dealer.Score+"."
+
+					ElseIf (Score == dealer.Score)
+						Blackjack.HUD.Text = "Score of "+Score+" pushes dealers "+dealer.Score+"."
+						PushWager()
+					Else
+						; derp, i dont know what happened
+						WriteLine(self, "Error, problem handling score "+Score+" against dealers "+dealer.Score+".")
+					EndIf
+				EndIf
+			EndIf
+		EndIf
+
+		Blackjack.HUD.Update(self)
+	EndEvent
+EndState
+
+
+Function WinWager()
+	int value = Bet * 2
+	Session.Winnings += value
+
+	If (self is Players:Human)
+		Game.GivePlayerCaps(value)
+		Blackjack.HUD.Text = "Won "+value+" caps."
+	EndIf
+EndFunction
+
+
+Function PushWager()
+	Session.Winnings += Bet
+
+	If (self is Players:Human)
+		Game.GivePlayerCaps(Bet)
+		Blackjack.HUD.Text = "Refunded "+Bet+" caps."
+	EndIf
+EndFunction
+
+
+; Functions
 ;---------------------------------------------
 
 bool Function TryDraw()
@@ -164,77 +254,6 @@ bool Function TryDraw()
 	Else
 		WriteLine(Name, "Cannot draw another card right now.")
 		return Failure
-	EndIf
-EndFunction
-
-
-; Virtual
-;---------------------------------------------
-
-int Function GetBank()
-	{The amount of caps the player has to play with.}
-	return 1000
-EndFunction
-
-
-MarkerData Function GetMarkers()
-	{Required - Destination markers for motion.}
-	WriteMessage(self, "Error, I forgot to implement the GetMarkers function!")
-	return none
-EndFunction
-
-
-int Function GetWager()
-	{Returns the amount of caps to wager.}
-	return 5
-EndFunction
-
-
-Function PlayBegin()
-	{What happens when a turn begins.}
-EndFunction
-
-
-int Function GetPlay()
-	{Returns the choice for this play.}
-	If (Match.Score <= 16)
-		return ChoiceHit
-	Else
-		return ChoiceStand
-	EndIf
-EndFunction
-
-
-; Functions
-;---------------------------------------------
-
-Function PayWager()
-	Session.Winnings -= Wager
-
-	If (self is Players:Human)
-		Game.RemovePlayerCaps(Wager)
-		Blackjack.HUD.Text = "Bet "+Wager+" caps."
-	EndIf
-EndFunction
-
-
-Function WinWager()
-	int value = Wager * 2
-	Session.Winnings += value
-
-	If (self is Players:Human)
-		Game.GivePlayerCaps(value)
-		Blackjack.HUD.Text = "Won "+value+" caps."
-	EndIf
-EndFunction
-
-
-Function PushWager()
-	Session.Winnings += Wager
-
-	If (self is Players:Human)
-		Game.GivePlayerCaps(Wager)
-		Blackjack.HUD.Text = "Refunded "+Wager+" caps."
 	EndIf
 EndFunction
 
@@ -284,7 +303,7 @@ EndFunction
 
 Group Object
 	Blackjack:Game Property Blackjack Auto Const Mandatory
-	Controllers:Motion Property Motion Auto Const Mandatory
+	Tasks:Motion Property Motion Auto Const Mandatory
 EndGroup
 
 Group Player
@@ -306,9 +325,9 @@ Group Player
 		EndFunction
 	EndProperty
 
-	int Property Wager Hidden
+	int Property Bet Hidden
 		int Function Get()
-			return Match.Wager
+			return Wager.Bet
 		EndFunction
 	EndProperty
 
@@ -349,9 +368,4 @@ Group Hand
 			return Cards.Length - 1
 		EndFunction
 	EndProperty
-EndGroup
-
-Group Choice
-	int Property ChoiceHit = 0 AutoReadOnly
-	int Property ChoiceStand = 1 AutoReadOnly
 EndGroup

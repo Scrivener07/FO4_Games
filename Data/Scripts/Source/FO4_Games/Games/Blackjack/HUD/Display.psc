@@ -30,7 +30,7 @@ int Right = 102 const
 WidgetData Function Create()
 	WidgetData widget = new WidgetData
 	widget.ID = WidgetID
-	widget.LoadNow = true
+	widget.LoadNow = true ; true, debug only
 	widget.AutoLoad = false
 	widget.X = 0
 	widget.Y = 0
