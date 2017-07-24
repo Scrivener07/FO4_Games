@@ -4,24 +4,24 @@ ScriptName Games:Blackjack:Players:Chester extends Games:Blackjack:Player
 	none, simple AI
 /;
 
-; Personality
+; Tasks
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
-	MarkerData marker = new MarkerData
-	marker.Card01 = Games_Blackjack_P4C01
-	marker.Card02 = Games_Blackjack_P4C02
-	marker.Card03 = Games_Blackjack_P4C03
-	marker.Card04 = Games_Blackjack_P4C04
-	marker.Card05 = Games_Blackjack_P4C05
-	marker.Card06 = Games_Blackjack_P4C06
-	marker.Card07 = Games_Blackjack_P4C07
-	marker.Card08 = Games_Blackjack_P4C08
-	marker.Card09 = Games_Blackjack_P4C09
-	marker.Card10 = Games_Blackjack_P4C10
-	marker.Card11 = Games_Blackjack_P4C11
-	return marker
-EndFunction
+State Starting
+	Event SetMarkers(MarkerValue set)
+		set.Card01 = Games_Blackjack_P4C01
+		set.Card02 = Games_Blackjack_P4C02
+		set.Card03 = Games_Blackjack_P4C03
+		set.Card04 = Games_Blackjack_P4C04
+		set.Card05 = Games_Blackjack_P4C05
+		set.Card06 = Games_Blackjack_P4C06
+		set.Card07 = Games_Blackjack_P4C07
+		set.Card08 = Games_Blackjack_P4C08
+		set.Card09 = Games_Blackjack_P4C09
+		set.Card10 = Games_Blackjack_P4C10
+		set.Card11 = Games_Blackjack_P4C11
+	EndEvent
+EndState
 
 
 ; Properties

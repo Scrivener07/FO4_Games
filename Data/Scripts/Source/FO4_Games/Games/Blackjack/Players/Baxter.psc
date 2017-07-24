@@ -1,38 +1,39 @@
 ScriptName Games:Blackjack:Players:Baxter extends Games:Blackjack:Player
-import Games:Shared:Common
 
 ;/ Personality
 	Swatter
 	Really likes to hit on their turn.
 /;
 
-; Personality
+; Tasks
 ;---------------------------------------------
 
-MarkerData Function CreateMarkers()
-	MarkerData marker = new MarkerData
-	marker.Card01 = Games_Blackjack_P3C01
-	marker.Card02 = Games_Blackjack_P3C02
-	marker.Card03 = Games_Blackjack_P3C03
-	marker.Card04 = Games_Blackjack_P3C04
-	marker.Card05 = Games_Blackjack_P3C05
-	marker.Card06 = Games_Blackjack_P3C06
-	marker.Card07 = Games_Blackjack_P3C07
-	marker.Card08 = Games_Blackjack_P3C08
-	marker.Card09 = Games_Blackjack_P3C09
-	marker.Card10 = Games_Blackjack_P3C10
-	marker.Card11 = Games_Blackjack_P3C11
-	return marker
-EndFunction
+State Starting
+	Event SetMarkers(MarkerValue set)
+		set.Card01 = Games_Blackjack_P3C01
+		set.Card02 = Games_Blackjack_P3C02
+		set.Card03 = Games_Blackjack_P3C03
+		set.Card04 = Games_Blackjack_P3C04
+		set.Card05 = Games_Blackjack_P3C05
+		set.Card06 = Games_Blackjack_P3C06
+		set.Card07 = Games_Blackjack_P3C07
+		set.Card08 = Games_Blackjack_P3C08
+		set.Card09 = Games_Blackjack_P3C09
+		set.Card10 = Games_Blackjack_P3C10
+		set.Card11 = Games_Blackjack_P3C11
+	EndEvent
+EndState
 
 
-int Function AskChoice()
-	If (Score <= 18)
-		return ChoiceHit
-	Else
-		return ChoiceStand
-	EndIf
-EndFunction
+State Playing
+	Event SetChoice(ChoiceValue set)
+		If (Score <= 18)
+			set.Selected = ChoiceHit
+		Else
+			set.Selected = ChoiceStand
+		EndIf
+	EndEvent
+EndState
 
 
 ; Properties

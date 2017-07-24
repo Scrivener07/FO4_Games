@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Components:Cards extends Games:Blackjack:Component
+ScriptName Games:Blackjack:Objects:Cards extends Games:Blackjack:Object
 import Games
 import Games:Blackjack
 import Games:Shared
@@ -80,7 +80,7 @@ EndEvent
 State Starting
 	Event OnBeginState(string asOldState)
 		CollectAll(true)
-		ReleaseThread()
+		AwaitEnd()
 	EndEvent
 EndState
 
@@ -147,7 +147,7 @@ EndFunction
 Group Object
 	Blackjack:Game Property Blackjack Auto Const Mandatory
 	Shared:Deck Property Deck Auto Const Mandatory
-	Controllers:Motion Property Motion Auto Const Mandatory
+	Tasks:Motion Property Motion Auto Const Mandatory
 EndGroup
 
 Group Markers
