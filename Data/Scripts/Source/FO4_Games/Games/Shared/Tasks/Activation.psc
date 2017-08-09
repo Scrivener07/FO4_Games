@@ -1,6 +1,6 @@
 ScriptName Games:Shared:Tasks:Activation extends Games:Shared:Task
 import Games:Shared
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 ;/ TODO:
 - The argument auiEntryID, is this an index or ID?

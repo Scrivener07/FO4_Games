@@ -1,10 +1,21 @@
 ScriptName Games:Blackjack:Object extends Games:Shared:Task Native Hidden
 import Games
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 
 ; Tasks
 ;---------------------------------------------
+
+Group Tasks
+	string Property IdlePhase = "" AutoReadOnly
+	string Property StartingPhase = "Starting" AutoReadOnly
+	string Property WageringPhase = "Wagering" AutoReadOnly
+	string Property DealingPhase = "Dealing" AutoReadOnly
+	string Property PlayingPhase = "Playing" AutoReadOnly
+	string Property ScoringPhase = "Scoring" AutoReadOnly
+	string Property ExitingPhase = "Exiting" AutoReadOnly
+EndGroup
+
 
 State Starting
 	Event OnBeginState(string asOldState)
@@ -67,17 +78,6 @@ Struct PhaseEventArgs
 	string Name
 	bool Change = true
 EndStruct
-
-
-Group StateNames
-	string Property IdlePhase = "" AutoReadOnly
-	string Property StartingPhase = "Starting" AutoReadOnly
-	string Property WageringPhase = "Wagering" AutoReadOnly
-	string Property DealingPhase = "Dealing" AutoReadOnly
-	string Property PlayingPhase = "Playing" AutoReadOnly
-	string Property ScoringPhase = "Scoring" AutoReadOnly
-	string Property ExitingPhase = "Exiting" AutoReadOnly
-EndGroup
 
 
 Group PhaseChanges

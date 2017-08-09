@@ -1,5 +1,5 @@
 ScriptName Games:Shared:Tasks:Motion extends Games:Shared:Task
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 
 int Index = -1

@@ -1,5 +1,5 @@
 ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:Object Native Hidden
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 
 Struct SessionData

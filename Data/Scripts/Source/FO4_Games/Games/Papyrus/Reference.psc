@@ -1,5 +1,5 @@
-Scriptname Games:Shared:Spatial Const Native Hidden
-import Games:Shared:PointType
+Scriptname Games:Papyrus:Reference Const Native Hidden
+import Games:Papyrus:PointType
 
 
 ; References

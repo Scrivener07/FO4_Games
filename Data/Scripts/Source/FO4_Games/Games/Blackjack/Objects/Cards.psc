@@ -2,7 +2,7 @@ ScriptName Games:Blackjack:Objects:Cards extends Games:Blackjack:Object
 import Games
 import Games:Blackjack
 import Games:Shared
-import Games:Shared:Common
+import Games:Papyrus:Log
 import Games:Shared:Deck
 
 

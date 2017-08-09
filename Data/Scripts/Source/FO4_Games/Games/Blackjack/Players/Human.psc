@@ -1,6 +1,6 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
 import Games:Shared
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 Actor PlayerRef
 

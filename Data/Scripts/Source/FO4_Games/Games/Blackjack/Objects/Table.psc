@@ -1,7 +1,7 @@
 ScriptName Games:Blackjack:Objects:Table extends Games:Blackjack:Object
 import Games
 import Games:Blackjack
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 Actor Player
 InputEnableLayer InputLayer

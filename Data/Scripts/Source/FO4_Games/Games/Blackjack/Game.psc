@@ -1,8 +1,9 @@
 ScriptName Games:Blackjack:Game extends Games:Blackjack:Object
 import Games
-import Games:Shared:Common
-import Games:Shared:Deck
+import Games:Papyrus:Log
+import Games:Papyrus:Script
 import Games:Shared
+import Games:Shared:Deck
 
 ObjectReference Entry
 Player[] Players
@@ -16,13 +17,14 @@ float TimeWait = 3.0 const
 
 Event OnInit()
 	Players = new Player[0]
-	HUD.Widget()
+	Display.Setup()
+	Choice.Setup()
 	RegisterForPhaseEvent(self)
 EndEvent
 
 
 Event OnQuestInit()
-	HUD.Register()
+	Display.Register()
 EndEvent
 
 
@@ -31,7 +33,7 @@ EndEvent
 
 Event OnGamePhase(PhaseEventArgs e)
 	WriteLine(self, e)
-	HUD.Phase = e.Name
+	Display.Phase = e.Name
 EndEvent
 
 
@@ -47,18 +49,18 @@ State Starting
 		EndIf
 
 		If (SendPhase(self, StartingPhase, Begun))
-			HUD.Load()
+			Display.Load()
 			Table.Await(StartingPhase)
 			Cards.Await(StartingPhase)
-
-			Add(Human)
-			Human.Await(StartingPhase)
 
 			Add(Abraham)
 			Abraham.Await(StartingPhase)
 
 			Add(Baxter)
 			Baxter.Await(StartingPhase)
+
+			Add(Human)
+			Human.Await(StartingPhase)
 
 			Add(Chester)
 			Chester.Await(StartingPhase)
@@ -90,7 +92,7 @@ State Wagering
 
 		If (Human.HasCaps == false)
 			ChangeState(self, ExitingPhase)
-			ShowKickedWager()
+			Prompt.ShowKicked()
 			return
 		EndIf
 
@@ -226,19 +228,16 @@ State Scoring
 					index += 1
 				EndWhile
 
-
 				If (Human.HasCaps)
-					If (PromptPlayAgain())
+					If (Prompt.PlayAgain())
 						ChangeState(self, WageringPhase)
 					Else
 						ChangeState(self, ExitingPhase)
 					EndIf
 				Else
 					ChangeState(self, ExitingPhase)
-					ShowKickedWager()
+					Prompt.ShowKicked()
 				EndIf
-
-
 
 			Else
 				WriteLine(self, "There are no players to score.")
@@ -270,7 +269,7 @@ State Exiting
 		If (SendPhase(self, ExitingPhase, Begun))
 			Utility.Wait(TimeWait)
 
-			HUD.Unload()
+			Display.Unload()
 
 			Table.Await(ExitingPhase)
 			Cards.Await(ExitingPhase)
@@ -312,77 +311,6 @@ Function For(Player gambler)
 EndFunction
 
 
-; HUD
-;---------------------------------------------
-
-bool Function PromptPlay()
-	int selected = Games_Blackjack_MessagePlay.Show()
-	int OptionExit = 0 const
-	int OptionStart = 1 const
-
-	If (selected == OptionStart)
-		return true
-
-	ElseIf (selected == OptionExit || selected == Invalid)
-		WriteLine(self, "Chose not to play Blackjack.")
-		return false
-	Else
-		WriteLine(self, "The option '"+selected+"' is unhandled.")
-		return false
-	EndIf
-EndFunction
-
-
-bool Function PromptPlayAgain()
-	return Games_Blackjack_MessagePlayAgain.Show() == 1
-EndFunction
-
-
-; int Function PromptWager()
-; 	int selected = Games_Blackjack_MessageWager.Show(Human.Caps, Human.Winnings)
-; 	int OptionExit = 0 const
-; 	int OptionWager1 = 1 const
-; 	int OptionWager5 = 2 const
-; 	int OptionWager10 = 3 const
-; 	int OptionWager20 = 4 const
-; 	int OptionWager50 = 5 const
-; 	int OptionWager100 = 6 const
-
-; 	If (selected == OptionExit || selected == Invalid)
-; 		return Invalid
-; 	ElseIf (selected == OptionWager1)
-; 		return 1
-; 	ElseIf (selected == OptionWager5)
-; 		return 5
-; 	ElseIf (selected == OptionWager10)
-; 		return 10
-; 	ElseIf (selected == OptionWager20)
-; 		return 20
-; 	ElseIf (selected == OptionWager50)
-; 		return 50
-; 	ElseIf (selected == OptionWager100)
-; 		return 100
-; 	Else
-; 		WriteLine(self, "The option '"+selected+"' is unhandled.")
-; 		return Invalid
-; 	EndIf
-; EndFunction
-
-
-; int Function ShowTurn(float card1, float card2, float score)
-; 	return Games_Blackjack_MessageTurn.Show(card1, card2, score)
-; EndFunction
-
-
-; int Function ShowTurnDealt(float card, float score)
-; 	return Games_Blackjack_MessageTurnDealt.Show(card, score)
-; EndFunction
-
-
-Function ShowKickedWager()
-	; dummy for `Message`
-	WriteMessage("Kicked", "Your all out of caps. Better luck next time.")
-EndFunction
 
 
 ; Methods
@@ -504,9 +432,14 @@ EndFunction
 ;---------------------------------------------
 
 Group Object
-	Objects:HUD Property HUD Auto Const Mandatory
 	Objects:Table Property Table Auto Const Mandatory
 	Objects:Cards Property Cards Auto Const Mandatory
+EndGroup
+
+Group UI
+	UI:Display Property Display Auto Const Mandatory
+	UI:Choice Property Choice Auto Const Mandatory
+	UI:Prompt Property Prompt Auto Const Mandatory
 EndGroup
 
 Group Actions
@@ -538,15 +471,6 @@ Group Players
 	Players:Dewey Property Dewey Auto Const Mandatory
 EndGroup
 
-Group HUD
-	Message Property Games_Blackjack_MessageWager Auto Const Mandatory
-	Message Property Games_Blackjack_MessageTurn Auto Const Mandatory
-	Message Property Games_Blackjack_MessageTurnDealt Auto Const Mandatory
-	Message Property Games_Blackjack_MessagePlay Auto Const Mandatory
-	Message Property Games_Blackjack_MessagePlayAgain Auto Const Mandatory
-	Message Property Games_Blackjack_MessageWin Auto Const Mandatory
-	Message Property Games_Blackjack_MessageBust Auto Const Mandatory
-EndGroup
 
 Group Scoring
 	int Property Win = 21 AutoReadOnly

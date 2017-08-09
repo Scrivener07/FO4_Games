@@ -1,6 +1,6 @@
 Scriptname Games:Blackjack:Actions:Play extends Form Default
 import Games
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 ; Events
 ;---------------------------------------------
@@ -32,7 +32,7 @@ EndEvent
 Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akActionRef)
 	WriteLine(self, "ObjectReference.OnActivate")
 
-	If (Blackjack.PromptPlay())
+	If (Blackjack.Prompt.PlayGame())
 		Blackjack.Play(akSender)
 	EndIf
 EndEvent

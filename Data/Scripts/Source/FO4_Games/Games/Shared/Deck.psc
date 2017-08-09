@@ -1,5 +1,5 @@
 ScriptName Games:Shared:Deck extends Form
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 
 Card[] Cards

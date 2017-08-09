@@ -1,4 +1,4 @@
-Scriptname Games:Shared:PointType Const Native Hidden
+Scriptname Games:Papyrus:PointType Const Native Hidden
 
 ; Notes
 ; https://msdn.microsoft.com/en-us/library/system.windows.point(v=vs.110).aspx
@@ -25,30 +25,6 @@ string Function PointToString(Point value) Global
 EndFunction
 
 
-; Not Implemented
-float Function PointAngleBetween(Point value, Point other) Global
-	{Retrieves the angle required to rotate the first specified Point structure into the second specified Point structure.}
-EndFunction
-
-
-; Not Implemented
-float Function PointDotProduct(Point value, Point other) Global
-	{Calculates the dot product of two Point structures.}
-EndFunction
-
-
-; Not Implemented
-Point Function PointCrossProduct(Point value, Point other) Global
-	{Calculates the cross product of two Point structures.}
-EndFunction
-
-
-; Not Implemented
-Point Function PointNormalize() Global
-	{Normalizes the specified Point structure.}
-EndFunction
-
-
 Point Function PointAbsolute(Point value) Global
 	Point result = new Point
 	result.X = Math.Abs(value.X)
@@ -61,17 +37,16 @@ EndFunction
 ; Operators
 ;---------------------------------------------
 
-; Not Implemented
 bool Function PointEquality(Point value, Point other) Global
 	{Compares two Point structures for equality.}
+	return (value.X == other.X) && (value.Y == other.Y) && (value.Z == other.Z)
 EndFunction
 
 
-; Not Implemented
 bool Function PointInequality(Point value, Point other) Global
 	{Compares two Point structures for inequality.}
+	return (value.X != other.X) || (value.Y != other.Y) || (value.Z != other.Z)
 EndFunction
-
 
 
 Point Function PointAddition(Point value, Point other) Global
@@ -111,12 +86,6 @@ Point Function PointDivision(Point value, float scalar) Global
 	result.Y = value.Y / scalar
 	result.Z = value.Z / scalar
 	return result
-EndFunction
-
-
-; Not Implemented
-Point Function PointUnaryNegation(Point value) Global
-	{Negates a Point structure.}
 EndFunction
 
 
