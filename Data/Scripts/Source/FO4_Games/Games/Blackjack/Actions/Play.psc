@@ -32,7 +32,10 @@ EndEvent
 Event ObjectReference.OnActivate(ObjectReference akSender, ObjectReference akActionRef)
 	WriteLine(self, "ObjectReference.OnActivate")
 
-	If (Blackjack.Prompt.PlayGame())
+	; TODO: shift responsibilty to Game.psc
+	; Dialog should remain optional to start the game
+
+	If (Blackjack.Dialog.PlayGame())
 		Blackjack.Play(akSender)
 	EndIf
 EndEvent

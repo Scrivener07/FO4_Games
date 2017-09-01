@@ -1,0 +1,27 @@
+D:.
+|   ChoiceMenu.as
+|   ChoiceMenu.fla
+|
++---scaleform
+|   \---gfx
+|           Extensions.as
+|
++---Shared
+|   |   GlobalFunc.as
+|   |   IMenu.as
+|   |   PlatformChangeEvent.as
+|   |   PlatformRequestEvent.as
+|   |
+|   \---AS3
+|       |   BSBracketClip.as
+|       |   BSButtonHint.as
+|       |   BSButtonHintBar.as
+|       |   BSButtonHintData.as
+|       |   BSUIComponent.as
+|       |
+|       \---COMPANIONAPP
+|               CompanionAppMode.as
+|               MobileButtonHint.as
+|
+\---ChoiceMenu_fla
+        BSButtonHint_IconHolder_5.as

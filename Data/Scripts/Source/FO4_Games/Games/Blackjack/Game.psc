@@ -18,7 +18,6 @@ float TimeWait = 3.0 const
 Event OnInit()
 	Players = new Player[0]
 	Display.Setup()
-	Choice.Setup()
 	RegisterForPhaseEvent(self)
 EndEvent
 
@@ -92,7 +91,7 @@ State Wagering
 
 		If (Human.HasCaps == false)
 			ChangeState(self, ExitingPhase)
-			Prompt.ShowKicked()
+			Dialog.ShowKicked()
 			return
 		EndIf
 
@@ -229,14 +228,14 @@ State Scoring
 				EndWhile
 
 				If (Human.HasCaps)
-					If (Prompt.PlayAgain())
+					If (Dialog.PlayAgain())
 						ChangeState(self, WageringPhase)
 					Else
 						ChangeState(self, ExitingPhase)
 					EndIf
 				Else
 					ChangeState(self, ExitingPhase)
-					Prompt.ShowKicked()
+					Dialog.ShowKicked()
 				EndIf
 
 			Else
@@ -439,7 +438,7 @@ EndGroup
 Group UI
 	UI:Display Property Display Auto Const Mandatory
 	UI:Choice Property Choice Auto Const Mandatory
-	UI:Prompt Property Prompt Auto Const Mandatory
+	UI:Dialog Property Dialog Auto Const Mandatory
 EndGroup
 
 Group Actions

@@ -1,8 +1,76 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
 import Games:Shared
 import Games:Papyrus:Log
+import Games:Blackjack:UI:Choice
 
 Actor PlayerRef
+
+int W = 87 const ; test key
+int A = 65 const ; test key
+int S = 83 const ; test key
+int D = 68 const ; test key
+int E_Key = 69 const ; test key
+int R = 82 const ; test key
+int T = 84 const ; test key
+
+
+
+Function WageringButtons()
+	Button AcceptButton = new Button
+	AcceptButton.Text = "Accept"
+	AcceptButton.KeyCode = E_Key
+	AcceptButton.PC = "E"
+	AcceptButton.PSN = "PSN_A"
+	AcceptButton.Xenon = "Xenon_A"
+
+	Button IncreaseButton = new Button
+	IncreaseButton.Text = "Increase"
+	IncreaseButton.KeyCode = D
+	IncreaseButton.PC = "D"
+	IncreaseButton.PSN = "PSN_L2"
+	IncreaseButton.Xenon = "Xenon_L2"
+
+	Button DecreaseButton = new Button
+	DecreaseButton.Text = "Increase"
+	DecreaseButton.KeyCode = A
+	DecreaseButton.PC = "A"
+	DecreaseButton.PSN = "PSN_R2"
+	DecreaseButton.Xenon = "Xenon_R2"
+
+	Button[] array = new Button[0]
+	array.Add(AcceptButton)
+	array.Add(IncreaseButton)
+	array.Add(DecreaseButton)
+
+	Menu.SetButtons(array)
+EndFunction
+
+
+
+; hit
+; stand
+Function PlayingButtons()
+	Button HitButton = new Button
+	HitButton.Text = "Hit"
+	HitButton.KeyCode = A
+	HitButton.PC = "A"
+	HitButton.PSN = "PSN_R2"
+	HitButton.Xenon = "Xenon_R2"
+
+	Button StandButton = new Button
+	StandButton.Text = "Stand"
+	StandButton.KeyCode = A
+	StandButton.PC = "A"
+	StandButton.PSN = "PSN_R2"
+	StandButton.Xenon = "Xenon_R2"
+
+	Button[] array = new Button[0]
+	array.Add(HitButton)
+	array.Add(StandButton)
+
+	Menu.SetButtons(array)
+EndFunction
+
 
 
 ; Events
@@ -25,9 +93,9 @@ Event OnGamePhase(PhaseEventArgs e)
 EndEvent
 
 
-Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-	{EMPTY}
-EndEvent
+; Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
+; 	{EMPTY}
+; EndEvent
 
 
 ; Object
@@ -56,30 +124,30 @@ State Wagering
 		Game.RemovePlayerCaps(Bet)
 	EndEvent
 
-	Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-		If (akSender.Menu == Games_Blackjack_Activate_Wager)
-			; |   [3]   |
-			; | [2] [1] |
-			; |   [0]   |
-			int OptionAccept = 0 const
-			int OptionDecrease = 1 const
-			int OptionIncrease = 2 const
+	; Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
+	; 	If (akSender.Menu == Games_Blackjack_Activate_Wager)
+	; 		; |   [3]   |
+	; 		; | [2] [1] |
+	; 		; |   [0]   |
+	; 		int OptionAccept = 0 const
+	; 		int OptionDecrease = 1 const
+	; 		int OptionIncrease = 2 const
 
-			int value = 5 const
+	; 		int value = 5 const
 
-			If (akSender.Selected == OptionIncrease)
-				IncreaseWager(value)
-			EndIf
+	; 		If (akSender.Selected == OptionIncrease)
+	; 			IncreaseWager(value)
+	; 		EndIf
 
-			If (akSender.Selected == OptionDecrease)
-				DecreaseWager(value)
-			EndIf
+	; 		If (akSender.Selected == OptionDecrease)
+	; 			DecreaseWager(value)
+	; 		EndIf
 
-			If (akSender.Selected == OptionAccept)
-				akSender.Accept()
-			EndIf
-		EndIf
-	EndEvent
+	; 		If (akSender.Selected == OptionAccept)
+	; 			akSender.Accept()
+	; 		EndIf
+	; 	EndIf
+	; EndEvent
 EndState
 
 
@@ -92,11 +160,11 @@ State Playing
 		set.Selected = Activation.Selected
 	EndEvent
 
-	Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-		If (akSender.Menu == Games_Blackjack_Activate_Turn)
-			akSender.Accept()
-		EndIf
-	EndEvent
+	; Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
+	; 	If (akSender.Menu == Games_Blackjack_Activate_Turn)
+	; 		akSender.Accept()
+	; 	EndIf
+	; EndEvent
 EndState
 
 
@@ -119,11 +187,11 @@ State Scoring
 	EndEvent
 
 
-	Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-		If (akSender.Menu == Games_Blackjack_Activate_Replay)
-			akSender.Accept()
-		EndIf
-	EndEvent
+	; Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
+	; 	If (akSender.Menu == Games_Blackjack_Activate_Replay)
+	; 		akSender.Accept()
+	; 	EndIf
+	; EndEvent
 EndState
 
 
@@ -167,4 +235,8 @@ Group Activation
 	Perk Property Games_Blackjack_Activate_Replay Auto Const Mandatory
 	Perk Property Games_Blackjack_Activate_Turn Auto Const Mandatory
 	Perk Property Games_Blackjack_Activate_Wager Auto Const Mandatory
+EndGroup
+
+Group Menu
+	Games:Blackjack:UI:Choice Property Menu Auto Const Mandatory
 EndGroup

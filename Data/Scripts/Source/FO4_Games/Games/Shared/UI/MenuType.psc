@@ -1,37 +1,40 @@
-Scriptname Games:Shared:UI:MenuType extends Quest Native Const Hidden
+Scriptname Games:Shared:UI:MenuType extends Games:Shared:Task Native Hidden
 import Games:Papyrus:Log
 
 
 Struct MenuData
 	string Name = ""
+	{The name of the menu to load within.}
 	string Root = ""
-	string File = ""
+	{The root display object.}
+	string Load = ""
+	{The swf file to load within the given menu.}
+	string Method = ""
+	{destination}
 EndStruct
 
 
 ; Methods
 ;---------------------------------------------
 
-Function Setup() Native
-{Configures the menu data for this menu.}
-
 bool Function Load() Native
-{Loads the menu data into the user interface.}
+{Loads the MenuData into the user interface.}
 
-
-; Callbacks
-;---------------------------------------------
-
-Event UI_Loaded(bool success, string menuName, string sourceVar, string destVar, string assetPath) Native
+Event MenuLoadedCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath) Native
 {Callback from "UI.Load" F4SE script.}
 
 
 ; Virtual
 ;---------------------------------------------
 
-Event SetData(MenuData menu) Native
-{Entending script configures the widget data.}
+MenuData Function GetMenuData() Native
+{Extending script returns the MenuData for this menu.}
 
-
-Event OnLoaded() Native
+Event OnMenuLoaded() Native
 {The menu has been loaded.}
+
+
+; Properties
+;---------------------------------------------
+
+string Property MenuLoadedCallback = "MenuLoadedCallback" AutoReadOnly
