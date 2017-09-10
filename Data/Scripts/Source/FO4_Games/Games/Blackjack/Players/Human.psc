@@ -29,6 +29,8 @@ Event OnInit()
 	parent.OnInit()
 	PlayerRef = Game.GetPlayer()
 	RegisterForPhaseEvent(Blackjack)
+
+	ButtonHint.Load()
 	RegisterForCustomEvent(ButtonHint, "OnSelected")
 EndEvent
 
@@ -40,7 +42,6 @@ Event OnGamePhase(PhaseEventArgs e)
 		; Activation.Accept()
 	EndIf
 EndEvent
-
 
 
 ; Object
@@ -59,16 +60,6 @@ State Starting
 		set.Card09 = Games_Blackjack_P1C09
 		set.Card10 = Games_Blackjack_P1C10
 		set.Card11 = Games_Blackjack_P1C11
-
-		; delete the following..
-		int E = 69 const ; test key
-
-		Button AcceptButton = new Button
-		AcceptButton.Text = "Hello World"
-		AcceptButton.KeyCode = E
-
-		ButtonHint.SetButton(AcceptButton)
-		ButtonHint.Show() ; waits for thread
 	EndEvent
 EndState
 
@@ -108,7 +99,6 @@ EndState
 State Playing
 	Event SetChoice(ChoiceValue set)
 		set.Selected = Invalid
-
 	EndEvent
 EndState
 

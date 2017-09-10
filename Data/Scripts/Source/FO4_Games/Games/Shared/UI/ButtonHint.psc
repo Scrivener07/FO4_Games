@@ -4,7 +4,6 @@ import Games:Papyrus:Script
 import Games:Shared
 
 CustomEvent OnSelected
-SelectionData Selected
 Button[] Buttons
 
 Struct Button
@@ -14,25 +13,25 @@ Struct Button
 	{The keyboard scancode}
 EndStruct
 
-Struct SelectionData
-	; depreciate
-	int KeyCode = -1
-EndStruct
-
-
 ; Events
 ;---------------------------------------------
 
 Event OnInit()
 	parent.OnInit()
 	Buttons = new Button[0]
-	Selected = new SelectionData ; unused
 EndEvent
 
 
 Event OnDisplayLoaded()
 	WriteLine(self, Menu+" has loaded "+Asset)
-	Show()
+
+	; derp derp
+	Button AcceptButton = new Button
+	AcceptButton.Text = "Hello World"
+	AcceptButton.KeyCode = 69
+
+	SetButton(AcceptButton)
+	Show() ; waits for thread
 EndEvent
 
 
@@ -53,12 +52,19 @@ EndFunction
 
 bool Function Show()
 	If (IsLoaded)
+		Visible = true
 		return TaskAwait(self, "Shown")
 	Else
 		WriteLine(self, "Must be loaded before shown.")
 		return false
 	EndIf
 EndFunction
+
+
+Function Hide()
+	Visible = false
+EndFunction
+
 
 
 bool Function Accept()
@@ -69,6 +75,8 @@ EndFunction
 
 Function SetButton(Button value)
 	string member = GetMember("SetButton")
+
+	Buttons.Add(value)
 
 	var[] argument = new var[1]
 	argument[0] = value

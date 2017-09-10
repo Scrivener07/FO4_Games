@@ -121,7 +121,7 @@ Function SendNumber(int aiCommand, float afArgument)
 	If (IsLoaded)
 		If (aiCommand != -1)
 			HUD.SendMessage(Data.ID, aiCommand, afArgument)
-			WriteLine(self, "Sent the '"+aiCommand+"' number command with the '"+afArgument+"' argument.")
+		;	WriteLine(self, "Sent the '"+aiCommand+"' number command with the '"+afArgument+"' argument.")
 		Else
 			WriteLine(self, "Cannot send an invalid '-1' number command.")
 		EndIf
@@ -133,7 +133,7 @@ Function SendText(string asCommand, string asArgument)
 	If (IsLoaded)
 		If (asCommand)
 			HUD.SendMessageString(Data.ID, asCommand, asArgument)
-			WriteLine(self, "Sent the '"+asCommand+"' text command with the '"+asArgument+"' argument.")
+		;	WriteLine(self, "Sent the '"+asCommand+"' text command with the '"+asArgument+"' argument.")
 		Else
 			WriteLine(self, "Cannot send a none string command.")
 		EndIf
@@ -145,7 +145,7 @@ Function SendCustom(Message akMessage)
 	If (IsLoaded)
 		If (akMessage)
 			HUD.SendCustomMessage(akMessage)
-			WriteLine(self, "Sent the '"+akMessage+"' custom message form.")
+		;	WriteLine(self, "Sent the '"+akMessage+"' custom message form.")
 		Else
 			WriteLine(self, "Cannot send a none Message form.")
 		EndIf

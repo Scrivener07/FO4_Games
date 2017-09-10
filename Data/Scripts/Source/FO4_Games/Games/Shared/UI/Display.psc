@@ -5,6 +5,8 @@ import Games:Papyrus:Script
 DisplayData Display
 CustomEvent OnLoaded
 
+; string LoadingTask = "Loading" const
+string LoadingCallback = "LoadingCallback" const
 
 ; Events
 ;---------------------------------------------
@@ -30,8 +32,28 @@ bool Function Load()
 		WriteLine(self, "The menu is already loaded.")
 		return false
 	Else
-		WriteLine(self, "Awaiting busy task.")
-		return TaskAwait(self) ; @ busy
+		Utility.Wait(0.1) ; wait for HUDMenu to be loaded...
+		If (UI.Load(Menu, Root, Asset, self, LoadingCallback))
+			WriteLine(self, "UI.Load is waiting for callback...")
+		Else
+			WriteLine(self, "UI.Load has failed for "+Display)
+		EndIf
+	EndIf
+EndFunction
+
+
+Function LoadingCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath)
+	WriteLine(self, "UI.Load: "+LoadingCallback)
+
+	If (menuName == Menu)
+		If (assetPath == Asset)
+			Display.Method = destVar
+			self.OnDisplayLoaded()
+		Else
+			WriteLine(self, "Callback received unhandled asset "+menuName)
+		EndIf
+	Else
+		WriteLine(self, "Callback received unhandled menu "+menuName)
 	EndIf
 EndFunction
 
@@ -39,47 +61,6 @@ EndFunction
 string Function GetMember(string member)
 	return Method+"."+member
 EndFunction
-
-
-; Tasks
-;---------------------------------------------
-
-State Busy
-	Event OnBeginState(string asOldState)
-		Utility.Wait(0.1) ; wait for HUDMenu to be loaded...
-
-		If (UI.Load(Menu, Root, Asset, self, UILoadedCallback))
-			WriteLine(self, "Load was a success.")
-		Else
-			WriteLine(self, "Failed to load ui display.")
-			TaskEnd(self)
-		EndIf
-	EndEvent
-
-	bool Function Load()
-		{EMPTY}
-	EndFunction
-
-	Event UILoadedCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath)
-		If (menuName == Menu)
-			If (assetPath == Asset)
-				Display.Method = destVar
-				self.OnDisplayLoaded()
-				TaskEnd(self)
-				WriteLine(self, "Callback loaded "+assetPath+" within "+menuName)
-			Else
-				WriteLine(self, "Callback received unhandled asset "+menuName)
-			EndIf
-		Else
-			WriteLine(self, "Callback received unhandled menu "+menuName)
-		EndIf
-	EndEvent
-
-
-	Event OnEndState(string asNewState)
-		WriteLine(self, "Ending busy state.")
-	EndEvent
-EndState
 
 
 ; Virtual

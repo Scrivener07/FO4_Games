@@ -23,8 +23,8 @@ Function Setup() Native
 bool Function Load() Native
 {Loads the DisplayData into the user interface.}
 
-Event UILoadedCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath) Native
-{Callback from `UI.Load` F4SE script.}
+; Function LoadingCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath) Native
+; {Callback from `UI.Load` F4SE script.}
 
 
 ; Virtual
@@ -40,4 +40,4 @@ Event OnDisplayLoaded() Native
 ; Properties
 ;---------------------------------------------
 
-string Property UILoadedCallback = "UILoadedCallback" AutoReadOnly
+
