@@ -3,8 +3,7 @@ import Games:Papyrus:Log
 import GamesTest:Framework
 
 
-
-Function LilacTrace(Lilac framework, int logLevel, string text) Global
+Function LilacTrace(GamesTest:Framework:Lilac framework, int logLevel, string text) Global
 	string level
 	If (logLevel == 0)
 		level = ""

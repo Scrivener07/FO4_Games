@@ -1,5 +1,6 @@
 ScriptName GamesTest:Framework:Lilac extends Quest
 import Games:Papyrus:Log
+import GamesTest:Framework
 import GamesTest:Framework:Library
 
 ;/
@@ -41,7 +42,7 @@ EndEvent
 ;---------------------------------------------
 
 Function RunTests()
-	LilacTrace(self, INFO, "Starting " + SystemName + " " + SystemVersion + " (API v" + APIVersion + ") on " + self)
+	LilacTrace(self, INFO, "Starting " + SystemName + " " + SystemVersion + " (API v" + APIVersion + ")")
 
 	; Initial setup
 	ResetTestRunner()
