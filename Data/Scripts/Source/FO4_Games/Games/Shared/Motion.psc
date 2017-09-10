@@ -1,6 +1,6 @@
-ScriptName Games:Shared:Tasks:Motion extends Games:Shared:Task
+ScriptName Games:Shared:Motion extends Quest
 import Games:Papyrus:Log
-
+import Games:Papyrus:Script
 
 int Index = -1
 
@@ -25,7 +25,7 @@ Function TranslateEach(ObjectReference[] aObjects, ObjectReference aDestination,
 	Objects = aObjects
 	Destination = aDestination
 	Speed = aSpeed
-	self.Await()
+	TaskAwait(self)
 EndFunction
 
 
@@ -46,7 +46,7 @@ State Busy
 			EndWhile
 		Else
 			WriteLine(self,  "No objects to translate.")
-			self.AwaitEnd()
+			TaskEnd(self)
 		EndIf
 	EndEvent
 
@@ -67,7 +67,7 @@ State Busy
 		int last = Objects.Length - 1
 
 		If (Index >= last)
-			self.AwaitEnd()
+			TaskEnd(self)
 		EndIf
 	EndFunction
 

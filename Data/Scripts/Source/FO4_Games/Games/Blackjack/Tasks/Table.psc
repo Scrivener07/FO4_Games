@@ -1,7 +1,8 @@
-ScriptName Games:Blackjack:Objects:Table extends Games:Blackjack:Object
+ScriptName Games:Blackjack:Tasks:Table extends Games:Blackjack:Task
 import Games
 import Games:Blackjack
 import Games:Papyrus:Log
+import Games:Papyrus:Script
 
 Actor Player
 InputEnableLayer InputLayer
@@ -36,7 +37,7 @@ State Starting
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
 
 		Utility.Wait(TimeWait)
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 
@@ -58,7 +59,7 @@ State Exiting
 			InputLayer = none
 		EndIf
 
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 

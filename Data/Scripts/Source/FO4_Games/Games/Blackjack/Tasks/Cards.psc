@@ -1,10 +1,10 @@
-ScriptName Games:Blackjack:Objects:Cards extends Games:Blackjack:Object
+ScriptName Games:Blackjack:Tasks:Cards extends Games:Blackjack:Task
 import Games
 import Games:Blackjack
-import Games:Shared
 import Games:Papyrus:Log
+import Games:Papyrus:Script
+import Games:Shared
 import Games:Shared:Deck
-
 
 ObjectReference[] References
 ReferenceData Data
@@ -80,7 +80,7 @@ EndEvent
 State Starting
 	Event OnBeginState(string asOldState)
 		CollectAll(true)
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 
@@ -147,7 +147,7 @@ EndFunction
 Group Object
 	Blackjack:Game Property Blackjack Auto Const Mandatory
 	Shared:Deck Property Deck Auto Const Mandatory
-	Tasks:Motion Property Motion Auto Const Mandatory
+	Shared:Motion Property Motion Auto Const Mandatory
 EndGroup
 
 Group Markers

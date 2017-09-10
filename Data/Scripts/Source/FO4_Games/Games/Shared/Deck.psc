@@ -1,6 +1,5 @@
-ScriptName Games:Shared:Deck extends Form
+ScriptName Games:Shared:Deck extends Quest
 import Games:Papyrus:Log
-
 
 Card[] Cards
 

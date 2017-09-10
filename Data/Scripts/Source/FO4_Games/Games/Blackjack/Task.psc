@@ -1,6 +1,7 @@
-ScriptName Games:Blackjack:Object extends Games:Shared:Task Native Hidden
+ScriptName Games:Blackjack:Task extends Quest Native Hidden
 import Games
 import Games:Papyrus:Log
+import Games:Papyrus:Script
 
 
 ; Tasks
@@ -20,7 +21,7 @@ EndGroup
 State Starting
 	Event OnBeginState(string asOldState)
 		Starting()
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 Event Starting() Native
@@ -29,7 +30,7 @@ Event Starting() Native
 State Wagering
 	Event OnBeginState(string asOldState)
 		Wagering()
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 Event Wagering() Native
@@ -38,7 +39,7 @@ Event Wagering() Native
 State Dealing
 	Event OnBeginState(string asOldState)
 		Dealing()
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 Event Dealing() Native
@@ -47,7 +48,7 @@ Event Dealing() Native
 State Playing
 	Event OnBeginState(string asOldState)
 		Playing()
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 Event Playing() Native
@@ -56,7 +57,7 @@ Event Playing() Native
 State Scoring
 	Event OnBeginState(string asOldState)
 		Scoring()
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 Event Scoring() Native
@@ -65,7 +66,7 @@ Event Scoring() Native
 State Exiting
 	Event OnBeginState(string asOldState)
 		Exiting()
-		AwaitEnd()
+		TaskEnd(self)
 	EndEvent
 EndState
 Event Exiting() Native
@@ -121,12 +122,29 @@ EndFunction
 
 Group Properties
 	int Property Invalid = -1 AutoReadOnly
+	bool Property Completed = true AutoReadOnly
+	bool Property Incomplete = false AutoReadOnly
 EndGroup
 
 Group Game
+	string Property EmptyState = "" AutoReadOnly
+	string Property BusyState = "Busy" AutoReadOnly
+
+	string Property StateName Hidden
+		string Function Get()
+			return GetState()
+		EndFunction
+	EndProperty
+
 	bool Property Idling Hidden
 		bool Function Get()
-			return StateName == IdlePhase
+			return GetState() == IdlePhase
+		EndFunction
+	EndProperty
+
+	bool Property IsBusy Hidden
+		bool Function Get()
+			return TaskRunning(self)
 		EndFunction
 	EndProperty
 EndGroup

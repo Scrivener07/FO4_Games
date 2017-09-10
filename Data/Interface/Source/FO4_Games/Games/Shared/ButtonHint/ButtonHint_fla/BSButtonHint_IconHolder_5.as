@@ -1,4 +1,4 @@
-package ChoiceMenu_fla
+package ButtonHint_fla
 {
 	import flash.display.MovieClip;
 

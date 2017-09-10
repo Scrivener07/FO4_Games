@@ -1,7 +1,7 @@
-Scriptname Games:Shared:UI:HUD:Framework Native Const Hidden
+Scriptname Games:Shared:HUD:Framework Native Const Hidden
 import Games:Papyrus:Log
 import Games:Papyrus:StringType
-import Games:Shared:UI:HUD:WidgetType
+import Games:Shared:HUD:WidgetType
 
 
 ; HUD

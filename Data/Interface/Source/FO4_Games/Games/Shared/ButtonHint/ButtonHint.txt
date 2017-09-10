@@ -1,6 +1,6 @@
 D:.
-|   ChoiceMenu.as
-|   ChoiceMenu.fla
+|   ButtonHint.as
+|   ButtonHint.fla
 |
 +---scaleform
 |   \---gfx
@@ -23,5 +23,5 @@ D:.
 |               CompanionAppMode.as
 |               MobileButtonHint.as
 |
-\---ChoiceMenu_fla
+\---ButtonHint_fla
         BSButtonHint_IconHolder_5.as

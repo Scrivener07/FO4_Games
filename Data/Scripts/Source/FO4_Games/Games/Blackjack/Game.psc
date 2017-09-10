@@ -1,9 +1,10 @@
-ScriptName Games:Blackjack:Game extends Games:Blackjack:Object
+ScriptName Games:Blackjack:Game extends Games:Blackjack:Task
 import Games
-import Games:Papyrus:Log
-import Games:Papyrus:Script
 import Games:Shared
 import Games:Shared:Deck
+import Games:Papyrus:Log
+import Games:Papyrus:Script
+
 
 ObjectReference Entry
 Player[] Players
@@ -49,26 +50,26 @@ State Starting
 
 		If (SendPhase(self, StartingPhase, Begun))
 			Display.Load()
-			Table.Await(StartingPhase)
-			Cards.Await(StartingPhase)
+			TaskAwait(Table, StartingPhase)
+			TaskAwait(Cards, StartingPhase)
 
 			Add(Abraham)
-			Abraham.Await(StartingPhase)
+			TaskAwait(Abraham, StartingPhase)
 
 			Add(Baxter)
-			Baxter.Await(StartingPhase)
+			TaskAwait(Baxter, StartingPhase)
 
 			Add(Human)
-			Human.Await(StartingPhase)
+			TaskAwait(Human, StartingPhase)
 
 			Add(Chester)
-			Chester.Await(StartingPhase)
+			TaskAwait(Chester, StartingPhase)
 
 			Add(Dewey)
-			Dewey.Await(StartingPhase)
+			TaskAwait(Dewey, StartingPhase)
 
 			Add(Dealer)
-			Dealer.Await(StartingPhase)
+			TaskAwait(Dealer, StartingPhase)
 
 			ChangeState(self, WageringPhase)
 		Else
@@ -121,7 +122,7 @@ State Wagering
 
 
 	Function For(Player gambler)
-		gambler.Await(WageringPhase)
+		TaskAwait(gambler, WageringPhase)
 	EndFunction
 
 
@@ -165,7 +166,7 @@ State Dealing
 
 
 	Function For(Player gambler)
-		gambler.Await(DealingPhase)
+		TaskAwait(gambler, DealingPhase)
 	EndFunction
 
 
@@ -202,7 +203,7 @@ State Playing
 
 
 	Function For(Player gambler)
-		gambler.Await(PlayingPhase)
+		TaskAwait(gambler, PlayingPhase)
 	EndFunction
 
 
@@ -249,7 +250,7 @@ State Scoring
 
 
 	Function For(Player gambler)
-		gambler.Await(ScoringPhase) ; refactor to Player.psc
+		TaskAwait(gambler, ScoringPhase) ; TODO: refactor to Player.psc
 		Cards.CollectFrom(gambler)
 	EndFunction
 
@@ -270,8 +271,8 @@ State Exiting
 
 			Display.Unload()
 
-			Table.Await(ExitingPhase)
-			Cards.Await(ExitingPhase)
+			TaskAwait(Table, ExitingPhase)
+			TaskAwait(Cards, ExitingPhase)
 
 			Clear()
 		EndIf
@@ -430,15 +431,14 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Object
-	Objects:Table Property Table Auto Const Mandatory
-	Objects:Cards Property Cards Auto Const Mandatory
+Group Task
+	Tasks:Table Property Table Auto Const Mandatory
+	Tasks:Cards Property Cards Auto Const Mandatory
 EndGroup
 
 Group UI
-	UI:Display Property Display Auto Const Mandatory
-	UI:Choice Property Choice Auto Const Mandatory
-	UI:Dialog Property Dialog Auto Const Mandatory
+	Blackjack:Display Property Display Auto Const Mandatory
+	Blackjack:Dialog Property Dialog Auto Const Mandatory
 EndGroup
 
 Group Actions

@@ -4,7 +4,6 @@ import Games:Blackjack
 import Games:Papyrus:Log
 import Games:Shared
 import Games:Shared:Deck
-import Games:Blackjack:PlayerType
 
 Card[] Cards
 
@@ -303,7 +302,7 @@ EndFunction
 
 Group Object
 	Blackjack:Game Property Blackjack Auto Const Mandatory
-	Tasks:Motion Property Motion Auto Const Mandatory
+	Shared:Motion Property Motion Auto Const Mandatory
 EndGroup
 
 Group Player

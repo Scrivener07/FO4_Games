@@ -1,4 +1,4 @@
-Scriptname Games:Shared:UI:HUD:WidgetType extends Quest Native Const Hidden
+Scriptname Games:Shared:HUD:WidgetType extends Quest Native Const Hidden
 {The base type for hud framework widgets.}
 
 Struct WidgetData

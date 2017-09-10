@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:UI:Dialog extends Games:Blackjack:Object
+ScriptName Games:Blackjack:Dialog extends Games:Blackjack:Task
 import Games:Papyrus:Log
 
 ; Options

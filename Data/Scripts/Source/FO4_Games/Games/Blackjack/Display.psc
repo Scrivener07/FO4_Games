@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:UI:Display extends Games:Shared:UI:HUD:Widget
+ScriptName Games:Blackjack:Display extends Games:Shared:HUD:Widget
 import Games:Blackjack
 import Games:Papyrus:Log
 import Games:Papyrus:PointType

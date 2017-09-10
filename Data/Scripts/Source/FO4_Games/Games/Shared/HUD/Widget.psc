@@ -1,7 +1,7 @@
-Scriptname Games:Shared:UI:HUD:Widget extends Games:Shared:UI:HUD:WidgetType Hidden
+Scriptname Games:Shared:HUD:Widget extends Games:Shared:HUD:WidgetType Hidden
 import Games:Papyrus:Log
 import Games:Papyrus:PointType
-import Games:Shared:UI:HUD:Framework
+import Games:Shared:HUD:Framework
 
 
 HUDFramework HUD

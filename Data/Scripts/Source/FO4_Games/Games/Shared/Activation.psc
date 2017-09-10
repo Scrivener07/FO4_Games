@@ -1,6 +1,8 @@
-ScriptName Games:Shared:Tasks:Activation extends Games:Shared:Task
-import Games:Shared
+ScriptName Games:Shared:Activation extends Quest
+import Games
 import Games:Papyrus:Log
+import Games:Papyrus:Script
+import Games:Shared
 
 ;/ TODO:
 - The argument auiEntryID, is this an index or ID?
@@ -83,7 +85,7 @@ EndEvent
 
 bool Function Show(ObjectReference aReference, Perk aMenu)
 	{Shows the activation menu for the given reference.}
-	If (IsBusy)
+	If (TaskRunning(self))
 		WriteLine(self, "Activation menu is already shown.")
 		return Incomplete
 	Else
@@ -92,7 +94,7 @@ bool Function Show(ObjectReference aReference, Perk aMenu)
 				Data = new ActivationData
 				Data.Menu = aMenu
 				Data.Reference = aReference
-				return self.Await()
+				return TaskAwait(self)
 			Else
 				WriteLine(self, "Cannot show a none activate menu perk.")
 				return Incomplete
@@ -107,7 +109,7 @@ EndFunction
 
 Function Accept()
 	{Clears the activation menu on the given reference.}
-	self.AwaitEnd()
+	TaskEnd(self)
 EndFunction
 
 
@@ -134,7 +136,7 @@ State Busy
 	EndEvent
 
 
-	Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
+	Event Games:Shared:Activation.OnSelected(Shared:Activation akSender, var[] arguments)
 		WriteLine(self, "Selected "+akSender.Selected)
 	EndEvent
 
@@ -155,13 +157,18 @@ Event Perk.OnEntryRun(Perk akSender, int auiEntryID, ObjectReference akTarget, A
 	{EMPTY}
 EndEvent
 
-Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
+Event Games:Shared:Activation.OnSelected(Shared:Activation akSender, var[] arguments)
 	{EMPTY}
 EndEvent
 
 
 ; Properties
 ;---------------------------------------------
+
+Group Properties
+	bool Property Completed = true AutoReadOnly
+	bool Property Incomplete = false AutoReadOnly
+EndGroup
 
 Group Activation
 	ObjectReference Property Reference Hidden

@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:Object Native Hidden
+ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:Task Native Hidden
 import Games:Papyrus:Log
 
 
