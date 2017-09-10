@@ -2,7 +2,7 @@ Scriptname Games:Papyrus:Script Const Native Hidden
 import Games:Papyrus:Log
 import Games:Papyrus:StringType
 
-; State
+; States
 ;---------------------------------------------
 
 bool Function ChangeState(ScriptObject script, string newState) Global
