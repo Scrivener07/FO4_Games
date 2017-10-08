@@ -1,4 +1,4 @@
-ScriptName Games:Shared:Activation extends Quest
+ScriptName Games:Shared:Activation extends Quest Default
 import Games
 import Games:Papyrus:Log
 import Games:Papyrus:Script

@@ -3,22 +3,43 @@ import Games:Papyrus:Log
 import Games:Shared
 import Games:Shared:UI:ButtonHint
 
+Button button1
+Button button2
 
 ; Events
 ;---------------------------------------------
 
-Event Games:Shared:UI:Display.OnLoaded(UI:Display akSender, var[] arguments)
-	Button HelloButton = new Button
-	HelloButton.Text = "Hello World"
-	HelloButton.KeyCode = 69
+Function Derp()
+	button1 = new Button
+	button1.Text = "One"
+	button1.KeyCode = 49
 
-	ButtonHint.SetButton(HelloButton)
+	button2 = new Button
+	button2.Text = "Two"
+	button2.KeyCode = 50
+
+	ButtonHint.Clear()
+	ButtonHint.Add(button1)
+	ButtonHint.Add(button2)
 	ButtonHint.Show() ; waits for thread
-EndEvent
+EndFunction
+
+
+; Event Games:Shared:UI:Display.OnLoaded(UI:Display akSender, var[] arguments)
+; EndEvent
 
 
 Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
-	; I need button arguments!
+	Button selected = akSender.GetSelectedEventArgs(arguments)
+	If (selected == button1)
+		WriteLine(self, "Selected the "+selected.Text+" button.")
+	ElseIf (selected == button2)
+		WriteLine(self, "Selected the "+selected.Text+" button.")
+	Else
+		WriteLine(self, "The "+selected+" button was unhandled.")
+	EndIf
+
+	akSender.Hide()
 EndEvent
 
 
@@ -31,13 +52,13 @@ EndFunction
 
 
 Function beforeEach()
-	RegisterForCustomEvent(ButtonHint, "OnLoaded")
+	; RegisterForCustomEvent(ButtonHint, "OnLoaded")
 	RegisterForCustomEvent(ButtonHint, "OnSelected")
 EndFunction
 
 
 Function afterEach()
-	UnregisterForCustomEvent(ButtonHint, "OnLoaded")
+	; UnregisterForCustomEvent(ButtonHint, "OnLoaded")
 	UnregisterForCustomEvent(ButtonHint, "OnSelected")
 EndFunction
 
@@ -54,9 +75,9 @@ EndFunction
 
 
 bool Function loadTest()
-	Expect(ButtonHint.IsLoaded, To, BeFalsy)
-	ButtonHint.Load()
-	Expect(ButtonHint.IsLoaded, To, BeTruthy)
+	; Expect(ButtonHint.IsLoaded, To, BeFalsy)
+	; ButtonHint.Load()
+	; Expect(ButtonHint.IsLoaded, To, BeTruthy)
 	return true
 EndFunction
 
@@ -69,7 +90,8 @@ EndFunction
 
 
 bool Function hiddenTest()
-	ButtonHint.Hide()
+	Expect(ButtonHint.Visible, To, BeTruthy)
+	ButtonHint.Visible = false
 	Expect(ButtonHint.Visible, To, BeFalsy)
 	return true
 EndFunction

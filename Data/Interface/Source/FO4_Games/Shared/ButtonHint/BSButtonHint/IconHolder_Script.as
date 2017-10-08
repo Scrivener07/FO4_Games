@@ -1,14 +1,14 @@
-package ButtonHint_fla
+package BSButtonHint
 {
 	import flash.display.MovieClip;
 
-	public dynamic class BSButtonHint_IconHolder_5 extends MovieClip
+	public dynamic class IconHolder_Script extends MovieClip
 	{
 
 		public var IconAnimInstance:MovieClip;
 
 
-		public function BSButtonHint_IconHolder_5()
+		public function IconHolder_Script()
 		{
 			super();
 			addFrameScript(0, this.frame1, 59, this.frame60);

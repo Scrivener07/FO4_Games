@@ -42,8 +42,8 @@ State Starting
 		self.SetMarkers(Marker)
 		self.StartBegin()
 
-		Blackjack.Display.Text = "Joined"
 		Blackjack.Display.Player(self)
+		Blackjack.Display.Text = "Joined"
 	EndEvent
 EndState
 
@@ -56,14 +56,14 @@ State Wagering
 		Cards = new Card[0]
 		Match = new MatchData
 		Wager = new WagerValue
+		Blackjack.Display.Player(self)
 
 		self.SetWager(Wager)
 		self.WagerBegin()
-
 		Session.Winnings -= Bet
 
-		Blackjack.Display.Text = "Wagered a bet of "+Bet
 		Blackjack.Display.Player(self)
+		Blackjack.Display.Text = "Wagered a bet of "+Bet
 	EndEvent
 
 
@@ -114,11 +114,11 @@ State Playing
 			Match.Turn += 1
 			self.PlayBegin(Match.Turn)
 
-			If (Blackjack.IsWin(Match.Score))
+			If (Blackjack.Session.IsWin(Match.Score))
 				Blackjack.Display.Text = "Standing with 21."
 				next = Break
 
-			ElseIf (Blackjack.IsBust(Score))
+			ElseIf (Blackjack.Session.IsBust(Score))
 				Blackjack.Display.Text = "Busted!"
 				next = Break
 			Else
@@ -166,15 +166,15 @@ State Scoring
 	Event Scoring()
 		self.ScoreBegin()
 
-		Player dealer = Blackjack.Dealer
+		Player dealer = Blackjack.Session.Dealer
 
 		If (self is Players:Dealer)
 			WriteLine(self, "Skipped dealer for scoring.")
 		Else
-			If (Blackjack.IsBust(Score))
+			If (Blackjack.Session.IsBust(Score))
 				Blackjack.Display.Text = "Score of "+Score+" is a bust."
 			Else
-				If (Blackjack.IsBust(dealer.Score))
+				If (Blackjack.Session.IsBust(dealer.Score))
 					Blackjack.Display.Text = "The dealer busted with "+dealer.Score+"."
 					WinWager()
 				Else
@@ -233,7 +233,7 @@ bool Function TryDraw()
 				ObjectReference turnMarker = NextMarker()
 				If (turnMarker)
 					Cards.Add(drawn)
-					Match.Score = Blackjack.Score(self)
+					Match.Score = Blackjack.Session.Score(self)
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
@@ -350,7 +350,7 @@ Group Player
 
 	bool Property CanDraw Hidden
 		bool Function Get()
-			return Blackjack.IsInPlay(Match.Score)
+			return Blackjack.Session.IsInPlay(Match.Score)
 		EndFunction
 	EndProperty
 EndGroup

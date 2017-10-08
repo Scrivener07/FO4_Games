@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Tasks:Table extends Games:Blackjack:Task
+ScriptName Games:Blackjack:Tasks:Table extends Games:Blackjack:GameType
 import Games
 import Games:Blackjack
 import Games:Papyrus:Log
@@ -29,13 +29,13 @@ State Starting
 
 		Game.SetInChargen(true, true, false)
 		Game.ShowFirstPersonGeometry(false)
+
 		; InputLayer = InputEnableLayer.Create()
 		; InputLayer.DisablePlayerControls(true, true, true, true, true, true, false, true, true, true, true)
-		; Game.SetPlayerAIDriven()
-		; Game.SetCharGenHUDMode(HudHidden)
+
+		Game.SetPlayerAIDriven()
 		Player.SetScale(0.75)
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
-
 		Utility.Wait(TimeWait)
 		TaskEnd(self)
 	EndEvent

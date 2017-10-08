@@ -1,4 +1,5 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
+import Games
 import Games:Blackjack
 import Games:Papyrus:Log
 import Games:Shared
@@ -6,20 +7,27 @@ import Games:Shared:UI:ButtonHint
 
 Actor PlayerRef
 
-int W = 87 const ; test key
-int A = 65 const ; test key
-int S = 83 const ; test key
-int D = 68 const ; test key
+
+Button AcceptButton
+Button IncreaseButton
+Button DecreaseButton
+
+Button HitButton
+Button StandButton
+
+Button YesButton
+Button NoButton
+
 
 Group ButtonHint
 	UI:ButtonHint Property ButtonHint Auto Const Mandatory
+	Shared:Keyboard Property Keyboard Auto Const Mandatory
 EndGroup
 
-
-Event Games:Shared:UI:ButtonHint.OnSelected(Games:Shared:UI:ButtonHint akSender, var[] arguments)
-	{EMPTY}
-EndEvent
-
+Group SFX
+	Sound Property ITMBottlecapsUpx Auto Const Mandatory
+	Sound Property ITMBottlecapsDownx Auto Const Mandatory
+EndGroup
 
 
 ; Events
@@ -28,19 +36,41 @@ EndEvent
 Event OnInit()
 	parent.OnInit()
 	PlayerRef = Game.GetPlayer()
-	RegisterForPhaseEvent(Blackjack)
 
-	ButtonHint.Load()
-	RegisterForCustomEvent(ButtonHint, "OnSelected")
+	AcceptButton = new Button
+	AcceptButton.Text = "Accept"
+	AcceptButton.KeyCode = Keyboard.E
+
+	IncreaseButton = new Button
+	IncreaseButton.Text = "Increase"
+	IncreaseButton.KeyCode = Keyboard.W
+
+	DecreaseButton = new Button
+	DecreaseButton.Text = "Decrease"
+	DecreaseButton.KeyCode = Keyboard.S
+
+	HitButton = new Button
+	HitButton.Text = "Hit"
+	HitButton.KeyCode = Keyboard.W
+
+	StandButton = new Button
+	StandButton.Text = "Stand"
+	StandButton.KeyCode = Keyboard.S
+
+	YesButton = new Button
+	YesButton.Text = "Yes"
+	YesButton.KeyCode = Keyboard.E
+
+	NoButton = new Button
+	NoButton.Text = "No"
+	NoButton.KeyCode = Keyboard.Tab
+
+	ButtonHint.RegisterForSelectedEvent(self)
 EndEvent
 
 
-Event OnGamePhase(PhaseEventArgs e)
-	If (e.Change == Begun)
-		;
-	Else
-		; Activation.Accept()
-	EndIf
+Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
+	akSender.Hide()
 EndEvent
 
 
@@ -66,31 +96,27 @@ EndState
 
 State Wagering
 	Event SetWager(WagerValue set)
-		int E = 69 const ; test key
-		int R = 82 const ; test key
-		int T = 84 const ; test key
+		ButtonHint.Clear()
+		ButtonHint.SelectOnce = false
+		ButtonHint.Add(AcceptButton)
+		ButtonHint.Add(IncreaseButton)
+		ButtonHint.Add(DecreaseButton)
+		ButtonHint.Show()
 
-		Button AcceptButton = new Button
-		AcceptButton.Text = "Accept"
-		AcceptButton.KeyCode = E
+		Game.RemovePlayerCaps(Bet)
+	EndEvent
 
-		Button IncreaseButton = new Button
-		IncreaseButton.Text = "Increase"
-		IncreaseButton.KeyCode = D
-
-		Button DecreaseButton = new Button
-		DecreaseButton.Text = "Increase"
-		DecreaseButton.KeyCode = A
-
-		Button[] array = new Button[0]
-		array.Add(AcceptButton)
-		array.Add(IncreaseButton)
-		array.Add(DecreaseButton)
-
-		ButtonHint.SetButtons(array)
-		ButtonHint.Show() ; waits for thread
-
-		Game.RemovePlayerCaps(Bet) ; set by button selected event during wait
+	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
+		Button selected = akSender.GetSelectedEventArgs(arguments)
+		If (selected == AcceptButton)
+			akSender.Hide()
+		ElseIf (selected == IncreaseButton)
+			IncreaseWager(5)
+			ITMBottlecapsDownx.Play(Player)
+		ElseIf (selected == DecreaseButton)
+			DecreaseWager(5)
+			ITMBottlecapsUpx.Play(Player)
+		EndIf
 	EndEvent
 EndState
 
@@ -98,29 +124,47 @@ EndState
 
 State Playing
 	Event SetChoice(ChoiceValue set)
-		set.Selected = Invalid
+		ButtonHint.Clear()
+		ButtonHint.SelectOnce = true
+		ButtonHint.Add(HitButton)
+		ButtonHint.Add(StandButton)
+
+		ButtonHint.Show()
+		If (ButtonHint.Selected)
+			If (ButtonHint.Selected == HitButton)
+				set.Selected = ChoiceHit
+			ElseIf (ButtonHint.Selected == StandButton)
+				set.Selected = ChoiceStand
+			Else
+				set.Selected = Invalid
+				WriteLine(self, "The play choice was invalid.")
+			EndIf
+		Else
+			WriteLine(self, "No play choice was selected.")
+		EndIf
 	EndEvent
 EndState
 
 
 State Scoring
 	Event ScoreBegin()
-		; Prompt to play again. (yes/no)
+		ButtonHint.Clear()
+		ButtonHint.SelectOnce = true
+		ButtonHint.Add(YesButton)
+		ButtonHint.Add(NoButton)
 
-		Button HitButton = new Button
-		HitButton.Text = "Hit"
-		HitButton.KeyCode = D
-
-		Button StandButton = new Button
-		StandButton.Text = "Stand"
-		StandButton.KeyCode = A
-
-		Button[] array = new Button[0]
-		array.Add(HitButton)
-		array.Add(StandButton)
-
-		ButtonHint.SetButtons(array)
-		ButtonHint.Show() ; waits for thread
+		ButtonHint.Show()
+		If (ButtonHint.Selected)
+			If (ButtonHint.Selected == YesButton)
+				; See: Game.psc @Dialog.PlayAgain()
+			ElseIf (ButtonHint.Selected == NoButton)
+				; See: Game.psc @Dialog.PlayAgain()
+			Else
+				; derp
+			EndIf
+		Else
+			WriteLine(self, "No play choice was selected.")
+		EndIf
 	EndEvent
 EndState
 
@@ -157,3 +201,4 @@ Group Markers
 	ObjectReference Property Games_Blackjack_P1C10 Auto Const Mandatory
 	ObjectReference Property Games_Blackjack_P1C11 Auto Const Mandatory
 EndGroup
+

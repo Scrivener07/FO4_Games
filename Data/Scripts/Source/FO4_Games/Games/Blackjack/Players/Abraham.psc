@@ -28,7 +28,7 @@ EndState
 
 State Wagering
 	Event SetWager(WagerValue set)
-		set.Bet = (Blackjack.Human.Bet * 3) + 50
+		set.Bet = (Blackjack.Session.Human.Bet * 3) + 50
 	EndEvent
 EndState
 

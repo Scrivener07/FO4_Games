@@ -1,4 +1,4 @@
-ScriptName Games:Shared:Deck extends Quest
+ScriptName Games:Shared:Deck extends Quest Default
 import Games:Papyrus:Log
 
 Card[] Cards

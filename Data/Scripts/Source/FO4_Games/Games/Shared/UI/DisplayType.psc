@@ -1,43 +1,63 @@
 Scriptname Games:Shared:UI:DisplayType extends Quest Native Hidden
-import Games:Papyrus:Log
-
+{The papyrus script for user interface display types.}
 
 Struct DisplayData
 	string Menu = ""
 	{The name of the menu to load within.}
-	string Root = ""
+
+	string Root = "root1"
 	{The root display object.}
+
 	string Asset = ""
-	{The asset file to load within the given menu.}
-	string Method = ""
-	{The destination variable.}
+	{The asset file to load within the given menu. The root directory is "Data\Interface".}
+
+	string Instance = ""
+	{The destination instance variable.}
 EndStruct
 
 
-; Methods
-;---------------------------------------------
-
-Function Setup() Native
-{Configures the display data provided by extending script.}
-
-bool Function Load() Native
-{Loads the DisplayData into the user interface.}
-
-; Function LoadingCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath) Native
-; {Callback from `UI.Load` F4SE script.}
+Struct DisplayArguments
+	string Menu
+	{menuName}
+	string Root
+	{sourceVar}
+	string Asset
+	{assetPath}
+	string Instance
+	{destVar}
+	bool Success = false
+	{Load success}
+EndStruct
 
 
 ; Virtual
 ;---------------------------------------------
 
-DisplayData Function GetDisplay() Native
-{An extending script returns the DisplayData required to load swf files.}
+Event OnDisplayData(DisplayData display) Native
+{Required, event occurs when the display needs to configure its data.}
 
 Event OnDisplayLoaded() Native
-{The menu has been loaded.}
+{Optional, event occurs when the display has been loaded.}
 
 
-; Properties
+; Methods
 ;---------------------------------------------
 
+bool Function Data() Native
+{A member of the DisplayType papyrus script.}
 
+bool Function Load() Native
+{A member of the DisplayType papyrus script.}
+
+string Function GetMember(string member) Native
+{A member of the DisplayType papyrus script.}
+
+string Function ToString() Native
+{A member of the DisplayType papyrus script.}
+
+
+; Callbacks
+;---------------------------------------------
+
+Function LoadingCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath) Native
+{Callback for OnDisplayLoaded.}

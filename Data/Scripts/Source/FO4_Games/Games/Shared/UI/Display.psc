@@ -1,88 +1,80 @@
 Scriptname Games:Shared:UI:Display extends Games:Shared:UI:DisplayType Hidden
 import Games:Papyrus:Log
 import Games:Papyrus:Script
+import Games:Shared
+import Games:Shared:UI:Framework
 
 DisplayData Display
-CustomEvent OnLoaded
 
-; string LoadingTask = "Loading" const
-string LoadingCallback = "LoadingCallback" const
 
 ; Events
 ;---------------------------------------------
 
 Event OnInit()
-	Setup()
+	If (Data())
+		Load()
+	EndIf
 EndEvent
+
+
+Event OnMenuOpenCloseEvent(string menuName, bool opening)
+	DisplayOpenCloseHandler(self, menuName, opening)
+EndEvent
+
+
+Function LoadingCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath)
+	DisplayArguments arguments = new DisplayArguments
+	arguments.Menu = menuName
+	arguments.Root = sourceVar
+	arguments.Instance = destVar
+	arguments.Asset = assetPath
+	arguments.Success = success
+	DisplayLoadingHandler(self, Display, arguments)
+EndFunction
 
 
 ; Methods
 ;---------------------------------------------
 
-Function Setup()
-	Display = GetDisplay()
-	If !(Display)
-		WriteLine(self, "The display cannot be none.")
-	EndIf
+bool Function Data()
+	Display = DisplayData(self)
+	return Display as bool
 EndFunction
 
 
 bool Function Load()
-	If (IsLoaded)
-		WriteLine(self, "The menu is already loaded.")
-		return false
-	Else
-		Utility.Wait(0.1) ; wait for HUDMenu to be loaded...
-		If (UI.Load(Menu, Root, Asset, self, LoadingCallback))
-			WriteLine(self, "UI.Load is waiting for callback...")
-		Else
-			WriteLine(self, "UI.Load has failed for "+Display)
-		EndIf
-	EndIf
-EndFunction
-
-
-Function LoadingCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath)
-	WriteLine(self, "UI.Load: "+LoadingCallback)
-
-	If (menuName == Menu)
-		If (assetPath == Asset)
-			Display.Method = destVar
-			self.OnDisplayLoaded()
-		Else
-			WriteLine(self, "Callback received unhandled asset "+menuName)
-		EndIf
-	Else
-		WriteLine(self, "Callback received unhandled menu "+menuName)
-	EndIf
+	return DisplayLoad(self)
 EndFunction
 
 
 string Function GetMember(string member)
-	return Method+"."+member
+	return DisplayGetMember(self, member)
+EndFunction
+
+
+string Function ToString()
+	return DisplayToString(self)
 EndFunction
 
 
 ; Virtual
 ;---------------------------------------------
 
-DisplayData Function GetDisplay()
-	{VIRTUAL - Member is overridden in a derived class.}
-	WriteLine(self, "The virtual 'GetDisplay' function is not implemented.")
-	return new DisplayData
-EndFunction
+Event OnDisplayData(DisplayData widget)
+	{Required}
+	WriteMessage(self, "Error!", "The virtual OnDisplayData event is not implemented.")
+EndEvent
 
 
 Event OnDisplayLoaded()
-	{VIRTUAL - Member is overridden in a derived class.}
-	WriteLine(self, "The virtual 'OnDisplayLoaded' event is not implemented.")
+	{Optional}
 EndEvent
 
 
 ; Properties
 ;---------------------------------------------
 
-Group Properties
+Group Display
 	string Property Menu Hidden
 		string Function Get()
 			return Display.Menu
@@ -101,27 +93,24 @@ Group Properties
 		EndFunction
 	EndProperty
 
-	string Property Method Hidden
+	string Property Instance Hidden
 		string Function Get()
-			return Display.Method
+			return Display.Instance
 		EndFunction
 	EndProperty
-EndGroup
 
-
-Group Display
-	bool Property IsLoaded Hidden
+	bool Property IsOpen Hidden
 		bool Function Get()
-			return UI.Get(Menu, GetMember("IsLoaded")) as bool
+			return DisplayIsOpen(self)
 		EndFunction
 	EndProperty
 
 	bool Property Visible Hidden
 		bool Function Get()
-			return UI.Get(Menu, GetMember("Visible")) as bool
+			return DisplayGetVisible(self)
 		EndFunction
 		Function Set(bool value)
-			UI.Set(Menu, GetMember("Visible"), value)
+			DisplaySetVisible(self, value)
 		EndFunction
 	EndProperty
 EndGroup

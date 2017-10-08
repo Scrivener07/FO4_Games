@@ -71,12 +71,12 @@ State Scoring
 		int OptionYes = 1 const
 
 		If (Activation.Selected == OptionNo)
-			WriteMessage("Selected", "Replay No")
+			WriteMessage(self, "Selected", "Replay No")
 			; TODO: does nothing
 		EndIf
 
 		If (Activation.Selected == OptionYes)
-			WriteMessage("Selected", "Replay Yes")
+			WriteMessage(self, "Selected", "Replay Yes")
 			; TODO: does nothing
 		EndIf
 	EndFunction

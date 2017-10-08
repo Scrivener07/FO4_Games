@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Dialog extends Games:Blackjack:Task
+ScriptName Games:Blackjack:Dialog extends Games:Blackjack:GameType
 import Games:Papyrus:Log
 
 ; Options
@@ -32,7 +32,7 @@ EndFunction
 
 Function ShowKicked()
 	; dummy for `Message`
-	WriteMessage("Kicked", "Your all out of caps. Better luck next time.")
+	WriteMessage(self, "Kicked", "Your all out of caps. Better luck next time.")
 EndFunction
 
 
@@ -80,7 +80,7 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group HUD
+Group Messages
 	Message Property Games_Blackjack_MessageWager Auto Const Mandatory
 	Message Property Games_Blackjack_MessageTurn Auto Const Mandatory
 	Message Property Games_Blackjack_MessageTurnDealt Auto Const Mandatory

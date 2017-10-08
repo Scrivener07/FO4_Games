@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Tasks:Cards extends Games:Blackjack:Task
+ScriptName Games:Blackjack:Tasks:Cards extends Games:Blackjack:GameType
 import Games
 import Games:Blackjack
 import Games:Papyrus:Log

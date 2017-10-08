@@ -1,4 +1,5 @@
 ScriptName Games:Papyrus:Log Const Native Hidden DebugOnly
+import Games:Papyrus:StringType
 
 
 bool Function WriteLine(string prefix, string text) Global DebugOnly
@@ -19,12 +20,11 @@ bool Function WriteNotification(string prefix, string text) Global DebugOnly
 EndFunction
 
 
-bool Function WriteMessage(string prefix, string text) Global DebugOnly
-	string title
-	If (prefix)
-		title = prefix+"\n"
+bool Function WriteMessage(string prefix, string title, string text = "") Global DebugOnly
+	string value
+	If !(StringIsNoneOrEmpty(text))
+		value = title+"\n"+text
 	EndIf
-
-	Debug.MessageBox(title+text)
-	return WriteLine(prefix, text)
+	Debug.MessageBox(value)
+	return WriteLine(prefix, title+" "+text)
 EndFunction

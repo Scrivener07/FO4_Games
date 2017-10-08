@@ -11,6 +11,7 @@ bool Function ChangeState(ScriptObject script, string newState) Global
 		script.GoToState(newState)
 		return true
 	Else
+		WriteLine(script, "The script is already in the '"+newState+"' state.")
 		return false
 	EndIf
 EndFunction
@@ -32,16 +33,16 @@ EndFunction
 ;---------------------------------------------
 ; Tasks are simply regular script states. These states can be run, awaited, or ended.
 
-bool Function TaskAwait(ScriptObject script, string thread = "Busy") Global
+bool Function TaskAwait(ScriptObject script, string task = "Busy") Global
 	{Waits for the configured task to complete.}
 	If (script)
-		If (TaskRun(script, thread))
+		If (TaskRun(script, task))
 			While (TaskRunning(script))
 				Utility.Wait(0.1)
 			EndWhile
 			return true
 		Else
-			WriteLine(script, "Task could not await the '"+thread+"' thread.")
+			WriteLine(script, "Task could not await the '"+task+"' task.")
 			return false
 		EndIf
 	Else
@@ -51,27 +52,27 @@ bool Function TaskAwait(ScriptObject script, string thread = "Busy") Global
 EndFunction
 
 
-bool Function TaskRun(ScriptObject script, string thread = "Busy") Global
+bool Function TaskRun(ScriptObject script, string task = "Busy") Global
 	{Runs the configured task without waiting for completion.}
 	If (script)
 		If (TaskRunning(script))
-			WriteLine(script, "Task cannot await the '"+thread+"' thread while busy.")
+			WriteLine(script, "Cannot run the '"+task+"' task while '"+script.GetState()+"' task is running.")
 			return false
 		Else
-			If !(StringIsNoneOrEmpty(thread))
-				If (ChangeState(script, thread))
+			If !(StringIsNoneOrEmpty(task))
+				If (ChangeState(script, task))
 					return true
 				Else
-					WriteLine(script, "Task cannot change state for the '"+thread+"' thread.")
+					WriteLine(script, "Task run cannot change state for the '"+task+"' task.")
 					return false
 				EndIf
 			Else
-				WriteLine(script, "Task cannot await thread for a none or empty state.")
+				WriteLine(script, "Task run cannot operateon a none or empty state.")
 				return false
 			EndIf
 		EndIf
 	Else
-		WriteLine(script, "Task cannot operate on a none script.")
+		WriteLine(script, "Task run cannot operate on a none script.")
 		return false
 	EndIf
 EndFunction
@@ -87,7 +88,7 @@ bool Function TaskEnd(ScriptObject script) Global
 			return false
 		EndIf
 	Else
-		WriteLine(script, "Task cannot operate on a none script.")
+		WriteLine(script, "Task end cannot operate on a none script.")
 		return false
 	EndIf
 EndFunction
@@ -99,7 +100,7 @@ bool Function TaskRunning(ScriptObject script) Global
 	If (script)
 		return HasState(script)
 	Else
-		WriteLine(script, "Task cannot operate on a none script.")
+		WriteLine(script, "Task running cannot operate on a none script.")
 		return false
 	EndIf
 EndFunction
