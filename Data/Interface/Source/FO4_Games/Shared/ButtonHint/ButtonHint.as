@@ -2,19 +2,14 @@
 {
 	import flash.display.MovieClip;
 	import flash.events.Event;
-	import flash.utils.describeType;
 	import Shared.AS3.BSButtonHintBar;
 	import Shared.AS3.BSButtonHintData;
+	import Shared.Display;
 	import Shared.IDisplay;
-	import Shared.IMenu;
 
-	public class ButtonHint extends IMenu implements IDisplay, IButtonHint
+	public class ButtonHint extends Display implements IButtonHint
 	{
 		public var ButtonHintBar_mc:BSButtonHintBar;
-
-		public function get Exists():Boolean { return true; }
-		public function get Visible():Boolean { return this.visible; }
-		public function set Visible(argument:Boolean):void { this.visible = argument; }
 
 
 		// Menu
@@ -22,7 +17,6 @@
 
 		public function ButtonHint()
 		{
-			super();
 			trace("[ButtonHint] Constructor");
 			addEventListener(Event.ADDED_TO_STAGE, OnAddedToStage);
 		}

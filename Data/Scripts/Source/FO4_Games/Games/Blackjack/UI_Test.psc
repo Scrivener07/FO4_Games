@@ -8,7 +8,7 @@ import Games:Papyrus:Log
 
 Event OnDisplayData(DisplayData display)
 	display.Menu = "HUDMenu"
-	display.Asset = "Untitled.swf"
+	display.Asset = "Dummy.swf"
 	WriteLine(self, "OnDisplayData:"+display)
 EndEvent
 
@@ -35,6 +35,7 @@ Event OnKeyDown(int keyCode)
 	EndIf
 
 	If (keyCode == Keyboard.L)
+		UI.Invoke(Menu, GetMember("BringToFront"))
 		WriteNotification(self, "You pressed the L key on the keyboard.")
 	EndIf
 EndEvent

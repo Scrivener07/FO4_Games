@@ -144,7 +144,7 @@ bool Function DisplayGetVisible(UI:Display display) Global
 			WriteLine(display, "DisplayGetVisible cannot operate on a none or empty display Instance.")
 			return false
 		Else
-			return UI.Get(Display.Menu, display.GetMember("Visible")) as bool
+			return UI.Get(display.Menu, display.GetMember("Visible")) as bool
 		EndIf
 	Else
 		WriteLine(ToString(), "DisplayGetVisible cannot operate on a none display.")

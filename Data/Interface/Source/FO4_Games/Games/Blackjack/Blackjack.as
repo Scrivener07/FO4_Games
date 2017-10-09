@@ -1,20 +1,16 @@
 ﻿package
 {
+	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.text.TextField;
 	import hudframework.IHUDWidget;
+	import Shared.Display;
 	import Shared.IDisplay;
 
-	public class Blackjack extends MovieClip implements IDisplay, IHUDWidget, IBlackjack
+	public class Blackjack extends Display implements IDisplay, IHUDWidget, IBlackjack
 	{
 		private static const WIDGET_IDENTIFIER:String = "Blackjack.swf";
-
-		// IDisplay
-		public function get Exists():Boolean { return true; }
-		public function get Visible():Boolean { return this.visible; }
-		public function set Visible(argument:Boolean):void { this.visible = argument; }
-
 
 		// Status
 		public var PhaseFader_mc:MovieClip;
@@ -46,11 +42,13 @@
 			trace("[Blackjack] OnAddedToStage");
 		}
 
+
 		public function derpDerp(argString:String):void
 		{
 			// @IBlackjack, TODO: f4se interop
 		}
-		
+
+
 		public function processMessage(command:String, params:Array):void
 		{
 			trace("[Blackjack] processMessage");
