@@ -1,5 +1,5 @@
-ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:Object Native Hidden
-import Games:Shared:Common
+ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:GameType Native Hidden
+import Games:Papyrus:Log
 
 
 Struct SessionData
@@ -147,9 +147,6 @@ EndFunction
 ;---------------------------------------------
 
 Group Choice
-	; |         |
-	; | [0] [1] |
-	; |         |
 	int Property ChoiceHit = 0 AutoReadOnly
 	int Property ChoiceStand = 1 AutoReadOnly
 	int Property ChoiceDouble = 2 AutoReadOnly ; not supported

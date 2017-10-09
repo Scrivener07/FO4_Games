@@ -1,5 +1,5 @@
 ScriptName Games:Blackjack:Players:Dealer extends Games:Blackjack:Player
-import Games:Shared:Common
+import Games:Papyrus:Log
 
 
 ; Tasks

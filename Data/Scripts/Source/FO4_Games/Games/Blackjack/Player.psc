@@ -1,8 +1,8 @@
 ScriptName Games:Blackjack:Player extends Games:Blackjack:PlayerType Hidden
 import Games
 import Games:Blackjack
+import Games:Papyrus:Log
 import Games:Shared
-import Games:Shared:Common
 import Games:Shared:Deck
 
 Card[] Cards
@@ -42,8 +42,8 @@ State Starting
 		self.SetMarkers(Marker)
 		self.StartBegin()
 
-		Blackjack.HUD.Text = "Joined"
-		Blackjack.HUD.Update(self)
+		Blackjack.Display.Player(self)
+		Blackjack.Display.Text = "Joined"
 	EndEvent
 EndState
 
@@ -56,14 +56,14 @@ State Wagering
 		Cards = new Card[0]
 		Match = new MatchData
 		Wager = new WagerValue
+		Blackjack.Display.Player(self)
 
 		self.SetWager(Wager)
 		self.WagerBegin()
-
 		Session.Winnings -= Bet
 
-		Blackjack.HUD.Text = "Wagered a bet of "+Bet
-		Blackjack.HUD.Update(self)
+		Blackjack.Display.Player(self)
+		Blackjack.Display.Text = "Wagered a bet of "+Bet
 	EndEvent
 
 
@@ -74,13 +74,13 @@ State Wagering
 
 	Function IncreaseWager(int value)
 		Wager.Bet += value
-		Blackjack.HUD.PlayerBet = Bet
+		Blackjack.Display.Bet = Bet
 	EndFunction
 
 
 	Function DecreaseWager(int value)
 		Wager.Bet -= value
-		Blackjack.HUD.PlayerBet = Bet
+		Blackjack.Display.Bet = Bet
 	EndFunction
 EndState
 
@@ -93,8 +93,8 @@ State Dealing
 		TryDraw()
 		self.DealBegin()
 
-		Blackjack.HUD.Text = "Dealt a card.."
-		Blackjack.HUD.Update(self)
+		Blackjack.Display.Text = "Dealt a card.."
+		Blackjack.Display.Player(self)
 	EndEvent
 EndState
 
@@ -114,12 +114,12 @@ State Playing
 			Match.Turn += 1
 			self.PlayBegin(Match.Turn)
 
-			If (Blackjack.IsWin(Match.Score))
-				Blackjack.HUD.Text = "Standing with 21."
+			If (Blackjack.Session.IsWin(Match.Score))
+				Blackjack.Display.Text = "Standing with 21."
 				next = Break
 
-			ElseIf (Blackjack.IsBust(Score))
-				Blackjack.HUD.Text = "Busted!"
+			ElseIf (Blackjack.Session.IsBust(Score))
+				Blackjack.Display.Text = "Busted!"
 				next = Break
 			Else
 				Choice = new ChoiceValue
@@ -127,8 +127,8 @@ State Playing
 
 				If (Choice.Selected == ChoiceHit)
 					If (self.TryDraw())
-						Blackjack.HUD.Text = "Drew a card." + Hand[Last]
-						Blackjack.HUD.Update(self)
+						Blackjack.Display.Text = "Drew a card." + Hand[Last]
+						Blackjack.Display.Player(self)
 						next = Continue
 					Else
 						WriteMessage(self, "Error, problem drawing a card! "+self.ToString())
@@ -136,17 +136,16 @@ State Playing
 					EndIf
 
 				ElseIf (Choice.Selected == ChoiceStand)
-					Blackjack.HUD.Text = "Chose to stand."
+					Blackjack.Display.Text = "Chose to stand."
 					next = Break
 				Else
 					WriteLine(self, "Error, the play choice "+Choice.Selected+" was out of range. "+self.ToString())
 					next = Break
 				EndIf
-
 			EndIf
 		EndWhile
 
-		Blackjack.HUD.Update(self)
+		Blackjack.Display.Player(self)
 	EndEvent
 
 
@@ -167,27 +166,27 @@ State Scoring
 	Event Scoring()
 		self.ScoreBegin()
 
-		Player dealer = Blackjack.Dealer
+		Player dealer = Blackjack.Session.Dealer
 
 		If (self is Players:Dealer)
 			WriteLine(self, "Skipped dealer for scoring.")
 		Else
-			If (Blackjack.IsBust(Score))
-				Blackjack.HUD.Text = "Score of "+Score+" is a bust."
+			If (Blackjack.Session.IsBust(Score))
+				Blackjack.Display.Text = "Score of "+Score+" is a bust."
 			Else
-				If (Blackjack.IsBust(dealer.Score))
-					Blackjack.HUD.Text = "The dealer busted with "+dealer.Score+"."
+				If (Blackjack.Session.IsBust(dealer.Score))
+					Blackjack.Display.Text = "The dealer busted with "+dealer.Score+"."
 					WinWager()
 				Else
 					If (Score > dealer.Score)
-						Blackjack.HUD.Text = "Score of "+Score+" beats dealers "+dealer.Score+"."
+						Blackjack.Display.Text = "Score of "+Score+" beats dealers "+dealer.Score+"."
 						WinWager()
 
 					ElseIf (Score < dealer.Score)
-						Blackjack.HUD.Text = "Score of "+Score+" loses to dealers "+dealer.Score+"."
+						Blackjack.Display.Text = "Score of "+Score+" loses to dealers "+dealer.Score+"."
 
 					ElseIf (Score == dealer.Score)
-						Blackjack.HUD.Text = "Score of "+Score+" pushes dealers "+dealer.Score+"."
+						Blackjack.Display.Text = "Score of "+Score+" pushes dealers "+dealer.Score+"."
 						PushWager()
 					Else
 						; derp, i dont know what happened
@@ -197,7 +196,7 @@ State Scoring
 			EndIf
 		EndIf
 
-		Blackjack.HUD.Update(self)
+		Blackjack.Display.Player(self)
 	EndEvent
 EndState
 
@@ -208,7 +207,7 @@ Function WinWager()
 
 	If (self is Players:Human)
 		Game.GivePlayerCaps(value)
-		Blackjack.HUD.Text = "Won "+value+" caps."
+		Blackjack.Display.Text = "Won "+value+" caps."
 	EndIf
 EndFunction
 
@@ -218,7 +217,7 @@ Function PushWager()
 
 	If (self is Players:Human)
 		Game.GivePlayerCaps(Bet)
-		Blackjack.HUD.Text = "Refunded "+Bet+" caps."
+		Blackjack.Display.Text = "Refunded "+Bet+" caps."
 	EndIf
 EndFunction
 
@@ -234,7 +233,7 @@ bool Function TryDraw()
 				ObjectReference turnMarker = NextMarker()
 				If (turnMarker)
 					Cards.Add(drawn)
-					Match.Score = Blackjack.Score(self)
+					Match.Score = Blackjack.Session.Score(self)
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
@@ -303,7 +302,7 @@ EndFunction
 
 Group Object
 	Blackjack:Game Property Blackjack Auto Const Mandatory
-	Tasks:Motion Property Motion Auto Const Mandatory
+	Shared:Motion Property Motion Auto Const Mandatory
 EndGroup
 
 Group Player
@@ -351,7 +350,7 @@ Group Player
 
 	bool Property CanDraw Hidden
 		bool Function Get()
-			return Blackjack.IsInPlay(Match.Score)
+			return Blackjack.Session.IsInPlay(Match.Score)
 		EndFunction
 	EndProperty
 EndGroup

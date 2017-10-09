@@ -1,8 +1,33 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
+import Games
+import Games:Blackjack
+import Games:Papyrus:Log
 import Games:Shared
-import Games:Shared:Common
+import Games:Shared:UI:ButtonHint
 
 Actor PlayerRef
+
+
+Button AcceptButton
+Button IncreaseButton
+Button DecreaseButton
+
+Button HitButton
+Button StandButton
+
+Button YesButton
+Button NoButton
+
+
+Group ButtonHint
+	UI:ButtonHint Property ButtonHint Auto Const Mandatory
+	Shared:Keyboard Property Keyboard Auto Const Mandatory
+EndGroup
+
+Group SFX
+	Sound Property ITMBottlecapsUpx Auto Const Mandatory
+	Sound Property ITMBottlecapsDownx Auto Const Mandatory
+EndGroup
 
 
 ; Events
@@ -11,22 +36,41 @@ Actor PlayerRef
 Event OnInit()
 	parent.OnInit()
 	PlayerRef = Game.GetPlayer()
-	RegisterForCustomEvent(Activation, "OnSelected")
-	RegisterForPhaseEvent(Blackjack)
+
+	AcceptButton = new Button
+	AcceptButton.Text = "Accept"
+	AcceptButton.KeyCode = Keyboard.E
+
+	IncreaseButton = new Button
+	IncreaseButton.Text = "Increase"
+	IncreaseButton.KeyCode = Keyboard.W
+
+	DecreaseButton = new Button
+	DecreaseButton.Text = "Decrease"
+	DecreaseButton.KeyCode = Keyboard.S
+
+	HitButton = new Button
+	HitButton.Text = "Hit"
+	HitButton.KeyCode = Keyboard.W
+
+	StandButton = new Button
+	StandButton.Text = "Stand"
+	StandButton.KeyCode = Keyboard.S
+
+	YesButton = new Button
+	YesButton.Text = "Yes"
+	YesButton.KeyCode = Keyboard.E
+
+	NoButton = new Button
+	NoButton.Text = "No"
+	NoButton.KeyCode = Keyboard.Tab
+
+	ButtonHint.RegisterForSelectedEvent(self)
 EndEvent
 
 
-Event OnGamePhase(PhaseEventArgs e)
-	If (e.Change == Begun)
-		;
-	Else
-		Activation.Accept()
-	EndIf
-EndEvent
-
-
-Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-	{EMPTY}
+Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
+	akSender.Hide()
 EndEvent
 
 
@@ -52,32 +96,26 @@ EndState
 
 State Wagering
 	Event SetWager(WagerValue set)
-		Activation.Show(Games_Blackjack_ActivateMenu, Games_Blackjack_Activate_Wager)
+		ButtonHint.Clear()
+		ButtonHint.SelectOnce = false
+		ButtonHint.Add(AcceptButton)
+		ButtonHint.Add(IncreaseButton)
+		ButtonHint.Add(DecreaseButton)
+		ButtonHint.Show()
+
 		Game.RemovePlayerCaps(Bet)
 	EndEvent
 
-	Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-		If (akSender.Menu == Games_Blackjack_Activate_Wager)
-			; |   [3]   |
-			; | [2] [1] |
-			; |   [0]   |
-			int OptionAccept = 0 const
-			int OptionDecrease = 1 const
-			int OptionIncrease = 2 const
-
-			int value = 5 const
-
-			If (akSender.Selected == OptionIncrease)
-				IncreaseWager(value)
-			EndIf
-
-			If (akSender.Selected == OptionDecrease)
-				DecreaseWager(value)
-			EndIf
-
-			If (akSender.Selected == OptionAccept)
-				akSender.Accept()
-			EndIf
+	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
+		Button selected = akSender.GetSelectedEventArgs(arguments)
+		If (selected == AcceptButton)
+			akSender.Hide()
+		ElseIf (selected == IncreaseButton)
+			IncreaseWager(5)
+			ITMBottlecapsDownx.Play(Player)
+		ElseIf (selected == DecreaseButton)
+			DecreaseWager(5)
+			ITMBottlecapsUpx.Play(Player)
 		EndIf
 	EndEvent
 EndState
@@ -86,15 +124,23 @@ EndState
 
 State Playing
 	Event SetChoice(ChoiceValue set)
-		set.Selected = Invalid
-		Activation.Show(Games_Blackjack_ActivateMenu, Games_Blackjack_Activate_Turn)
+		ButtonHint.Clear()
+		ButtonHint.SelectOnce = true
+		ButtonHint.Add(HitButton)
+		ButtonHint.Add(StandButton)
 
-		set.Selected = Activation.Selected
-	EndEvent
-
-	Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-		If (akSender.Menu == Games_Blackjack_Activate_Turn)
-			akSender.Accept()
+		ButtonHint.Show()
+		If (ButtonHint.Selected)
+			If (ButtonHint.Selected == HitButton)
+				set.Selected = ChoiceHit
+			ElseIf (ButtonHint.Selected == StandButton)
+				set.Selected = ChoiceStand
+			Else
+				set.Selected = Invalid
+				WriteLine(self, "The play choice was invalid.")
+			EndIf
+		Else
+			WriteLine(self, "No play choice was selected.")
 		EndIf
 	EndEvent
 EndState
@@ -102,26 +148,22 @@ EndState
 
 State Scoring
 	Event ScoreBegin()
-		Activation.Show(Games_Blackjack_ActivateMenu, Games_Blackjack_Activate_Replay)
+		ButtonHint.Clear()
+		ButtonHint.SelectOnce = true
+		ButtonHint.Add(YesButton)
+		ButtonHint.Add(NoButton)
 
-		int OptionNo = 0 const
-		int OptionYes = 1 const
-
-		If (Activation.Selected == OptionNo)
-			WriteMessage("Selected", "Replay No")
-			; TODO: does nothing
-		EndIf
-
-		If (Activation.Selected == OptionYes)
-			WriteMessage("Selected", "Replay Yes")
-			; TODO: does nothing
-		EndIf
-	EndEvent
-
-
-	Event Games:Shared:Tasks:Activation.OnSelected(Tasks:Activation akSender, var[] arguments)
-		If (akSender.Menu == Games_Blackjack_Activate_Replay)
-			akSender.Accept()
+		ButtonHint.Show()
+		If (ButtonHint.Selected)
+			If (ButtonHint.Selected == YesButton)
+				; See: Game.psc @Dialog.PlayAgain()
+			ElseIf (ButtonHint.Selected == NoButton)
+				; See: Game.psc @Dialog.PlayAgain()
+			Else
+				; derp
+			EndIf
+		Else
+			WriteLine(self, "No play choice was selected.")
 		EndIf
 	EndEvent
 EndState
@@ -160,11 +202,3 @@ Group Markers
 	ObjectReference Property Games_Blackjack_P1C11 Auto Const Mandatory
 EndGroup
 
-Group Activation
-	Tasks:Activation Property Activation Auto Const Mandatory
-
-	ObjectReference Property Games_Blackjack_ActivateMenu Auto Const Mandatory
-	Perk Property Games_Blackjack_Activate_Replay Auto Const Mandatory
-	Perk Property Games_Blackjack_Activate_Turn Auto Const Mandatory
-	Perk Property Games_Blackjack_Activate_Wager Auto Const Mandatory
-EndGroup
