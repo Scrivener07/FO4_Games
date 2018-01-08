@@ -28,38 +28,36 @@ package Shared
 		{
 	//		BringToFront();
 			trace("[Display] OnAddedToStage:"+Shared.Utility.WalkMovie(this));
+
+//			var bg: MovieClip = new MovieClip();
+//			bg.graphics.beginFill(0xCCCCCC,0);
+//			bg.graphics.drawRect(-2000,-2000,4000,4000);
+//			bg.graphics.endFill();
+//			var StageRoot:MovieClip = stage.getChildAt(0) as MovieClip;
+//			StageRoot.addChild(bg)
 		}
 
 
 		public function BringToFront() : void
 		{
 			trace("[Display] BringToFront");
-			var stageRoot:DisplayObjectContainer = this.parent.parent; // root1
-			var container:DisplayObjectContainer = this.parent; // instance10
+			var container:DisplayObjectContainer = this.parent.parent;
+			var loader:DisplayObjectContainer = this.parent;
+			container.setChildIndex(loader, container.numChildren - 1);
 
 
-			if (isTrue)
-			{
-				stageRoot.setChildIndex(container, stageRoot.numChildren - 1); // bottom??
-			}
-			else
-			{
-				stageRoot.setChildIndex(container, 0); // top??
-			}
-			isTrue = !isTrue;
+			var StageRoot:MovieClip = stage.getChildAt(0) as MovieClip;
 
 
 			trace("\n\n\n\n");
 			trace("[Display] TraceDisplayList");
-			Shared.Utility.TraceDisplayList(stageRoot);
+			Shared.Utility.TraceDisplayList(StageRoot);
 			trace("\n\n\n\n");
-
 
 			trace("\n\n\n\n");
 			trace("[Display] TraceObject");
-			Shared.Utility.TraceObject(stageRoot);
+			Shared.Utility.TraceObject(container);
 			trace("\n\n\n\n");
-
 
 
 		//	trace("\n\n[Display] BringToFront - After \n\n");

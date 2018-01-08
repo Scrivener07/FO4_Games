@@ -63,16 +63,16 @@ bool Function TaskRun(ScriptObject script, string task = "Busy") Global
 				If (ChangeState(script, task))
 					return true
 				Else
-					WriteLine(script, "Task run cannot change state for the '"+task+"' task.")
+					WriteLine(script, "Run task cannot change state for the '"+task+"' task.")
 					return false
 				EndIf
 			Else
-				WriteLine(script, "Task run cannot operateon a none or empty state.")
+				WriteLine(script, "Run task cannot operate on a none or empty state.")
 				return false
 			EndIf
 		EndIf
 	Else
-		WriteLine(script, "Task run cannot operate on a none script.")
+		WriteLine(script, "Run task cannot operate on a none script.")
 		return false
 	EndIf
 EndFunction

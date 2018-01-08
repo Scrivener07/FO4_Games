@@ -9,13 +9,6 @@ Player[] Players
 float TimeWait = 3.0 const
 
 
-;/ Player Slots
-	Dealer  1x (Required)
-	Human   2x (Required)
-	Gambler 4x (Optional)
-/;
-
-
 ; Events
 ;---------------------------------------------
 
@@ -29,7 +22,6 @@ EndEvent
 
 int Function Score(Player gambler)
 	int score = 0
-
 	int index = 0
 	While (index < gambler.Hand.Length)
 		Deck:Card card = gambler.Hand[index]
@@ -68,23 +60,12 @@ EndFunction
 State Starting
 	Event Starting()
 		{Allocate players for this session.}
-		Add(Human)
-		TaskAwait(Human, StartingTask)
-
-		Add(Abraham)
-		TaskAwait(Abraham, StartingTask)
-
-		Add(Baxter)
-		TaskAwait(Baxter, StartingTask)
-
-		Add(Chester)
-		TaskAwait(Chester, StartingTask)
-
-		Add(Dewey)
-		TaskAwait(Dewey, StartingTask)
-
-		Add(Dealer)
-		TaskAwait(Dealer, StartingTask)
+		If (Add(Human))
+			TaskAwait(Human, StartingTask)
+		EndIf
+		If (Add(Dealer))
+			TaskAwait(Dealer, StartingTask)
+		EndIf
 	EndEvent
 
 	bool Function Add(Player value)
@@ -163,16 +144,6 @@ EndState
 State Scoring
 	Event Scoring()
 		For(Players)
-		If (Human.HasCaps)
-			If (Blackjack.Dialog.PlayAgain())
-				ChangeState(Blackjack, WageringTask)
-			Else
-				ChangeState(Blackjack, ExitingTask)
-			EndIf
-		Else
-			ChangeState(Blackjack, ExitingTask)
-			Blackjack.Dialog.ShowKicked()
-		EndIf
 	EndEvent
 
 	Function Each(Player gambler)
@@ -291,10 +262,10 @@ Group Players
 
 	Players:Human Property Human Auto Const Mandatory
 	Players:Dealer Property Dealer Auto Const Mandatory
-	Players:Abraham Property Abraham Auto Const Mandatory
-	Players:Baxter Property Baxter Auto Const Mandatory
-	Players:Chester Property Chester Auto Const Mandatory
-	Players:Dewey Property Dewey Auto Const Mandatory
+	; Players:Abraham Property Abraham Auto Const Mandatory
+	; Players:Baxter Property Baxter Auto Const Mandatory
+	; Players:Chester Property Chester Auto Const Mandatory
+	; Players:Dewey Property Dewey Auto Const Mandatory
 EndGroup
 
 Group Scoring

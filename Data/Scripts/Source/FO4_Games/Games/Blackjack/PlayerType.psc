@@ -129,9 +129,14 @@ State Scoring
 	Event ScoreBegin()
 		{TODO}
 	EndEvent
+
+	Event ScoreEnd()
+		{TODO}
+	EndEvent
 EndState
 
 Event ScoreBegin() Native
+Event ScoreEnd() Native
 
 
 ; Virtual

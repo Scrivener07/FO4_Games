@@ -16,18 +16,12 @@ float TimeWait = 3.0 const
 ;---------------------------------------------
 
 Event OnInit()
-	; Display.Setup()
 	RegisterForPhaseEvent(self)
 EndEvent
 
 
-Event OnQuestInit()
-	; Display.Register()
-EndEvent
-
-
 Event OnGamePhase(PhaseEventArgs e)
-	Display.Phase = e.Name
+	WriteLine(self, "OnGamePhase " + e.Name)
 EndEvent
 
 
@@ -86,7 +80,7 @@ State Starting
 		EndIf
 
 		If (SendPhase(self, StartingTask, Begun))
-			Display.Load()
+			Display.Visible = true
 			TaskAwait(Table, StartingTask)
 			TaskAwait(Cards, StartingTask)
 			TaskAwait(Session, StartingTask)
@@ -117,6 +111,7 @@ State Wagering
 		If (SendPhase(self, WageringTask, Begun))
 			Utility.Wait(TimeWait)
 			TaskAwait(Session, WageringTask)
+
 			If (Session.Human.Bet == Invalid)
 				ChangeState(self, ExitingTask)
 			Else
@@ -179,6 +174,18 @@ State Scoring
 		If (SendPhase(self, ScoringTask, Begun))
 			Utility.Wait(TimeWait)
 			TaskAwait(Session, ScoringTask)
+
+			If (Session.Human.HasCaps)
+				If (Dialog.PlayAgain())
+					ChangeState(self, WageringTask)
+				Else
+					ChangeState(self, ExitingTask)
+				EndIf
+			Else
+				ChangeState(self, ExitingTask)
+				Dialog.ShowKicked()
+			EndIf
+
 		Else
 			ChangeState(self, ExitingTask)
 		EndIf
@@ -196,7 +203,7 @@ State Exiting
 		WriteLine("Phase", "Exiting")
 		If (SendPhase(self, ExitingTask, Begun))
 			Utility.Wait(TimeWait)
-			; Display.Unload()
+			Display.Visible = false
 			TaskAwait(Table, ExitingTask)
 			TaskAwait(Cards, ExitingTask)
 			TaskAwait(Session, ExitingTask)

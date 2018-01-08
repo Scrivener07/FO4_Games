@@ -91,6 +91,13 @@ State Starting
 		set.Card10 = Games_Blackjack_P1C10
 		set.Card11 = Games_Blackjack_P1C11
 	EndEvent
+
+	Event StartBegin()
+		Blackjack.Display.Score = Score
+		Blackjack.Display.Bet = Bet
+		Blackjack.Display.Caps = Caps
+		Blackjack.Display.Earnings = Winnings
+	EndEvent
 EndState
 
 
@@ -102,8 +109,8 @@ State Wagering
 		ButtonHint.Add(IncreaseButton)
 		ButtonHint.Add(DecreaseButton)
 		ButtonHint.Show()
-
 		Game.RemovePlayerCaps(Bet)
+		Blackjack.Display.Caps = Caps
 	EndEvent
 
 	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
@@ -112,17 +119,29 @@ State Wagering
 			akSender.Hide()
 		ElseIf (selected == IncreaseButton)
 			IncreaseWager(5)
+			Blackjack.Display.Bet = Bet
 			ITMBottlecapsDownx.Play(Player)
 		ElseIf (selected == DecreaseButton)
 			DecreaseWager(5)
+			Blackjack.Display.Bet = Bet
 			ITMBottlecapsUpx.Play(Player)
 		EndIf
 	EndEvent
 EndState
 
 
+State Dealing
+	Event DealBegin()
+		Blackjack.Display.Score = Score
+	EndEvent
+EndState
+
 
 State Playing
+	Event PlayBegin(int aTurn)
+		Blackjack.Display.Score = Score
+	EndEvent
+
 	Event SetChoice(ChoiceValue set)
 		ButtonHint.Clear()
 		ButtonHint.SelectOnce = true
@@ -166,6 +185,13 @@ State Scoring
 			WriteLine(self, "No play choice was selected.")
 		EndIf
 	EndEvent
+
+	Event ScoreEnd()
+		Blackjack.Display.Score = Score
+		Blackjack.Display.Bet = Bet
+		Blackjack.Display.Caps = Caps
+		Blackjack.Display.Earnings = Winnings
+	EndEvent
 EndState
 
 
@@ -201,4 +227,3 @@ Group Markers
 	ObjectReference Property Games_Blackjack_P1C10 Auto Const Mandatory
 	ObjectReference Property Games_Blackjack_P1C11 Auto Const Mandatory
 EndGroup
-

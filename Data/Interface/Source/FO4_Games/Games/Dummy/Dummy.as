@@ -9,7 +9,7 @@ package
 	public class Dummy extends Display implements IDisplay
 	{
 
-		// Menu
+		// Display
 		//---------------------------------------------
 
 		public function Dummy()

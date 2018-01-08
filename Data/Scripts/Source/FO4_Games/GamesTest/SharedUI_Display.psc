@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:UI_Test extends Games:Shared:UI:Display Default
+ScriptName GamesTest:SharedUI_Display extends Games:Shared:UI:Display
 import Games
 import Games:Papyrus:Log
 
@@ -7,9 +7,9 @@ import Games:Papyrus:Log
 ;---------------------------------------------
 
 Event OnDisplayData(DisplayData display)
-	display.Menu = "HUDMenu"
+	display.Menu = "PipboyMenu"
 	display.Asset = "Dummy.swf"
-	WriteLine(self, "OnDisplayData:"+display)
+	; display.Root = "root1.BottomCenterGroup_mc.CompassWidget_mc"
 EndEvent
 
 

@@ -30,11 +30,11 @@ State Starting
 		Game.SetInChargen(true, true, false)
 		Game.ShowFirstPersonGeometry(false)
 
-		; InputLayer = InputEnableLayer.Create()
+		InputLayer = InputEnableLayer.Create()
 		; InputLayer.DisablePlayerControls(true, true, true, true, true, true, false, true, true, true, true)
 
 		Game.SetPlayerAIDriven()
-		Player.SetScale(0.75)
+		Player.SetScale(0.45)
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
 		Utility.Wait(TimeWait)
 		TaskEnd(self)
