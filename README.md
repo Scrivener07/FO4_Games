@@ -6,7 +6,7 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 <img src="Documents/Screenshot03.png" height="200">
 
 #### Features
-- [ ] Black Jack
+- [ ] Blackjack
 - [ ] Cadillac
 
 ## Contributing
