@@ -7,6 +7,7 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 
 #### Features
 - [ ] Black Jack
+- [ ] Cadillac
 
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing to this project.
