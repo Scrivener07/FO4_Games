@@ -9,7 +9,7 @@ import Games:Papyrus:Script
 ObjectReference Entry
 CustomEvent PhaseEvent
 
-float TimeWait = 3.0 const
+float TimeWait = 2.0 const
 
 
 ; Events
@@ -66,7 +66,7 @@ bool Function UnregisterForPhaseEvent(Blackjack:Game script)
 EndFunction
 
 
-; Tasks
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting
@@ -80,7 +80,6 @@ State Starting
 		EndIf
 
 		If (SendPhase(self, StartingTask, Begun))
-			Display.Visible = true
 			TaskAwait(Table, StartingTask)
 			TaskAwait(Cards, StartingTask)
 			TaskAwait(Session, StartingTask)
@@ -176,7 +175,7 @@ State Scoring
 			TaskAwait(Session, ScoringTask)
 
 			If (Session.Human.HasCaps)
-				If (Dialog.PlayAgain())
+				If (Session.Human.Rematch)
 					ChangeState(self, WageringTask)
 				Else
 					ChangeState(self, ExitingTask)
@@ -185,7 +184,6 @@ State Scoring
 				ChangeState(self, ExitingTask)
 				Dialog.ShowKicked()
 			EndIf
-
 		Else
 			ChangeState(self, ExitingTask)
 		EndIf
@@ -203,7 +201,6 @@ State Exiting
 		WriteLine("Phase", "Exiting")
 		If (SendPhase(self, ExitingTask, Begun))
 			Utility.Wait(TimeWait)
-			Display.Visible = false
 			TaskAwait(Table, ExitingTask)
 			TaskAwait(Cards, ExitingTask)
 			TaskAwait(Session, ExitingTask)
@@ -227,7 +224,6 @@ Group Tasks
 EndGroup
 
 Group UI
-	Blackjack:Display Property Display Auto Const Mandatory
 	Blackjack:Dialog Property Dialog Auto Const Mandatory
 EndGroup
 

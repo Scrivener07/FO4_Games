@@ -7,7 +7,6 @@ import Games:Shared:UI:ButtonHint
 
 Actor PlayerRef
 
-
 Button AcceptButton
 Button IncreaseButton
 Button DecreaseButton
@@ -18,6 +17,8 @@ Button StandButton
 Button YesButton
 Button NoButton
 
+
+Blackjack:Display Property Display Auto Const Mandatory
 
 Group ButtonHint
 	UI:ButtonHint Property ButtonHint Auto Const Mandatory
@@ -58,11 +59,11 @@ Event OnInit()
 	StandButton.KeyCode = Keyboard.S
 
 	YesButton = new Button
-	YesButton.Text = "Yes"
+	YesButton.Text = "Play Again"
 	YesButton.KeyCode = Keyboard.E
 
 	NoButton = new Button
-	NoButton.Text = "No"
+	NoButton.Text = "Leave"
 	NoButton.KeyCode = Keyboard.Tab
 
 	ButtonHint.RegisterForSelectedEvent(self)
@@ -74,10 +75,18 @@ Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] argume
 EndEvent
 
 
-; Object
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting
+	Event Starting()
+		Display.Score = 0
+		Display.Bet = 0
+		Display.Caps = Caps
+		Display.Earnings = Earnings
+		parent.Starting()
+	EndEvent
+
 	Event SetMarkers(MarkerValue set)
 		set.Card01 = Games_Blackjack_P1C01
 		set.Card02 = Games_Blackjack_P1C02
@@ -91,17 +100,16 @@ State Starting
 		set.Card10 = Games_Blackjack_P1C10
 		set.Card11 = Games_Blackjack_P1C11
 	EndEvent
-
-	Event StartBegin()
-		Blackjack.Display.Score = Score
-		Blackjack.Display.Bet = Bet
-		Blackjack.Display.Caps = Caps
-		Blackjack.Display.Earnings = Winnings
-	EndEvent
 EndState
 
 
 State Wagering
+	Event Wagering()
+		; a new match will begin with this state
+
+		parent.Wagering()
+	EndEvent
+
 	Event SetWager(WagerValue set)
 		ButtonHint.Clear()
 		ButtonHint.SelectOnce = false
@@ -110,7 +118,7 @@ State Wagering
 		ButtonHint.Add(DecreaseButton)
 		ButtonHint.Show()
 		Game.RemovePlayerCaps(Bet)
-		Blackjack.Display.Caps = Caps
+		Display.Caps = Caps
 	EndEvent
 
 	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
@@ -119,27 +127,36 @@ State Wagering
 			akSender.Hide()
 		ElseIf (selected == IncreaseButton)
 			IncreaseWager(5)
-			Blackjack.Display.Bet = Bet
 			ITMBottlecapsDownx.Play(Player)
 		ElseIf (selected == DecreaseButton)
 			DecreaseWager(5)
-			Blackjack.Display.Bet = Bet
 			ITMBottlecapsUpx.Play(Player)
 		EndIf
 	EndEvent
+
+	Function IncreaseWager(int value)
+		parent.IncreaseWager(value)
+		Display.Bet = Bet
+	EndFunction
+
+	Function DecreaseWager(int value)
+		parent.DecreaseWager(value)
+		Display.Bet = Bet
+	EndFunction
 EndState
 
 
 State Dealing
-	Event DealBegin()
-		Blackjack.Display.Score = Score
+	Event Dealing()
+		parent.Dealing()
+		Display.Score = Score
 	EndEvent
 EndState
 
 
 State Playing
-	Event PlayBegin(int aTurn)
-		Blackjack.Display.Score = Score
+	Event PlayTurn(int aTurn)
+		Display.Score = Score
 	EndEvent
 
 	Event SetChoice(ChoiceValue set)
@@ -147,8 +164,8 @@ State Playing
 		ButtonHint.SelectOnce = true
 		ButtonHint.Add(HitButton)
 		ButtonHint.Add(StandButton)
-
 		ButtonHint.Show()
+
 		If (ButtonHint.Selected)
 			If (ButtonHint.Selected == HitButton)
 				set.Selected = ChoiceHit
@@ -166,32 +183,35 @@ EndState
 
 
 State Scoring
-	Event ScoreBegin()
+	Event Scoring()
+		parent.Scoring()
+
 		ButtonHint.Clear()
 		ButtonHint.SelectOnce = true
 		ButtonHint.Add(YesButton)
 		ButtonHint.Add(NoButton)
-
 		ButtonHint.Show()
+
 		If (ButtonHint.Selected)
-			If (ButtonHint.Selected == YesButton)
-				; See: Game.psc @Dialog.PlayAgain()
-			ElseIf (ButtonHint.Selected == NoButton)
-				; See: Game.psc @Dialog.PlayAgain()
-			Else
-				; derp
-			EndIf
+			SessionRematch(ButtonHint.Selected == YesButton)
 		Else
-			WriteLine(self, "No play choice was selected.")
+			WriteLine(self, "Chose not to play again.")
 		EndIf
 	EndEvent
 
-	Event ScoreEnd()
-		Blackjack.Display.Score = Score
-		Blackjack.Display.Bet = Bet
-		Blackjack.Display.Caps = Caps
-		Blackjack.Display.Earnings = Winnings
-	EndEvent
+	Function IncreaseEarnings(int value)
+		parent.IncreaseEarnings(value)
+		Game.GivePlayerCaps(value)
+		Display.Earnings = Earnings
+		Display.Caps = Caps
+	EndFunction
+
+	Function DecreaseEarnings(int value)
+		parent.DecreaseEarnings(value)
+		Game.RemovePlayerCaps(Bet)
+		Display.Earnings = Earnings
+		Display.Caps = Caps
+	EndFunction
 EndState
 
 
@@ -200,6 +220,12 @@ EndState
 
 int Function GetBank()
 	return Player.GetGoldAmount()
+EndFunction
+
+
+Function SetScore(int value)
+	parent.SetScore(value)
+	Display.Score = value
 EndFunction
 
 

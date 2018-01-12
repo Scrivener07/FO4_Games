@@ -19,7 +19,6 @@ package Shared
 
 		public function Display()
 		{
-			trace("[Display] Constructor");
 			addEventListener(Event.ADDED_TO_STAGE, OnAddedToStage);
 		}
 

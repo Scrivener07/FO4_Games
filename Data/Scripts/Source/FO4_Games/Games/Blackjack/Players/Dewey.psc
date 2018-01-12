@@ -4,7 +4,7 @@ ScriptName Games:Blackjack:Players:Dewey extends Games:Blackjack:Player
 	none, simple AI
 /;
 
-; Tasks
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting

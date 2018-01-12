@@ -6,7 +6,7 @@ ScriptName Games:Blackjack:Players:Abraham extends Games:Blackjack:Player
 	TODO: expose the highest bet among players
 /;
 
-; Tasks
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting

@@ -1,7 +1,6 @@
 ScriptName Games:Blackjack:Display extends Games:Shared:UI:Display
 import Games:Blackjack
 import Games:Papyrus:Log
-import Games:Papyrus:PointType
 
 
 ; Display
@@ -11,6 +10,11 @@ Event OnDisplayData(DisplayData display)
 	display.Menu = "HUDMenu"
 	display.Asset = "Blackjack.swf"
 EndEvent
+
+
+Function Reset()
+	UI.Invoke(Menu, GetMember("Reset"))
+EndFunction
 
 
 ; Properties

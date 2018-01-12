@@ -23,15 +23,15 @@ bool Failure = false const
 
 Event OnInit()
 	Cards = new Card[0]
-	Choice = new ChoiceValue
-	Marker = new MarkerValue
 	Match = new MatchData
 	Session = new SessionData
+	Marker = new MarkerValue
 	Wager = new WagerValue
+	Choice = new ChoiceValue
 EndEvent
 
 
-; Starting
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting
@@ -39,36 +39,29 @@ State Starting
 		Session = new SessionData
 		Marker = new MarkerValue
 		self.SetMarkers(Marker)
-		self.StartBegin()
 		WriteLine(self, "Joined")
 	EndEvent
 EndState
 
-
-; Wagering
-;---------------------------------------------
 
 State Wagering
 	Event Wagering()
 		Cards = new Card[0]
 		Match = new MatchData
 		Wager = new WagerValue
+
 		self.SetWager(Wager)
-		self.WagerBegin()
-		Session.Winnings -= Bet
+		Session.Earnings -= Bet
 		WriteLine(self, "Wagered a bet of "+Bet)
 	EndEvent
-
 
 	Event SetWager(WagerValue set)
 		set.Bet = 5
 	EndEvent
 
-
 	Function IncreaseWager(int value)
 		Wager.Bet += value
 	EndFunction
-
 
 	Function DecreaseWager(int value)
 		Wager.Bet -= value
@@ -76,20 +69,13 @@ State Wagering
 EndState
 
 
-; Dealing
-;---------------------------------------------
-
 State Dealing
 	Event Dealing()
 		TryDraw()
-		self.DealBegin()
 		WriteLine(self, "Dealt a card..")
 	EndEvent
 EndState
 
-
-; Playing
-;---------------------------------------------
 
 State Playing
 	Event Playing()
@@ -100,9 +86,9 @@ State Playing
 
 		While (next)
 			Match.Turn += 1
-			self.PlayBegin(Match.Turn)
+			self.PlayTurn(Match.Turn)
 
-			If (Blackjack.Session.IsWin(Match.Score))
+			If (Blackjack.Session.IsWin(Score))
 				WriteLine(self, "Standing with 21.")
 				next = Break
 
@@ -133,7 +119,6 @@ State Playing
 		EndWhile
 	EndEvent
 
-
 	Event SetChoice(ChoiceValue set)
 		If (Score <= 16)
 			set.Selected = ChoiceHit
@@ -144,63 +129,71 @@ State Playing
 EndState
 
 
-; Scoring
-;---------------------------------------------
-
 State Scoring
 	Event Scoring()
-		self.ScoreBegin()
-
-		Player dealer = Blackjack.Session.Dealer
 		If (self is Players:Dealer)
 			WriteLine(self, "Skipped dealer for scoring.")
 		Else
+			Player dealer = Blackjack.Session.Dealer
+
 			If (Blackjack.Session.IsBust(Score))
 				WriteLine(self, "Score of "+Score+" is a bust.")
+				OnScore(ScoreLose)
 			Else
 				If (Blackjack.Session.IsBust(dealer.Score))
 					WriteLine(self, "The dealer busted with "+dealer.Score+".")
-					WinWager()
+					OnScore(ScoreWin)
 				Else
 					If (Score > dealer.Score)
 						WriteLine(self, "Score of "+Score+" beats dealers "+dealer.Score+".")
-						WinWager()
-
+						OnScore(ScoreWin)
 					ElseIf (Score < dealer.Score)
 						WriteLine(self, "Score of "+Score+" loses to dealers "+dealer.Score+".")
-
+						OnScore(ScoreLose)
 					ElseIf (Score == dealer.Score)
 						WriteLine(self, "Score of "+Score+" pushes dealers "+dealer.Score+".")
-						PushWager()
+						OnScore(ScorePush)
 					Else
 						WriteLine(self, "Error, problem handling score "+Score+" against dealers "+dealer.Score+".")
+						OnScore(Invalid)
 					EndIf
 				EndIf
 			EndIf
 		EndIf
-
-		self.ScoreEnd()
 	EndEvent
+
+	Event OnScore(int scoring)
+		If (scoring == ScoreLose)
+			DecreaseEarnings(Bet)
+			WriteLine(self, "Lost "+Bet+" caps.")
+		ElseIf (scoring == ScoreWin)
+			int value = Bet * 2
+			IncreaseEarnings(value)
+			WriteLine(self, "Won "+value+" caps.")
+		ElseIf (scoring == ScorePush)
+			IncreaseEarnings(Bet)
+			WriteLine(self, "Pushed "+Bet+" caps.")
+		ElseIf (scoring == Invalid)
+			IncreaseEarnings(Bet)
+			WriteLine(self, "Something unexpected happened. Refunded "+Bet+" caps.")
+		Else
+			IncreaseEarnings(Bet)
+			WriteLine(self, "The parameter 'OnScore.scoring' is out of range. Refunded "+Bet+" caps.")
+		EndIf
+	EndEvent
+
+	Function IncreaseEarnings(int value)
+		Session.Earnings += value
+	EndFunction
+
+	Function DecreaseEarnings(int value)
+		Session.Earnings -= value
+	EndFunction
+
+	Function SessionRematch(bool value)
+		Session.Rematch = value
+	EndFunction
 EndState
-
-
-Function WinWager()
-	int value = Bet * 2
-	Session.Winnings += value
-	If (self is Players:Human)
-		Game.GivePlayerCaps(value)
-		WriteLine(self, "Won "+value+" caps.")
-	EndIf
-EndFunction
-
-
-Function PushWager()
-	Session.Winnings += Bet
-	If (self is Players:Human)
-		Game.GivePlayerCaps(Bet)
-		WriteLine(self, "Refunded "+Bet+" caps.")
-	EndIf
-EndFunction
 
 
 ; Functions
@@ -214,7 +207,7 @@ bool Function TryDraw()
 				ObjectReference turnMarker = NextMarker()
 				If (turnMarker)
 					Cards.Add(drawn)
-					Match.Score = Blackjack.Session.Score(self)
+					SetScore(Blackjack.Session.Score(self))
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
@@ -235,6 +228,11 @@ bool Function TryDraw()
 		WriteLine(Name, "Cannot draw another card right now.")
 		return Failure
 	EndIf
+EndFunction
+
+
+Function SetScore(int value)
+	Match.Score = value
 EndFunction
 
 
@@ -311,9 +309,9 @@ Group Player
 		EndFunction
 	EndProperty
 
-	int Property Winnings Hidden
+	int Property Earnings Hidden
 		int Function Get()
-			return Session.Winnings
+			return Session.Earnings
 		EndFunction
 	EndProperty
 
@@ -331,7 +329,13 @@ Group Player
 
 	bool Property CanDraw Hidden
 		bool Function Get()
-			return Blackjack.Session.IsInPlay(Match.Score)
+			return Blackjack.Session.IsInPlay(Score)
+		EndFunction
+	EndProperty
+
+	bool Property Rematch Hidden
+		bool Function Get()
+			return Session.Rematch
 		EndFunction
 	EndProperty
 EndGroup

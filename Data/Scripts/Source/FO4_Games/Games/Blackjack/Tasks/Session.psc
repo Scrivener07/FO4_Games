@@ -54,18 +54,24 @@ int Function Score(Player gambler)
 EndFunction
 
 
-; Tasks
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting
 	Event Starting()
 		{Allocate players for this session.}
 		If (Add(Human))
+			Human.Display.Visible = true
 			TaskAwait(Human, StartingTask)
 		EndIf
+
 		If (Add(Dealer))
 			TaskAwait(Dealer, StartingTask)
 		EndIf
+
+
+
+
 	EndEvent
 
 	bool Function Add(Player value)
@@ -155,6 +161,9 @@ EndState
 
 State Exiting
 	Event Exiting()
+		If (HasHuman)
+			Human.Display.Visible = false
+		EndIf
 		Clear()
 	EndEvent
 

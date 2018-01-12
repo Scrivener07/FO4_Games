@@ -7,10 +7,6 @@ import Games:Papyrus:Script
 Actor Player
 InputEnableLayer InputLayer
 
-float TimeWait = 2.0 const
-int HudStandard = 0 const
-int HudHidden = 3 const
-
 
 ; Events
 ;---------------------------------------------
@@ -20,23 +16,31 @@ Event OnInit()
 EndEvent
 
 
-; Task
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting
 	Event OnBeginState(string asOldState)
+		; Fade to a black screen over 1 second and leave up fader when done
+		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 		Player.MoveTo(Games_Blackjack_CellMarker)
 
-		Game.SetInChargen(true, true, false)
-		Game.ShowFirstPersonGeometry(false)
-
+		;Game.SetInChargen(true, true, false)
 		InputLayer = InputEnableLayer.Create()
-		; InputLayer.DisablePlayerControls(true, true, true, true, true, true, false, true, true, true, true)
+	 ;	InputLayer.EnableMovement(false)
+	; 	InputLayer.EnableLooking(false)
+	; 	InputLayer.EnableCamSwitch(false)
+	; ;	InputLayer.EnableMenu(false)
+	; 	InputLayer.EnableVATS(false)
+ ; 		InputLayer.EnableFighting(false)
 
 		Game.SetPlayerAIDriven()
+		Game.ShowFirstPersonGeometry(false)
 		Player.SetScale(0.45)
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
-		Utility.Wait(TimeWait)
+
+		; Spend 2 seconds on a black screen before fading in to the game over 1 second and hide fader when done
+		Game.FadeOutGame(false, true, 2.0, 1.0)
 		TaskEnd(self)
 	EndEvent
 EndState
@@ -44,21 +48,20 @@ EndState
 
 State Exiting
 	Event OnBeginState(string asOldState)
-		Utility.Wait(TimeWait)
+		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 
-		Game.ShowFirstPersonGeometry(true)
-		Game.SetInChargen(false, false, false)
-		Game.SetCharGenHUDMode(HudStandard)
-
-		Game.SetPlayerAIDriven(false)
-		Player.MoveTo(Blackjack.EntryPoint)
-		Player.SetScale(1.0)
-
+	;	Game.SetInChargen(false, false, false)
 		If (InputLayer)
 			InputLayer.Delete()
 			InputLayer = none
 		EndIf
 
+		Game.SetPlayerAIDriven(false)
+		Game.ShowFirstPersonGeometry(true)
+		Player.SetScale(1.0)
+
+		Player.MoveTo(Blackjack.EntryPoint, 120.0)
+		Game.FadeOutGame(false, true, 2.0, 1.0)
 		TaskEnd(self)
 	EndEvent
 EndState

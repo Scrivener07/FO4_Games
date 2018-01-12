@@ -19,10 +19,7 @@
 		{
 			trace("[Blackjack] Constructor");
 			visible = false;
-			Score = "";
-			Bet = "";
-			Caps = "";
-			Earnings = "";
+			Reset();
 		}
 
 
@@ -51,6 +48,16 @@
 		{
 			trace("[Blackjack] Player earnings are " + argument);
 			Info.Earnings = argument;
+		}
+
+
+		public function Reset():void
+		{
+			trace("[Blackjack] Reset display values.");
+			Score = "";
+			Bet = "";
+			Caps = "";
+			Earnings = "";
 		}
 
 

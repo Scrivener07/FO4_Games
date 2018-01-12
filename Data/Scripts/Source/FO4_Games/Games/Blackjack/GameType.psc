@@ -49,7 +49,7 @@ Event Games:Blackjack:Game.PhaseEvent(Blackjack:Game sender, var[] arguments)
 EndEvent
 
 
-; Tasks
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting

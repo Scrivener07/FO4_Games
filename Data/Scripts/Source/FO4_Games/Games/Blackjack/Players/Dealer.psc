@@ -2,7 +2,7 @@ ScriptName Games:Blackjack:Players:Dealer extends Games:Blackjack:Player
 import Games:Papyrus:Log
 
 
-; Tasks
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting
@@ -31,7 +31,7 @@ EndState
 
 
 State Playing
-	Event PlayBegin(int aTurn)
+	Event PlayTurn(int aTurn)
 		If (aTurn == 1)
 			; reveal the face down card
 			Motion.Translate(Hand[0].Reference, Games_Blackjack_D1C01B)

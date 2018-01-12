@@ -5,7 +5,7 @@ ScriptName Games:Blackjack:Players:Baxter extends Games:Blackjack:Player
 	Really likes to hit on their turn.
 /;
 
-; Tasks
+; FSM - Finite State Machine
 ;---------------------------------------------
 
 State Starting
