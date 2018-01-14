@@ -11,8 +11,6 @@ SessionData Session
 MatchData Match
 
 MarkerValue Marker
-WagerValue Wager
-ChoiceValue Choice
 
 bool Success = true const
 bool Failure = false const
@@ -26,8 +24,6 @@ Event OnInit()
 	Match = new MatchData
 	Session = new SessionData
 	Marker = new MarkerValue
-	Wager = new WagerValue
-	Choice = new ChoiceValue
 EndEvent
 
 
@@ -37,8 +33,7 @@ EndEvent
 State Starting
 	Event Starting()
 		Session = new SessionData
-		Marker = new MarkerValue
-		self.SetMarkers(Marker)
+		Marker = IMarkers()
 		WriteLine(self, "Joined")
 	EndEvent
 EndState
@@ -48,23 +43,12 @@ State Wagering
 	Event Wagering()
 		Cards = new Card[0]
 		Match = new MatchData
-		Wager = new WagerValue
-
-		self.SetWager(Wager)
-		Session.Earnings -= Bet
+		Match.Bet = IWager()
 		WriteLine(self, "Wagered a bet of "+Bet)
 	EndEvent
 
-	Event SetWager(WagerValue set)
-		set.Bet = 5
-	EndEvent
-
-	Function IncreaseWager(int value)
-		Wager.Bet += value
-	EndFunction
-
-	Function DecreaseWager(int value)
-		Wager.Bet -= value
+	int Function IWager()
+		return WagerMinimum
 	EndFunction
 EndState
 
@@ -86,7 +70,7 @@ State Playing
 
 		While (next)
 			Match.Turn += 1
-			self.PlayTurn(Match.Turn)
+			OnTurn(Match.Turn)
 
 			If (Blackjack.Session.IsWin(Score))
 				WriteLine(self, "Standing with 21.")
@@ -96,11 +80,10 @@ State Playing
 				WriteLine(self, "Busted!")
 				next = Break
 			Else
-				Choice = new ChoiceValue
-				self.SetChoice(Choice)
+				Match.TurnChoice = IChoice()
 
-				If (Choice.Selected == ChoiceHit)
-					If (self.TryDraw())
+				If (Match.TurnChoice == ChoiceHit)
+					If (TryDraw())
 						WriteLine(self, "Drew a card." + Hand[Last])
 						next = Continue
 					Else
@@ -108,24 +91,24 @@ State Playing
 						next = Break
 					EndIf
 
-				ElseIf (Choice.Selected == ChoiceStand)
+				ElseIf (Match.TurnChoice == ChoiceStand)
 					WriteLine(self, "Chose to stand.")
 					next = Break
 				Else
-					WriteLine(self, "Error, the play choice "+Choice.Selected+" was out of range. "+self.ToString())
+					WriteLine(self, "Error, the play choice "+Match.TurnChoice+" was out of range. "+self.ToString())
 					next = Break
 				EndIf
 			EndIf
 		EndWhile
 	EndEvent
 
-	Event SetChoice(ChoiceValue set)
+	int Function IChoice()
 		If (Score <= 16)
-			set.Selected = ChoiceHit
+			return ChoiceHit
 		Else
-			set.Selected = ChoiceStand
+			return ChoiceStand
 		EndIf
-	EndEvent
+	EndFunction
 EndState
 
 
@@ -138,62 +121,152 @@ State Scoring
 
 			If (Blackjack.Session.IsBust(Score))
 				WriteLine(self, "Score of "+Score+" is a bust.")
-				OnScore(ScoreLose)
+				OnScoreLose()
 			Else
 				If (Blackjack.Session.IsBust(dealer.Score))
 					WriteLine(self, "The dealer busted with "+dealer.Score+".")
-					OnScore(ScoreWin)
+					OnScoreWin()
 				Else
 					If (Score > dealer.Score)
 						WriteLine(self, "Score of "+Score+" beats dealers "+dealer.Score+".")
-						OnScore(ScoreWin)
+						OnScoreWin()
 					ElseIf (Score < dealer.Score)
 						WriteLine(self, "Score of "+Score+" loses to dealers "+dealer.Score+".")
-						OnScore(ScoreLose)
+						OnScoreLose()
 					ElseIf (Score == dealer.Score)
 						WriteLine(self, "Score of "+Score+" pushes dealers "+dealer.Score+".")
-						OnScore(ScorePush)
+						OnScorePush()
 					Else
 						WriteLine(self, "Error, problem handling score "+Score+" against dealers "+dealer.Score+".")
-						OnScore(Invalid)
+						OnScoreError()
 					EndIf
 				EndIf
 			EndIf
 		EndIf
 	EndEvent
 
-	Event OnScore(int scoring)
-		If (scoring == ScoreLose)
-			DecreaseEarnings(Bet)
-			WriteLine(self, "Lost "+Bet+" caps.")
-		ElseIf (scoring == ScoreWin)
-			int value = Bet * 2
-			IncreaseEarnings(value)
-			WriteLine(self, "Won "+value+" caps.")
-		ElseIf (scoring == ScorePush)
-			IncreaseEarnings(Bet)
-			WriteLine(self, "Pushed "+Bet+" caps.")
-		ElseIf (scoring == Invalid)
-			IncreaseEarnings(Bet)
-			WriteLine(self, "Something unexpected happened. Refunded "+Bet+" caps.")
+	Event OnScoreLose()
+		Session.Earnings -= Bet
+		WriteLine(self, "Lost "+Bet+" caps.")
+	EndEvent
+
+	Event OnScoreWin()
+		If (Hand.Length == 2)
+			Match.Winnings = Bet + (Bet * 1.5) as int
+			Session.Earnings += Winnings
+			WriteLine(self, "Won "+Winnings+" caps with a Blackjack.")
 		Else
-			IncreaseEarnings(Bet)
-			WriteLine(self, "The parameter 'OnScore.scoring' is out of range. Refunded "+Bet+" caps.")
+			Match.Winnings = Bet * 2
+			Session.Earnings += Winnings
+			WriteLine(self, "Won "+Winnings+" caps.")
 		EndIf
 	EndEvent
 
-	Function IncreaseEarnings(int value)
-		Session.Earnings += value
-	EndFunction
+	Event OnScorePush()
+		Match.Winnings = Bet
+		Session.Earnings += Bet
+		WriteLine(self, "Pushed "+Bet+" caps.")
+	EndEvent
 
-	Function DecreaseEarnings(int value)
-		Session.Earnings -= value
-	EndFunction
-
-	Function SessionRematch(bool value)
-		Session.Rematch = value
-	EndFunction
+	Event OnScoreError()
+		Match.Winnings = Bet
+		Session.Earnings += Bet
+		WriteLine(self, "Something unexpected happened. Refunded "+Bet+" caps.")
+	EndEvent
 EndState
+
+
+State Exiting
+	Event Exiting()
+		{Exiting}
+		WriteLine(self, "Leaving")
+	EndEvent
+EndState
+
+
+; Abstract
+;---------------------------------------------
+
+Event OnTurn(int aTurn)
+	WriteErrorNotImplemented(self, "OnTurn", "Not implemented in the '"+StateName+"' state.")
+EndEvent
+
+Event OnScoreLose()
+	WriteErrorNotImplemented(self, "OnScoreLose", "Not implemented in the '"+StateName+"' state.")
+EndEvent
+
+Event OnScoreWin()
+	WriteErrorNotImplemented(self, "OnScoreWin", "Not implemented in the '"+StateName+"' state.")
+EndEvent
+
+Event OnScorePush()
+	WriteErrorNotImplemented(self, "OnScorePush", "Not implemented in the '"+StateName+"' state.")
+EndEvent
+
+Event OnScoreError()
+	WriteErrorNotImplemented(self, "OnScoreError", "Not implemented in the '"+StateName+"' state.")
+EndEvent
+
+
+; Interface
+;---------------------------------------------
+
+MarkerValue Function IMarkers()
+	{Required - Destination markers for motion.}
+	WriteErrorNotImplemented(self, "IMarkers", "Not implemented in the '"+StateName+"' state.")
+	return new MarkerValue
+EndFunction
+
+int Function IWager()
+	{Ask the amount of caps to wager.}
+	WriteErrorNotImplemented(self, "IWager", "Not implemented in the '"+StateName+"' state.")
+	return Invalid
+EndFunction
+
+int Function IChoice()
+	{Ask the choice type for this turn.}
+	WriteErrorNotImplemented(self, "IChoice", "Not implemented in the '"+StateName+"' state.")
+	return Invalid
+EndFunction
+
+
+
+
+
+; Virtual
+;---------------------------------------------
+
+bool Function IsValidWager(int value)
+	If (value == Match.Bet)
+		return false
+	ElseIf (value <= 0)
+		return false
+	ElseIf (value < WagerMinimum)
+		return false
+	ElseIf (value > WagerMaximum)
+		return false
+	ElseIf (value > Bank)
+		return false
+	Else
+		return true
+	EndIf
+EndFunction
+
+
+int Function GetBank()
+	{The amount of caps the player has to gamble with.}
+	return 1000
+EndFunction
+
+
+Function SetScore(int value)
+	Match.Score = value
+EndFunction
+
+
+Function Rematch(bool value)
+	Match.Rematch = value
+EndFunction
 
 
 ; Functions
@@ -228,11 +301,6 @@ bool Function TryDraw()
 		WriteLine(Name, "Cannot draw another card right now.")
 		return Failure
 	EndIf
-EndFunction
-
-
-Function SetScore(int value)
-	Match.Score = value
 EndFunction
 
 
@@ -291,6 +359,12 @@ Group Player
 		EndFunction
 	EndProperty
 
+	bool Property Rematch Hidden
+		bool Function Get()
+			return Match.Rematch
+		EndFunction
+	EndProperty
+
 	int Property Turn Hidden
 		int Function Get()
 			return Match.Turn
@@ -305,7 +379,13 @@ Group Player
 
 	int Property Bet Hidden
 		int Function Get()
-			return Wager.Bet
+			return Match.Bet
+		EndFunction
+	EndProperty
+
+	int Property Winnings Hidden
+		int Function Get()
+			return Match.Winnings
 		EndFunction
 	EndProperty
 
@@ -315,7 +395,7 @@ Group Player
 		EndFunction
 	EndProperty
 
-	int Property Caps Hidden
+	int Property Bank Hidden
 		int Function Get()
 			return GetBank()
 		EndFunction
@@ -323,19 +403,7 @@ Group Player
 
 	bool Property HasCaps Hidden
 		bool Function Get()
-			return Caps > 0
-		EndFunction
-	EndProperty
-
-	bool Property CanDraw Hidden
-		bool Function Get()
-			return Blackjack.Session.IsInPlay(Score)
-		EndFunction
-	EndProperty
-
-	bool Property Rematch Hidden
-		bool Function Get()
-			return Session.Rematch
+			return Bank > 0
 		EndFunction
 	EndProperty
 EndGroup
@@ -350,6 +418,12 @@ Group Hand
 	int Property Last Hidden
 		int Function Get()
 			return Cards.Length - 1
+		EndFunction
+	EndProperty
+
+	bool Property CanDraw Hidden
+		bool Function Get()
+			return Blackjack.Session.IsInPlay(Score)
 		EndFunction
 	EndProperty
 EndGroup

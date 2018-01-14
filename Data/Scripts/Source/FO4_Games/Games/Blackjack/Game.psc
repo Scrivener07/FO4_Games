@@ -12,19 +12,6 @@ CustomEvent PhaseEvent
 float TimeWait = 2.0 const
 
 
-; Events
-;---------------------------------------------
-
-Event OnInit()
-	RegisterForPhaseEvent(self)
-EndEvent
-
-
-Event OnGamePhase(PhaseEventArgs e)
-	WriteLine(self, "OnGamePhase " + e.Name)
-EndEvent
-
-
 ; Methods
 ;---------------------------------------------
 
@@ -72,7 +59,7 @@ EndFunction
 State Starting
 	Event OnBeginState(string asOldState)
 		{Session Begin}
-		WriteLine("Phase", "Starting")
+		WriteLine("Blackjack", "Starting")
 		If (Session.Human.HasCaps == false)
 			ChangeState(self, NoTask)
 			WriteMessage(self, "Kicked", "You dont have any caps to play Blackjack.")
@@ -100,7 +87,7 @@ EndState
 State Wagering
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine("Phase", "Wagering")
+		WriteLine("Blackjack", "Wagering")
 		If (Session.Human.HasCaps == false)
 			ChangeState(self, ExitingTask)
 			Dialog.ShowKicked()
@@ -130,7 +117,7 @@ EndState
 State Dealing
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine("Phase", "Dealing")
+		WriteLine("Blackjack", "Dealing")
 		If (SendPhase(self, DealingTask, Begun))
 			Utility.Wait(TimeWait)
 			Cards.Shuffle()
@@ -150,7 +137,7 @@ EndState
 State Playing
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine("Phase", "Playing")
+		WriteLine("Blackjack", "Playing")
 		If (SendPhase(self, PlayingTask, Begun))
 			Utility.Wait(TimeWait)
 			TaskAwait(Session, PlayingTask)
@@ -169,7 +156,7 @@ EndState
 State Scoring
 	Event OnBeginState(string asOldState)
 		{Game State}
-		WriteLine("Phase", "Scoring")
+		WriteLine("Blackjack", "Scoring")
 		If (SendPhase(self, ScoringTask, Begun))
 			Utility.Wait(TimeWait)
 			TaskAwait(Session, ScoringTask)
@@ -198,7 +185,7 @@ EndState
 State Exiting
 	Event OnBeginState(string asOldState)
 		{Session End}
-		WriteLine("Phase", "Exiting")
+		WriteLine("Blackjack", "Exiting")
 		If (SendPhase(self, ExitingTask, Begun))
 			Utility.Wait(TimeWait)
 			TaskAwait(Table, ExitingTask)

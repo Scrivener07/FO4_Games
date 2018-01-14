@@ -165,7 +165,6 @@ EndFunction
 
 State Shown
 	Event OnBeginState(string asOldState)
-		Debug.StartStackProfiling()
 		If (Buttons)
 			var[] arguments = new var[0]
 			int index = 0
@@ -176,14 +175,13 @@ State Shown
 			EndWhile
 
 			WriteLine(self, "Invoke: "+GetMember("SetButtons"))
-
 			UI.Invoke(Menu, GetMember("SetButtons"), arguments)
+
 			Visible = true ; TODO: [01/12/2018 - 01:30:28AM] error: Stack too deep (infinite recursion likely) - aborting call and returning None
 		Else
 			WriteLine(self, "The button array is none or empty.")
 			TaskEnd(self)
 		EndIf
-		Debug.StopStackProfiling()
 	EndEvent
 
 
@@ -199,10 +197,12 @@ State Shown
 		EndIf
 	EndEvent
 
+
 	bool Function Show()
 		{EMPTY}
 		return false
 	EndFunction
+
 
 	bool Function Add(Button value)
 		{EMPTY}

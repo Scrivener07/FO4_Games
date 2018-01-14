@@ -3,9 +3,6 @@ import Games
 import Games:Papyrus:Log
 import Games:Shared
 
-; this was pulled from the Human.psc
-; needs to be adapted into a testable unit.
-
 ; Events
 ;---------------------------------------------
 

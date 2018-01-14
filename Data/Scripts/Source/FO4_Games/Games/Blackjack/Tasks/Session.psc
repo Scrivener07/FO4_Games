@@ -60,19 +60,14 @@ EndFunction
 State Starting
 	Event Starting()
 		{Allocate players for this session.}
-		If (Add(Human))
-			Human.Display.Visible = true
-			TaskAwait(Human, StartingTask)
-		EndIf
-
-		If (Add(Dealer))
-			TaskAwait(Dealer, StartingTask)
-		EndIf
-
-
-
-
+		Add(Human)
+		Add(Dealer)
+		For(Players)
 	EndEvent
+
+	Function Each(Player gambler)
+		TaskRun(gambler, StartingTask)
+	EndFunction
 
 	bool Function Add(Player value)
 		{Adds a player to the collection.}
@@ -110,6 +105,7 @@ State Dealing
 	EndEvent
 
 	bool Function For(Player[] array)
+		; TODO: Should I draw two cards in the player's dealing task instead?
 		If (array)
 			int index = 0
 			While (index < array.Length)
@@ -161,9 +157,7 @@ EndState
 
 State Exiting
 	Event Exiting()
-		If (HasHuman)
-			Human.Display.Visible = false
-		EndIf
+		For(Players)
 		Clear()
 	EndEvent
 
@@ -175,8 +169,15 @@ State Exiting
 			WriteLine(self, "Cannot clear empty or none player array.")
 		EndIf
 	EndFunction
+
+	Function Each(Player gambler)
+		TaskAwait(gambler, ExitingTask)
+	EndFunction
 EndState
 
+
+; For Each
+;---------------------------------------------
 
 bool Function For(Player[] array)
 	If (array)
@@ -195,6 +196,7 @@ EndFunction
 
 Function Each(Player gambler)
 	{EMPTY}
+	WriteLine(self, "'Each' is not implemented in the empty state.")
 EndFunction
 
 

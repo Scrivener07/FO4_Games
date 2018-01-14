@@ -7,9 +7,12 @@ import Games:Shared:UI:ButtonHint
 
 Actor PlayerRef
 
+int Wager = 0
 Button AcceptButton
 Button IncreaseButton
 Button DecreaseButton
+Button MinimumButton
+Button MaximumButton ; TODO: This button is outside the visible area on HUDMenu
 
 Button HitButton
 Button StandButton
@@ -50,6 +53,14 @@ Event OnInit()
 	DecreaseButton.Text = "Decrease"
 	DecreaseButton.KeyCode = Keyboard.S
 
+	MinimumButton = new Button
+	MinimumButton.Text = "Minimum"
+	MinimumButton.KeyCode = Keyboard.A
+
+	MaximumButton = new Button
+	MaximumButton.Text = "Maximum"
+	MaximumButton.KeyCode = Keyboard.D
+
 	HitButton = new Button
 	HitButton.Text = "Hit"
 	HitButton.KeyCode = Keyboard.W
@@ -80,69 +91,96 @@ EndEvent
 
 State Starting
 	Event Starting()
+		Wager = WagerMinimum
+
 		Display.Score = 0
-		Display.Bet = 0
-		Display.Caps = Caps
+		Display.Bet = Wager
+		Display.Caps = Bank
 		Display.Earnings = Earnings
+		Display.Visible = true
+
 		parent.Starting()
 	EndEvent
 
-	Event SetMarkers(MarkerValue set)
-		set.Card01 = Games_Blackjack_P1C01
-		set.Card02 = Games_Blackjack_P1C02
-		set.Card03 = Games_Blackjack_P1C03
-		set.Card04 = Games_Blackjack_P1C04
-		set.Card05 = Games_Blackjack_P1C05
-		set.Card06 = Games_Blackjack_P1C06
-		set.Card07 = Games_Blackjack_P1C07
-		set.Card08 = Games_Blackjack_P1C08
-		set.Card09 = Games_Blackjack_P1C09
-		set.Card10 = Games_Blackjack_P1C10
-		set.Card11 = Games_Blackjack_P1C11
-	EndEvent
+	MarkerValue Function IMarkers()
+		MarkerValue marker = new MarkerValue
+		marker.Card01 = Games_Blackjack_P1C01
+		marker.Card02 = Games_Blackjack_P1C02
+		marker.Card03 = Games_Blackjack_P1C03
+		marker.Card04 = Games_Blackjack_P1C04
+		marker.Card05 = Games_Blackjack_P1C05
+		marker.Card06 = Games_Blackjack_P1C06
+		marker.Card07 = Games_Blackjack_P1C07
+		marker.Card08 = Games_Blackjack_P1C08
+		marker.Card09 = Games_Blackjack_P1C09
+		marker.Card10 = Games_Blackjack_P1C10
+		marker.Card11 = Games_Blackjack_P1C11
+		return marker
+	EndFunction
 EndState
 
 
 State Wagering
 	Event Wagering()
-		; a new match will begin with this state
-
+		Display.Score = 0
+		Display.Bet = Wager ; last wager amount
 		parent.Wagering()
+		Display.Earnings = Earnings
 	EndEvent
 
-	Event SetWager(WagerValue set)
+	int Function IWager()
 		ButtonHint.Clear()
 		ButtonHint.SelectOnce = false
 		ButtonHint.Add(AcceptButton)
 		ButtonHint.Add(IncreaseButton)
 		ButtonHint.Add(DecreaseButton)
+		ButtonHint.Add(MinimumButton)
+		ButtonHint.Add(MaximumButton)
 		ButtonHint.Show()
-		Game.RemovePlayerCaps(Bet)
-		Display.Caps = Caps
-	EndEvent
+		return Wager
+	EndFunction
 
 	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
 		Button selected = akSender.GetSelectedEventArgs(arguments)
+
 		If (selected == AcceptButton)
-			akSender.Hide()
+			If (IsValidWager(Wager))
+				Game.RemovePlayerCaps(Wager)
+				Display.Caps = Bank
+				akSender.Hide()
+			EndIf
+
 		ElseIf (selected == IncreaseButton)
-			IncreaseWager(5)
-			ITMBottlecapsDownx.Play(Player)
+			If (IsValidWager(Wager + WagerStep))
+				Wager += WagerStep
+				Display.Bet = Wager
+				ITMBottlecapsDownx.Play(Player)
+			EndIf
+
 		ElseIf (selected == DecreaseButton)
-			DecreaseWager(5)
-			ITMBottlecapsUpx.Play(Player)
+			If (IsValidWager(Wager - WagerStep))
+				Wager -= WagerStep
+				Display.Bet = Wager
+				ITMBottlecapsUpx.Play(Player)
+			EndIf
+
+		ElseIf (selected == MinimumButton)
+			If (IsValidWager(WagerMinimum))
+				Wager = WagerMinimum
+				Display.Bet = Wager
+				ITMBottlecapsUpx.Play(Player)
+			EndIf
+
+		ElseIf (selected == MaximumButton)
+			If (IsValidWager(WagerMaximum))
+				Wager = WagerMaximum
+				Display.Bet = Wager
+				ITMBottlecapsDownx.Play(Player)
+			EndIf
+		Else
+			WriteLine(self, "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
 		EndIf
 	EndEvent
-
-	Function IncreaseWager(int value)
-		parent.IncreaseWager(value)
-		Display.Bet = Bet
-	EndFunction
-
-	Function DecreaseWager(int value)
-		parent.DecreaseWager(value)
-		Display.Bet = Bet
-	EndFunction
 EndState
 
 
@@ -155,11 +193,11 @@ EndState
 
 
 State Playing
-	Event PlayTurn(int aTurn)
+	Event OnTurn(int aTurn)
 		Display.Score = Score
 	EndEvent
 
-	Event SetChoice(ChoiceValue set)
+	int Function IChoice()
 		ButtonHint.Clear()
 		ButtonHint.SelectOnce = true
 		ButtonHint.Add(HitButton)
@@ -168,23 +206,27 @@ State Playing
 
 		If (ButtonHint.Selected)
 			If (ButtonHint.Selected == HitButton)
-				set.Selected = ChoiceHit
+				return ChoiceHit
 			ElseIf (ButtonHint.Selected == StandButton)
-				set.Selected = ChoiceStand
+				return ChoiceStand
 			Else
-				set.Selected = Invalid
-				WriteLine(self, "The play choice was invalid.")
+				WriteLine(self, "The selected choice button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				return Invalid
 			EndIf
 		Else
-			WriteLine(self, "No play choice was selected.")
+			WriteLine(self, "No choice button was selected.")
+			return Invalid
 		EndIf
-	EndEvent
+	EndFunction
 EndState
 
 
 State Scoring
 	Event Scoring()
 		parent.Scoring()
+		Game.GivePlayerCaps(Winnings)
+		Display.Earnings = Earnings
+		Display.Caps = Bank
 
 		ButtonHint.Clear()
 		ButtonHint.SelectOnce = true
@@ -193,26 +235,46 @@ State Scoring
 		ButtonHint.Show()
 
 		If (ButtonHint.Selected)
-			SessionRematch(ButtonHint.Selected == YesButton)
+			If (ButtonHint.Selected == YesButton)
+				Rematch(true)
+			ElseIf (ButtonHint.Selected == NoButton)
+				Rematch(false)
+			Else
+				WriteLine(self, "The selected scoring button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				Rematch(false)
+			EndIf
 		Else
-			WriteLine(self, "Chose not to play again.")
+			WriteLine(self, "No scoring button was selected.")
 		EndIf
 	EndEvent
-
-	Function IncreaseEarnings(int value)
-		parent.IncreaseEarnings(value)
-		Game.GivePlayerCaps(value)
-		Display.Earnings = Earnings
-		Display.Caps = Caps
-	EndFunction
-
-	Function DecreaseEarnings(int value)
-		parent.DecreaseEarnings(value)
-		Game.RemovePlayerCaps(Bet)
-		Display.Earnings = Earnings
-		Display.Caps = Caps
-	EndFunction
 EndState
+
+
+State Exiting
+	Event Exiting()
+		Display.Visible = false
+		parent.Exiting()
+	EndEvent
+EndState
+
+
+; Requests
+;---------------------------------------------
+
+MarkerValue Function IMarkers()
+	; Required for type-check return because function is not on object.
+	return parent.IMarkers()
+EndFunction
+
+int Function IWager()
+	; Required for type-check return because function is not on object.
+	return parent.IWager()
+EndFunction
+
+int Function IChoice()
+	; Required for type-check return because function is not on object.
+	return parent.IChoice()
+EndFunction
 
 
 ; Player

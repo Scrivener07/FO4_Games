@@ -28,3 +28,8 @@ bool Function WriteMessage(string prefix, string title, string text = "") Global
 	Debug.MessageBox(value)
 	return WriteLine(prefix, title+" "+text)
 EndFunction
+
+
+bool Function WriteErrorNotImplemented(ScriptObject script, string member, string text = "") Global DebugOnly
+	return WriteMessage(script, "Error", "The function or event '"+member+"' was not implemented. "+text)
+EndFunction

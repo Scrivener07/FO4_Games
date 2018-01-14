@@ -4,6 +4,63 @@ import Games:Papyrus:Log
 import Games:Papyrus:Script
 
 
+; FSM - Finite State Machine
+;---------------------------------------------
+
+State Starting
+	Event OnBeginState(string asOldState)
+		Starting()
+		TaskEnd(self)
+	EndEvent
+EndState
+
+State Wagering
+	Event OnBeginState(string asOldState)
+		Wagering()
+		TaskEnd(self)
+	EndEvent
+EndState
+
+State Dealing
+	Event OnBeginState(string asOldState)
+		Dealing()
+		TaskEnd(self)
+	EndEvent
+EndState
+
+State Playing
+	Event OnBeginState(string asOldState)
+		Playing()
+		TaskEnd(self)
+	EndEvent
+EndState
+
+State Scoring
+	Event OnBeginState(string asOldState)
+		Scoring()
+		TaskEnd(self)
+	EndEvent
+EndState
+
+State Exiting
+	Event OnBeginState(string asOldState)
+		Exiting()
+		TaskEnd(self)
+	EndEvent
+EndState
+
+
+; Abstract
+;---------------------------------------------
+
+Event Starting() Native
+Event Wagering() Native
+Event Dealing() Native
+Event Playing() Native
+Event Scoring() Native
+Event Exiting() Native
+
+
 ; Events
 ;---------------------------------------------
 
@@ -47,63 +104,6 @@ Event Games:Blackjack:Game.PhaseEvent(Blackjack:Game sender, var[] arguments)
 		WriteLine(self, "Invalid phase event arguments.")
 	EndIf
 EndEvent
-
-
-; FSM - Finite State Machine
-;---------------------------------------------
-
-State Starting
-	Event OnBeginState(string asOldState)
-		Starting()
-		TaskEnd(self)
-	EndEvent
-EndState
-Event Starting() Native
-
-
-State Wagering
-	Event OnBeginState(string asOldState)
-		Wagering()
-		TaskEnd(self)
-	EndEvent
-EndState
-Event Wagering() Native
-
-
-State Dealing
-	Event OnBeginState(string asOldState)
-		Dealing()
-		TaskEnd(self)
-	EndEvent
-EndState
-Event Dealing() Native
-
-
-State Playing
-	Event OnBeginState(string asOldState)
-		Playing()
-		TaskEnd(self)
-	EndEvent
-EndState
-Event Playing() Native
-
-
-State Scoring
-	Event OnBeginState(string asOldState)
-		Scoring()
-		TaskEnd(self)
-	EndEvent
-EndState
-Event Scoring() Native
-
-
-State Exiting
-	Event OnBeginState(string asOldState)
-		Exiting()
-		TaskEnd(self)
-	EndEvent
-EndState
-Event Exiting() Native
 
 
 ; Properties
