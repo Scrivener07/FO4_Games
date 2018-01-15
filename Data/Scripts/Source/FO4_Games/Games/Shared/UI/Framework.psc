@@ -95,7 +95,9 @@ EndFunction
 
 
 bool Function DisplayUnload(UI:Display display) Global
-	; unregister for menu open, recuring load
+	; TODO: iirc, loaded UI elements require a reload when the game does?
+	; Unregister for menu open and recuring game loads.
+	WriteErrorNotImplemented(display, "DisplayUnload", "I cannot find a way to directly unload a loaded UI element.")
 EndFunction
 
 

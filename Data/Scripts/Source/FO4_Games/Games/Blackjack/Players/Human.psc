@@ -76,13 +76,12 @@ Event OnInit()
 	NoButton = new Button
 	NoButton.Text = "Leave"
 	NoButton.KeyCode = Keyboard.Tab
-
-	ButtonHint.RegisterForSelectedEvent(self)
 EndEvent
 
 
 Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
-	akSender.Hide()
+	akSender.UnregisterForSelectedEvent(self)
+	WriteErrorNotImplemented(self, "Games:Shared:UI:ButtonHint.OnSelected", "Unregistered for event not implemented in the '"+StateName+"' state.")
 EndEvent
 
 
@@ -136,6 +135,7 @@ State Wagering
 		ButtonHint.Add(DecreaseButton)
 		ButtonHint.Add(MinimumButton)
 		ButtonHint.Add(MaximumButton)
+		ButtonHint.RegisterForSelectedEvent(self)
 		ButtonHint.Show()
 		return Wager
 	EndFunction
@@ -145,9 +145,10 @@ State Wagering
 
 		If (selected == AcceptButton)
 			If (IsValidWager(Wager))
+				akSender.UnregisterForSelectedEvent(self)
+				akSender.Hide()
 				Game.RemovePlayerCaps(Wager)
 				Display.Caps = Bank
-				akSender.Hide()
 			EndIf
 
 		ElseIf (selected == IncreaseButton)
@@ -236,8 +237,10 @@ State Scoring
 
 		If (ButtonHint.Selected)
 			If (ButtonHint.Selected == YesButton)
+				WriteLine(self, "The '"+ButtonHint.Selected.Text+"' button was selected.")
 				Rematch(true)
 			ElseIf (ButtonHint.Selected == NoButton)
+				WriteLine(self, "The '"+ButtonHint.Selected.Text+"' button was selected.")
 				Rematch(false)
 			Else
 				WriteLine(self, "The selected scoring button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
@@ -245,6 +248,7 @@ State Scoring
 			EndIf
 		Else
 			WriteLine(self, "No scoring button was selected.")
+			Rematch(false)
 		EndIf
 	EndEvent
 EndState

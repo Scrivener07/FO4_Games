@@ -33,6 +33,9 @@ EndStruct
 ; Virtual
 ;---------------------------------------------
 
+Event OnGameReload() Native
+{Event occurs when the game has been reloaded or initialized.}
+
 Event OnDisplayData(DisplayData display) Native
 {Required, event occurs when the display needs to configure its data.}
 

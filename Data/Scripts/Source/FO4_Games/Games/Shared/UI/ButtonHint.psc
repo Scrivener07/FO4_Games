@@ -140,7 +140,7 @@ bool Function RegisterForSelectedEvent(ScriptObject script)
 EndFunction
 
 
-bool Function UnregisterForSelectedEvent(Blackjack:Game script)
+bool Function UnregisterForSelectedEvent(ScriptObject script)
 	If (script)
 		script.UnregisterForCustomEvent(self, "OnSelected")
 		return true
@@ -173,11 +173,10 @@ State Shown
 				RegisterForKey(Buttons[index].KeyCode)
 				index += 1
 			EndWhile
-
-			WriteLine(self, "Invoke: "+GetMember("SetButtons"))
-			UI.Invoke(Menu, GetMember("SetButtons"), arguments)
-
+			string member = GetMember("SetButtons")
+			UI.Invoke(Menu, member, arguments)
 			Visible = true ; TODO: [01/12/2018 - 01:30:28AM] error: Stack too deep (infinite recursion likely) - aborting call and returning None
+			WriteLine(self, "Showing button press hints. Invoke: "+Menu+"."+member+"("+arguments+")")
 		Else
 			WriteLine(self, "The button array is none or empty.")
 			TaskEnd(self)
@@ -193,36 +192,42 @@ State Shown
 		SendCustomEvent("OnSelected", arguments)
 
 		If (AutoHide)
-			Hide()
+			WriteLine(self, "Automatically hiding for first selection.")
+			TaskEnd(self)
 		EndIf
 	EndEvent
 
 
 	bool Function Show()
 		{EMPTY}
+		WriteErrorNotImplemented(self, "Show", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Add(Button value)
 		{EMPTY}
+		WriteErrorNotImplemented(self, "Add", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Remove(Button value)
 		{EMPTY}
+		WriteErrorNotImplemented(self, "Remove", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Clear()
 		{EMPTY}
+		WriteErrorNotImplemented(self, "Clear", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	Event OnEndState(string asNewState)
+		WriteLine(self, "Ending the '"+GetState()+"' state.")
 		Visible = false
 
 		int index = 0

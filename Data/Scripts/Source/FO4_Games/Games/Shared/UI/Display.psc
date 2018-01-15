@@ -11,6 +11,19 @@ DisplayData Display
 ;---------------------------------------------
 
 Event OnInit()
+	RegisterForRemoteEvent(Game.GetPlayer(), "OnPlayerLoadGame")
+	OnGameReload()
+	WriteLine(self, "Initialization is complete for "+ToString())
+EndEvent
+
+
+Event Actor.OnPlayerLoadGame(Actor akSender)
+	OnGameReload()
+	WriteLine(self, "Reload is complete for "+ToString())
+EndEvent
+
+
+Event OnGameReload()
 	If (Data())
 		Load()
 	EndIf
@@ -23,6 +36,7 @@ EndEvent
 
 
 Function LoadingCallback(bool success, string menuName, string sourceVar, string destVar, string assetPath)
+	{F4SE callback for the UI.Load function.}
 	DisplayArguments arguments = new DisplayArguments
 	arguments.Menu = menuName
 	arguments.Root = sourceVar
@@ -62,12 +76,13 @@ EndFunction
 
 Event OnDisplayData(DisplayData widget)
 	{Required}
-	WriteMessage(self, "Error!", "The virtual OnDisplayData event is not implemented.")
+	WriteErrorNotImplemented(self, "OnDisplayData", "The event must be implemented on an extending script.")
 EndEvent
 
 
 Event OnDisplayLoaded()
 	{Optional}
+	WriteLine(self, "The event OnDisplayLoaded was not implemented on an extending script.")
 EndEvent
 
 
