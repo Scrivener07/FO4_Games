@@ -164,7 +164,7 @@ bool Function DisplaySetVisible(UI:Display display, bool value) Global
 			WriteLine(display, "DisplaySetVisible cannot operate on a none or empty display Instance.")
 			return false
 		Else
-			return UI.Set(display.Menu, display.GetMember("Visible"), value)
+			return UI.Set(display.Menu, display.GetMember("Visible"), value) ; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
 		EndIf
 	Else
 		WriteLine(ToString(), "DisplaySetVisible cannot operate on a none display.")

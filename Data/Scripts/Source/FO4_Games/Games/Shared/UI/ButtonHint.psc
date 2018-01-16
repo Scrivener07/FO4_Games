@@ -175,7 +175,7 @@ State Shown
 			EndWhile
 			string member = GetMember("SetButtons")
 			UI.Invoke(Menu, member, arguments)
-			Visible = true ; TODO: [01/12/2018 - 01:30:28AM] error: Stack too deep (infinite recursion likely) - aborting call and returning None
+			Visible = true ; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
 			WriteLine(self, "Showing button press hints. Invoke: "+Menu+"."+member+"("+arguments+")")
 		Else
 			WriteLine(self, "The button array is none or empty.")
@@ -243,6 +243,12 @@ EndState
 ;---------------------------------------------
 
 Group ButtonHint
+	int Property Count Hidden
+		int Function Get()
+			return Buttons.Length
+		EndFunction
+	EndProperty
+
 	Button Property Selected Hidden
 		Button Function Get()
 			return selectedLast

@@ -151,7 +151,7 @@ State Scoring
 	EndEvent
 
 	Event OnScoreWin()
-		If (Hand.Length == 2)
+		If (Score == 21 == Hand.Length == 2)
 			Match.Winnings = Bet + (Bet * 1.5) as int
 			Session.Earnings += Winnings
 			WriteLine(self, "Won "+Winnings+" caps with a Blackjack.")

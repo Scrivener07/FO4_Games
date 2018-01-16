@@ -40,6 +40,7 @@ bool Function TaskAwait(ScriptObject script, string task = "Busy") Global
 			While (TaskRunning(script))
 				Utility.Wait(0.1)
 			EndWhile
+			WriteLine(script, "Task await has completed awaiting the '"+task+"' task.")
 			return true
 		Else
 			WriteLine(script, "Task could not await the '"+task+"' task.")
@@ -61,6 +62,7 @@ bool Function TaskRun(ScriptObject script, string task = "Busy") Global
 		Else
 			If !(StringIsNoneOrEmpty(task))
 				If (ChangeState(script, task))
+					WriteLine(script, "Run task has begun the '"+task+"' task.")
 					return true
 				Else
 					WriteLine(script, "Run task cannot change state for the '"+task+"' task.")
@@ -82,13 +84,14 @@ bool Function TaskEnd(ScriptObject script) Global
 	{Ends any running task on the given script.}
 	If (script)
 		If (ChangeState(script, EmptyState()))
+			WriteLine(script, "End task has completed.")
 			return true
 		Else
-			WriteLine(script, "Task is unable to end right now.")
+			WriteLine(script, "End task is unable to change the scripts state to empty.")
 			return false
 		EndIf
 	Else
-		WriteLine(script, "Task end cannot operate on a none script.")
+		WriteLine(script, "End task cannot operate on a none script.")
 		return false
 	EndIf
 EndFunction

@@ -62,7 +62,8 @@ EndFunction
 
 
 string Function GetMember(string member)
-	return DisplayGetMember(self, member)
+	WriteLine(self, "GetMember for '"+member+"' member.")
+	return DisplayGetMember(self, member) ; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
 EndFunction
 
 
@@ -125,7 +126,8 @@ Group Display
 			return DisplayGetVisible(self)
 		EndFunction
 		Function Set(bool value)
-			DisplaySetVisible(self, value)
+			WriteLine(self, "Visible is being set to '"+value+"'.")
+			DisplaySetVisible(self, value) ; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
 		EndFunction
 	EndProperty
 EndGroup
