@@ -6,6 +6,7 @@ import Games:Shared
 
 Button[] Buttons
 Button selectedLast
+CustomEvent OnShown
 CustomEvent OnSelected
 
 
@@ -24,8 +25,14 @@ EndStruct
 ; Display
 ;---------------------------------------------
 
+Event OnGameReload()
+	Data()
+EndEvent
+
+
 Event OnDisplayData(DisplayData display)
-	display.Menu = "HUDMenu"
+	; TODO: Try loading into fader menu by using vanilla papyrus to show the menu.
+	display.Menu = "FaderMenu"
 	display.Asset = "ButtonHint.swf"
 	Buttons = new Button[0]
 EndEvent
@@ -46,8 +53,8 @@ bool Function Hide()
 EndFunction
 
 
-; Functions
 ;---------------------------------------------
+
 
 bool Function Add(Button value)
 	{Adds a button to the collection.}
@@ -57,15 +64,15 @@ bool Function Add(Button value)
 				Buttons.Add(value)
 				return true
 			Else
-				WriteLine(self, "The button array already contains a button with keycode '"+value.KeyCode+"'.")
+				InvalidOperationException(self, "Add", "The button array already contains a button with keycode '"+value.KeyCode+"'.")
 				return false
 			EndIf
 		Else
-			WriteLine(self, "The button array already contains '"+value+"'.")
+			InvalidOperationException(self, "Add", "The button array already contains '"+value+"'.")
 			return false
 		EndIf
 	Else
-		WriteLine(self, "Cannot add a none value to button array.")
+		ArgumentNoneException(self, "Add", "value", "Cannot add a none value to button array.")
 		return false
 	EndIf
 EndFunction
@@ -78,11 +85,11 @@ bool Function Remove(Button value)
 			Buttons.Remove(IndexOf(value))
 			return true
 		Else
-			WriteLine(self, "The button array does not contain '"+value+"'.")
+			InvalidOperationException(self, "Remove", "The button array does not contain '"+value+"'.")
 			return false
 		EndIf
 	Else
-		WriteLine(self, "Cannot remove a none value to button array.")
+		ArgumentNoneException(self, "Remove", "value", "Cannot remove a none value from button array.")
 		return false
 	EndIf
 EndFunction
@@ -95,7 +102,7 @@ bool Function Clear()
 		Buttons.Clear()
 		return true
 	Else
-		WriteLine(self, "The button array is already cleared.")
+		InvalidOperationException(self, "Clear", "The button array is already cleared.")
 		return false
 	EndIf
 EndFunction
@@ -129,12 +136,15 @@ int Function IndexOf(Button value)
 EndFunction
 
 
+;---------------------------------------------
+
+
 bool Function RegisterForSelectedEvent(ScriptObject script)
 	If (script)
 		script.RegisterForCustomEvent(self, "OnSelected")
 		return true
 	Else
-		WriteLine(self, "Cannot register a none script for phase events.")
+		ArgumentNoneException(self, "RegisterForSelectedEvent", "script", "Cannot register a none script for selection events.")
 		return false
 	EndIf
 EndFunction
@@ -145,7 +155,7 @@ bool Function UnregisterForSelectedEvent(ScriptObject script)
 		script.UnregisterForCustomEvent(self, "OnSelected")
 		return true
 	Else
-		WriteLine(self, "Cannot register a none script for phase events.")
+		ArgumentNoneException(self, "UnregisterForSelectedEvent", "script", "Cannot register a none script for selection events.")
 		return false
 	EndIf
 EndFunction
@@ -155,6 +165,47 @@ Button Function GetSelectedEventArgs(var[] arguments)
 	If (arguments)
 		return arguments[0] as Button
 	Else
+		ArgumentNoneException(self, "GetSelectedEventArgs", "arguments", "The selection event arguments are empty or none.")
+		return none
+	EndIf
+EndFunction
+
+
+;---------------------------------------------
+
+
+Struct ShownEventArgs
+	bool Showing = false
+EndStruct
+
+
+bool Function RegisterForShownEvent(ScriptObject script)
+	If (script)
+		script.RegisterForCustomEvent(self, "OnShown")
+		return true
+	Else
+		ArgumentNoneException(self, "RegisterForShownEvent", "script", "Cannot register a none script for shown events.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function UnregisterForShownEvent(ScriptObject script)
+	If (script)
+		script.UnregisterForCustomEvent(self, "OnShown")
+		return true
+	Else
+		ArgumentNoneException(self, "UnregisterForShownEvent", "script", "Cannot register a none script for shown events.")
+		return false
+	EndIf
+EndFunction
+
+
+ShownEventArgs Function GetShownEventArgs(var[] arguments)
+	If (arguments)
+		return arguments[0] as ShownEventArgs
+	Else
+		ArgumentNoneException(self, "GetShownEventArgs", "arguments", "The shown event arguments are empty or none.")
 		return none
 	EndIf
 EndFunction
@@ -165,20 +216,45 @@ EndFunction
 
 State Shown
 	Event OnBeginState(string asOldState)
-		If (Buttons)
-			var[] arguments = new var[0]
-			int index = 0
-			While (index < Buttons.Length)
-				arguments.Add(Buttons[index])
-				RegisterForKey(Buttons[index].KeyCode)
-				index += 1
-			EndWhile
-			string member = GetMember("SetButtons")
-			UI.Invoke(Menu, member, arguments)
-			Visible = true ; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
-			WriteLine(self, "Showing button press hints. Invoke: "+Menu+"."+member+"("+arguments+")")
+		bool abFadingOut = true const
+		bool abBlackFade = false const
+		float afSecsBeforeFade = 6.0
+		float afFadeDuration = 6.0
+		bool abStayFaded = true
+		Game.FadeOutGame(abFadingOut, abBlackFade, afSecsBeforeFade, afFadeDuration, abStayFaded)
+
+		UI.Invoke(Menu, Root+".Menu_mc.ShowDisplay")
+
+		If (Load())
+			If (Buttons)
+				var[] arguments = new var[0]
+				int index = 0
+				While (index < Buttons.Length)
+					arguments.Add(Buttons[index])
+					RegisterForKey(Buttons[index].KeyCode)
+					index += 1
+				EndWhile
+
+				string member = GetMember("SetButtons")
+				UI.Invoke(Menu, member, arguments)
+				Visible = true ; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
+
+
+				ShownEventArgs e = new ShownEventArgs
+				e.Showing = true
+				var[] shownArguments = new var[1]
+				shownArguments[0] = e
+				SendCustomEvent("OnShown", shownArguments)
+
+
+
+				WriteLine(self, "Showing button press hints. Invoke: "+Menu+"."+member+"("+arguments+")")
+			Else
+				InvalidOperationException(self, "Shown.OnBeginState", "The button array is none or empty.")
+				TaskEnd(self)
+			EndIf
 		Else
-			WriteLine(self, "The button array is none or empty.")
+			InvalidOperationException(self, "Shown.OnBeginState", "Could not load menu for '"+GetState()+"'' state.")
 			TaskEnd(self)
 		EndIf
 	EndEvent
@@ -200,41 +276,49 @@ State Shown
 
 	bool Function Show()
 		{EMPTY}
-		WriteErrorNotImplemented(self, "Show", "Not implemented in the '"+GetState()+"' state.")
+		NotImplementedException(self, "Show", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Add(Button value)
 		{EMPTY}
-		WriteErrorNotImplemented(self, "Add", "Not implemented in the '"+GetState()+"' state.")
+		NotImplementedException(self, "Add", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Remove(Button value)
 		{EMPTY}
-		WriteErrorNotImplemented(self, "Remove", "Not implemented in the '"+GetState()+"' state.")
+		NotImplementedException(self, "Remove", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Clear()
 		{EMPTY}
-		WriteErrorNotImplemented(self, "Clear", "Not implemented in the '"+GetState()+"' state.")
+		NotImplementedException(self, "Clear", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	Event OnEndState(string asNewState)
 		WriteLine(self, "Ending the '"+GetState()+"' state.")
+
 		Visible = false
+		UI.Invoke(Menu, Root+".Menu_mc.HideDisplay")
 
 		int index = 0
 		While (index < Buttons.Length)
 			UnregisterForKey(Buttons[index].KeyCode)
 			index += 1
 		EndWhile
+
+		ShownEventArgs e = new ShownEventArgs
+		e.Showing = false
+		var[] arguments = new var[1]
+		arguments[0] = e
+		SendCustomEvent("OnShown", arguments)
 	EndEvent
 EndState
 

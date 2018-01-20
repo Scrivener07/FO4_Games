@@ -1,6 +1,5 @@
 ScriptName Games:Blackjack:Display extends Games:Shared:UI:Display
 import Games:Blackjack
-import Games:Papyrus:Log
 
 
 ; Display

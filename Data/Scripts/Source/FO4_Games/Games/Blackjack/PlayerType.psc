@@ -8,42 +8,42 @@ import Games:Papyrus:Log
 State Starting
 	Event Starting()
 		{Allocate data for new game session.}
-		WriteErrorNotImplemented(self, "Starting")
+		NotImplementedException(self, "Starting")
 	EndEvent
 EndState
 
 State Wagering
 	Event Wagering()
 		{Wagering}
-		WriteErrorNotImplemented(self, "Wagering")
+		NotImplementedException(self, "Wagering")
 	EndEvent
 EndState
 
 State Dealing
 	Event Dealing()
 		{Dealing}
-		WriteErrorNotImplemented(self, "Dealing")
+		NotImplementedException(self, "Dealing")
 	EndEvent
 EndState
 
 State Playing
 	Event Playing()
 		{Playing}
-		WriteErrorNotImplemented(self, "Playing")
+		NotImplementedException(self, "Playing")
 	EndEvent
 EndState
 
 State Scoring
 	Event Scoring()
 		{Scoring}
-		WriteErrorNotImplemented(self, "Scoring")
+		NotImplementedException(self, "Scoring")
 	EndEvent
 EndState
 
 State Exiting
 	Event Exiting()
 		{Exiting}
-		WriteErrorNotImplemented(self, "Exiting")
+		NotImplementedException(self, "Exiting")
 	EndEvent
 EndState
 

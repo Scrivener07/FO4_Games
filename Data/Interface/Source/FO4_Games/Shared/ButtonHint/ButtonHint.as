@@ -24,7 +24,14 @@
 
 		private function OnAddedToStage(e:Event) : void
 		{
+			var FaderMenu:MovieClip = stage.getChildAt(0) as MovieClip;
 			trace("[ButtonHint] OnAddedToStage:"+Shared.Utility.WalkMovie(this));
+
+			FaderMenu.Menu_mc.visible = false;
+
+			trace("\n\n\n\n");
+			Shared.Utility.TraceDisplayList(FaderMenu)
+			trace("\n\n\n\n");
 		}
 
 

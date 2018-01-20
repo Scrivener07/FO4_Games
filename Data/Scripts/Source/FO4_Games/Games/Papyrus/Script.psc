@@ -5,13 +5,18 @@ import Games:Papyrus:StringType
 ; States
 ;---------------------------------------------
 
-bool Function ChangeState(ScriptObject script, string newState) Global
+bool Function ChangeState(ScriptObject this, string newState) Global
 	{Changes the given scripts state only to a different state.}
-	If(script.GetState() != newState)
-		script.GoToState(newState)
-		return true
+	If (this)
+		If(this.GetState() != newState)
+			this.GoToState(newState)
+			return true
+		Else
+			InvalidOperationException(this, "ChangeState", "The script is already in the '"+newState+"' state.")
+			return false
+		EndIf
 	Else
-		WriteLine(script, "The script is already in the '"+newState+"' state.")
+		ArgumentNoneException("Games:Papyrus:Script", "ChangeState", "this")
 		return false
 	EndIf
 EndFunction
@@ -33,77 +38,77 @@ EndFunction
 ;---------------------------------------------
 ; Tasks are simply regular script states. These states can be run, awaited, or ended.
 
-bool Function TaskAwait(ScriptObject script, string task = "Busy") Global
+bool Function TaskAwait(ScriptObject this, string task = "Busy") Global
 	{Waits for the configured task to complete.}
-	If (script)
-		If (TaskRun(script, task))
-			While (TaskRunning(script))
+	If (this)
+		If (TaskRun(this, task))
+			While (TaskRunning(this))
 				Utility.Wait(0.1)
 			EndWhile
-			WriteLine(script, "Task await has completed awaiting the '"+task+"' task.")
+			WriteLine(this, "Task await has completed awaiting the '"+task+"' task.")
 			return true
 		Else
-			WriteLine(script, "Task could not await the '"+task+"' task.")
+			InvalidOperationException(this, "TaskAwait", "Task could not await the '"+task+"' task.")
 			return false
 		EndIf
 	Else
-		WriteLine(script, "Task cannot operate on a none script.")
+		ArgumentNoneException("Games:Papyrus:Script", "TaskAwait", "this")
 		return false
 	EndIf
 EndFunction
 
 
-bool Function TaskRun(ScriptObject script, string task = "Busy") Global
+bool Function TaskRun(ScriptObject this, string task = "Busy") Global
 	{Runs the configured task without waiting for completion.}
-	If (script)
-		If (TaskRunning(script))
-			WriteLine(script, "Cannot run the '"+task+"' task while '"+script.GetState()+"' task is running.")
+	If (this)
+		If (TaskRunning(this))
+			InvalidOperationException(this, "TaskRun", "Cannot run the '"+task+"' task while '"+this.GetState()+"' task is running.")
 			return false
 		Else
 			If !(StringIsNoneOrEmpty(task))
-				If (ChangeState(script, task))
-					WriteLine(script, "Run task has begun the '"+task+"' task.")
+				If (ChangeState(this, task))
+					WriteLine(this, "Run task has begun the '"+task+"' task.")
 					return true
 				Else
-					WriteLine(script, "Run task cannot change state for the '"+task+"' task.")
+					InvalidOperationException(this, "TaskRun", "Run task cannot change state for the '"+task+"' task.")
 					return false
 				EndIf
 			Else
-				WriteLine(script, "Run task cannot operate on a none or empty state.")
+				ArgumentException(this, "TaskRun", "task", "Cannot operate on a none or empty task.")
 				return false
 			EndIf
 		EndIf
 	Else
-		WriteLine(script, "Run task cannot operate on a none script.")
+		ArgumentNoneException("Games:Papyrus:Script", "TaskRun", "this")
 		return false
 	EndIf
 EndFunction
 
 
-bool Function TaskEnd(ScriptObject script) Global
+bool Function TaskEnd(ScriptObject this) Global
 	{Ends any running task on the given script.}
-	If (script)
-		If (ChangeState(script, EmptyState()))
-			WriteLine(script, "End task has completed.")
+	If (this)
+		If (ChangeState(this, EmptyState()))
+			WriteLine(this, "End task has completed.")
 			return true
 		Else
-			WriteLine(script, "End task is unable to change the scripts state to empty.")
+			InvalidOperationException(this, "TaskEnd", "Unable to change the scripts state to empty.")
 			return false
 		EndIf
 	Else
-		WriteLine(script, "End task cannot operate on a none script.")
+		ArgumentNoneException("Games:Papyrus:Script", "TaskEnd", "this")
 		return false
 	EndIf
 EndFunction
 
 
-bool Function TaskRunning(ScriptObject script) Global
+bool Function TaskRunning(ScriptObject this) Global
 	{Return true if the given script has any state other than the default empty state.}
 	; TODO: Pretty much a duplicate of HasState(ScriptObject)
-	If (script)
-		return HasState(script)
+	If (this)
+		return HasState(this)
 	Else
-		WriteLine(script, "Task running cannot operate on a none script.")
+		ArgumentNoneException("Games:Papyrus:Script", "TaskRunning", "this")
 		return false
 	EndIf
 EndFunction

@@ -81,7 +81,7 @@ EndEvent
 
 Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
 	akSender.UnregisterForSelectedEvent(self)
-	WriteErrorNotImplemented(self, "Games:Shared:UI:ButtonHint.OnSelected", "Unregistered for event not implemented in the '"+StateName+"' state.")
+	InvalidOperationException(self, "OnSelected", "Unregistered for event in the '"+StateName+"' state.")
 EndEvent
 
 
@@ -141,45 +141,49 @@ State Wagering
 	EndFunction
 
 	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
-		Button selected = akSender.GetSelectedEventArgs(arguments)
+		If (arguments)
+			Button selected = akSender.GetSelectedEventArgs(arguments)
 
-		If (selected == AcceptButton)
-			If (IsValidWager(Wager))
-				akSender.UnregisterForSelectedEvent(self)
-				akSender.Hide()
-				Game.RemovePlayerCaps(Wager)
-				Display.Caps = Bank
-			EndIf
+			If (selected == AcceptButton)
+				If (IsValidWager(Wager))
+					akSender.UnregisterForSelectedEvent(self)
+					akSender.Hide()
+					Game.RemovePlayerCaps(Wager)
+					Display.Caps = Bank
+				EndIf
 
-		ElseIf (selected == IncreaseButton)
-			If (IsValidWager(Wager + WagerStep))
-				Wager += WagerStep
-				Display.Bet = Wager
-				ITMBottlecapsDownx.Play(Player)
-			EndIf
+			ElseIf (selected == IncreaseButton)
+				If (IsValidWager(Wager + WagerStep))
+					Wager += WagerStep
+					Display.Bet = Wager
+					ITMBottlecapsDownx.Play(Player)
+				EndIf
 
-		ElseIf (selected == DecreaseButton)
-			If (IsValidWager(Wager - WagerStep))
-				Wager -= WagerStep
-				Display.Bet = Wager
-				ITMBottlecapsUpx.Play(Player)
-			EndIf
+			ElseIf (selected == DecreaseButton)
+				If (IsValidWager(Wager - WagerStep))
+					Wager -= WagerStep
+					Display.Bet = Wager
+					ITMBottlecapsUpx.Play(Player)
+				EndIf
 
-		ElseIf (selected == MinimumButton)
-			If (IsValidWager(WagerMinimum))
-				Wager = WagerMinimum
-				Display.Bet = Wager
-				ITMBottlecapsUpx.Play(Player)
-			EndIf
+			ElseIf (selected == MinimumButton)
+				If (IsValidWager(WagerMinimum))
+					Wager = WagerMinimum
+					Display.Bet = Wager
+					ITMBottlecapsUpx.Play(Player)
+				EndIf
 
-		ElseIf (selected == MaximumButton)
-			If (IsValidWager(WagerMaximum))
-				Wager = WagerMaximum
-				Display.Bet = Wager
-				ITMBottlecapsDownx.Play(Player)
+			ElseIf (selected == MaximumButton)
+				If (IsValidWager(WagerMaximum))
+					Wager = WagerMaximum
+					Display.Bet = Wager
+					ITMBottlecapsDownx.Play(Player)
+				EndIf
+			Else
+				InvalidOperationException(self, "OnSelected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
 			EndIf
 		Else
-			WriteLine(self, "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
+			ArgumentException(self, "OnSelected", "var[] arguments", "The arguments are null or empty.")
 		EndIf
 	EndEvent
 EndState
@@ -211,11 +215,11 @@ State Playing
 			ElseIf (ButtonHint.Selected == StandButton)
 				return ChoiceStand
 			Else
-				WriteLine(self, "The selected choice button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				InvalidOperationException(self, "IChoice", "The selected choice button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
 				return Invalid
 			EndIf
 		Else
-			WriteLine(self, "No choice button was selected.")
+			InvalidOperationException(self, "IChoice", "No choice button was selected.")
 			return Invalid
 		EndIf
 	EndFunction
@@ -243,11 +247,11 @@ State Scoring
 				WriteLine(self, "The '"+ButtonHint.Selected.Text+"' button was selected.")
 				Rematch(false)
 			Else
-				WriteLine(self, "The selected scoring button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				InvalidOperationException(self, "Scoring", "The selected button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
 				Rematch(false)
 			EndIf
 		Else
-			WriteLine(self, "No scoring button was selected.")
+			InvalidOperationException(self, "Scoring", "No button hint was selected.")
 			Rematch(false)
 		EndIf
 	EndEvent
