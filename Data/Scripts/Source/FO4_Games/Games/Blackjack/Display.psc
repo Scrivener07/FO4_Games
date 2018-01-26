@@ -1,14 +1,14 @@
-ScriptName Games:Blackjack:Display extends Games:Shared:UI:Display
-import Games:Blackjack
-
+ScriptName Games:Blackjack:Display extends Games:Shared:UI:Menu
 
 ; Display
 ;---------------------------------------------
 
-Event OnDisplayData(DisplayData display)
-	display.Menu = "HUDMenu"
+DisplayData Function NewDisplay()
+	DisplayData display = new DisplayData
+	display.Menu = "Blackjack"
 	display.Asset = "Blackjack.swf"
-EndEvent
+	return display
+EndFunction
 
 
 Function Reset()

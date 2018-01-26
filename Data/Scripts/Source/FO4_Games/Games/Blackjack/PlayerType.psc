@@ -1,6 +1,5 @@
 ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:GameType Native Hidden
-import Games:Papyrus:Log
-
+import Games:Shared:Log
 
 ; FSM - Finite State Machine
 ;---------------------------------------------
@@ -8,42 +7,42 @@ import Games:Papyrus:Log
 State Starting
 	Event Starting()
 		{Allocate data for new game session.}
-		NotImplementedException(self, "Starting")
+		WriteNotImplemented(self, "Starting")
 	EndEvent
 EndState
 
 State Wagering
 	Event Wagering()
 		{Wagering}
-		NotImplementedException(self, "Wagering")
+		WriteNotImplemented(self, "Wagering")
 	EndEvent
 EndState
 
 State Dealing
 	Event Dealing()
 		{Dealing}
-		NotImplementedException(self, "Dealing")
+		WriteNotImplemented(self, "Dealing")
 	EndEvent
 EndState
 
 State Playing
 	Event Playing()
 		{Playing}
-		NotImplementedException(self, "Playing")
+		WriteNotImplemented(self, "Playing")
 	EndEvent
 EndState
 
 State Scoring
 	Event Scoring()
 		{Scoring}
-		NotImplementedException(self, "Scoring")
+		WriteNotImplemented(self, "Scoring")
 	EndEvent
 EndState
 
 State Exiting
 	Event Exiting()
 		{Exiting}
-		NotImplementedException(self, "Exiting")
+		WriteNotImplemented(self, "Exiting")
 	EndEvent
 EndState
 

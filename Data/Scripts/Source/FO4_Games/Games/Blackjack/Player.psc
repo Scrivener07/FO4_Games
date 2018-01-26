@@ -1,9 +1,9 @@
 ScriptName Games:Blackjack:Player extends Games:Blackjack:PlayerType Hidden
 import Games
 import Games:Blackjack
-import Games:Papyrus:Log
 import Games:Shared
 import Games:Shared:Deck
+import Games:Shared:Log
 
 Card[] Cards
 
@@ -188,23 +188,23 @@ EndState
 ;---------------------------------------------
 
 Event OnTurn(int aTurn)
-	NotImplementedException(self, "OnTurn", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnTurn", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScoreLose()
-	NotImplementedException(self, "OnScoreLose", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScoreLose", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScoreWin()
-	NotImplementedException(self, "OnScoreWin", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScoreWin", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScorePush()
-	NotImplementedException(self, "OnScorePush", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScorePush", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScoreError()
-	NotImplementedException(self, "OnScoreError", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScoreError", "Not implemented in the empty state.")
 EndEvent
 
 
@@ -213,19 +213,19 @@ EndEvent
 
 MarkerValue Function IMarkers()
 	{Required - Destination markers for motion.}
-	NotImplementedException(self, "IMarkers", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "IMarkers", "Not implemented in the empty state.")
 	return new MarkerValue
 EndFunction
 
 int Function IWager()
 	{Ask the amount of caps to wager.}
-	NotImplementedException(self, "IWager", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "IWager", "Not implemented in the empty state.")
 	return Invalid
 EndFunction
 
 int Function IChoice()
 	{Ask the choice type for this turn.}
-	NotImplementedException(self, "IChoice", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "IChoice", "Not implemented in the empty state.")
 	return Invalid
 EndFunction
 

@@ -1,11 +1,10 @@
-ScriptName GamesTest:SharedUI_ButtonHint extends GamesTest:Framework:Lilac
+ScriptName GamesTest:SharedUIButtonHintTest extends GamesTest:Lilac
 import Games
-import Games:Papyrus:Log
 import Games:Shared
+import Games:Shared:Log
 import Games:Shared:UI:ButtonHint
 
 ; Console Command: StartQuest GamesTest
-
 
 ; Lilac
 ;---------------------------------------------
@@ -65,12 +64,12 @@ EndFunction
 bool Function PopulatingSuite()
 	It("should be in the empty state", StateEmptyTest())
 	It("should contain no buttons", ButtonCountZeroTest())
-	It("should be able To add a button", ButtonAddTest())
+	It("should be able to add a button", ButtonAddTest())
 	It("should not add duplicate buttons", ButtonAddDuplicateTest())
 	It("should not add duplicate button keycodes", ButtonAddDuplicateKeyTest())
-	It("should be able To add buttons with the same text", ButtonAddDuplicateTextTest())
-	It("should be able To remove a button", ButtonRemoveTest())
-	It("should be able To clear all buttons", ButtonClearTest())
+	It("should be able to add buttons with the same text", ButtonAddDuplicateTextTest())
+	It("should be able to remove a button", ButtonRemoveTest())
+	It("should be able to clear all buttons", ButtonClearTest())
 	return Done
 EndFunction
 
@@ -253,5 +252,3 @@ Group ButtonHint
 	UI:ButtonHint Property ButtonHint Auto Const Mandatory
 	Shared:Keyboard Property Keyboard Auto Const Mandatory
 EndGroup
-
-

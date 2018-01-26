@@ -1,6 +1,6 @@
 ScriptName Games:Shared:Motion extends Quest Default
-import Games:Papyrus:Log
-import Games:Papyrus:Script
+import Games:Shared:Log
+import Games:Shared:Papyrus
 
 int Index = -1
 

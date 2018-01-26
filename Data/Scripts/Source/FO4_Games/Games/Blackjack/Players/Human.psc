@@ -1,7 +1,7 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
 import Games
 import Games:Blackjack
-import Games:Papyrus:Log
+import Games:Shared:Log
 import Games:Shared
 import Games:Shared:UI:ButtonHint
 
@@ -81,7 +81,7 @@ EndEvent
 
 Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
 	akSender.UnregisterForSelectedEvent(self)
-	InvalidOperationException(self, "OnSelected", "Unregistered for event in the '"+StateName+"' state.")
+	WriteUnexpected(self, "OnSelected", "Unregistered for event in the '"+StateName+"' state.")
 EndEvent
 
 
@@ -91,6 +91,8 @@ EndEvent
 State Starting
 	Event Starting()
 		Wager = WagerMinimum
+
+		Display.Open()
 
 		Display.Score = 0
 		Display.Bet = Wager
@@ -180,10 +182,10 @@ State Wagering
 					ITMBottlecapsDownx.Play(Player)
 				EndIf
 			Else
-				InvalidOperationException(self, "OnSelected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "OnSelected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
 			EndIf
 		Else
-			ArgumentException(self, "OnSelected", "var[] arguments", "The arguments are null or empty.")
+			WriteUnexpectedValue(self, "OnSelected", "arguments", "The arguments are null or empty.")
 		EndIf
 	EndEvent
 EndState
@@ -215,11 +217,11 @@ State Playing
 			ElseIf (ButtonHint.Selected == StandButton)
 				return ChoiceStand
 			Else
-				InvalidOperationException(self, "IChoice", "The selected choice button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "IChoice", "The selected choice button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
 				return Invalid
 			EndIf
 		Else
-			InvalidOperationException(self, "IChoice", "No choice button was selected.")
+			WriteUnexpected(self, "IChoice", "No choice button was selected.")
 			return Invalid
 		EndIf
 	EndFunction
@@ -247,11 +249,11 @@ State Scoring
 				WriteLine(self, "The '"+ButtonHint.Selected.Text+"' button was selected.")
 				Rematch(false)
 			Else
-				InvalidOperationException(self, "Scoring", "The selected button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "Scoring", "The selected button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
 				Rematch(false)
 			EndIf
 		Else
-			InvalidOperationException(self, "Scoring", "No button hint was selected.")
+			WriteUnexpected(self, "Scoring", "No button hint was selected.")
 			Rematch(false)
 		EndIf
 	EndEvent
@@ -261,6 +263,7 @@ EndState
 State Exiting
 	Event Exiting()
 		Display.Visible = false
+		Display.Close()
 		parent.Exiting()
 	EndEvent
 EndState

@@ -1,5 +1,5 @@
 ScriptName Games:Shared:Deck extends Quest Default
-import Games:Papyrus:Log
+import Games:Shared:Log
 
 Card[] Cards
 

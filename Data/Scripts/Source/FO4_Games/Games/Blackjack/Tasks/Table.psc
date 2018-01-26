@@ -1,8 +1,8 @@
 ScriptName Games:Blackjack:Tasks:Table extends Games:Blackjack:GameType
 import Games
 import Games:Blackjack
-import Games:Papyrus:Log
-import Games:Papyrus:Script
+import Games:Shared:Log
+import Games:Shared:Papyrus
 
 Actor Player
 InputEnableLayer InputLayer
@@ -60,7 +60,7 @@ State Exiting
 		Game.ShowFirstPersonGeometry(true)
 		Player.SetScale(1.0)
 
-		Player.MoveTo(Blackjack.EntryPoint, 120.0)
+		Player.MoveTo(Blackjack.EntryPoint, -120.0)
 		Game.FadeOutGame(false, true, 2.0, 1.0)
 		TaskEnd(self)
 	EndEvent

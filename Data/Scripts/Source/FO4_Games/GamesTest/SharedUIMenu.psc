@@ -1,23 +1,24 @@
-ScriptName GamesTest:SharedUI_Display extends Games:Shared:UI:Display
+ScriptName GamesTest:SharedUIMenu extends Games:Shared:UI:Menu
 import Games
-import Games:Papyrus:Log
-
+import Games:Shared:Log
 
 ; Display
 ;---------------------------------------------
 
-Event OnDisplayData(DisplayData display)
-	display.Menu = "PipboyMenu"
+DisplayData Function NewDisplay()
+	DisplayData display = new DisplayData
+	display.Menu = "Dummy"
 	display.Asset = "Dummy.swf"
-	; display.Root = "root1.BottomCenterGroup_mc.CompassWidget_mc"
-EndEvent
+	display.Root = "root1.Dummy"
+	return display
+EndFunction
 
 
-Event OnDisplayLoaded()
+Function OnDisplayReady()
 	RegisterForKey(Keyboard.J)
 	RegisterForKey(Keyboard.K)
 	RegisterForKey(Keyboard.L)
-EndEvent
+EndFunction
 
 
 ; Events
@@ -25,13 +26,13 @@ EndEvent
 
 Event OnKeyDown(int keyCode)
 	If (keyCode == Keyboard.J)
-		Data()
-		WriteLine(self, "Data")
+		Open()
+		WriteLine(self, "Open")
 	EndIf
 
 	If (keyCode == Keyboard.K)
-		Load()
-		WriteLine(self, "Load")
+		Close()
+		WriteLine(self, "Close")
 	EndIf
 
 	If (keyCode == Keyboard.L)
