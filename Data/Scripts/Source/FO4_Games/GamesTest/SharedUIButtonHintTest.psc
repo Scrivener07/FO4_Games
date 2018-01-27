@@ -215,14 +215,14 @@ EndFunction
 State ShownButtonTest
 	Event Games:Shared:UI:ButtonHint.OnShown(UI:ButtonHint akSender, var[] arguments)
 		Expect(akSender.GetState(), To, BeEqualTo, "Shown")
-		Expect(akSender.Visible, To, BeTruthy)
+		; Expect(akSender.Visible, To, BeTruthy)
 		; akSender.Hide()
 	EndEvent
 
 
 	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
 		Expect(akSender.GetState(), To, BeEqualTo, "Shown")
-		Expect(akSender.Visible, To, BeTruthy)
+		; Expect(akSender.Visible, To, BeTruthy)
 		akSender.Hide()
 	EndEvent
 EndState

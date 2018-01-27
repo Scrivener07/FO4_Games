@@ -7,17 +7,13 @@ import Games:Shared:Log
 
 DisplayData Function NewDisplay()
 	DisplayData display = new DisplayData
-	display.Menu = "Dummy"
-	display.Asset = "Dummy.swf"
-	display.Root = "root1.Dummy"
-	return display
-EndFunction
-
-
-Function OnDisplayReady()
+	display.Menu = "DummyMenu"
+	display.Asset = "Dummy"
+	display.Root = "root1.Menu"
 	RegisterForKey(Keyboard.J)
 	RegisterForKey(Keyboard.K)
 	RegisterForKey(Keyboard.L)
+	return display
 EndFunction
 
 
@@ -36,8 +32,7 @@ Event OnKeyDown(int keyCode)
 	EndIf
 
 	If (keyCode == Keyboard.L)
-		UI.Invoke(Menu, GetMember("BringToFront"))
-		WriteNotification(self, "You pressed the L key on the keyboard.")
+		WriteLine(self, "Pressed the L key.")
 	EndIf
 EndEvent
 

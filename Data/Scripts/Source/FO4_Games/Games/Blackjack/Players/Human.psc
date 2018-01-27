@@ -12,7 +12,7 @@ Button AcceptButton
 Button IncreaseButton
 Button DecreaseButton
 Button MinimumButton
-Button MaximumButton ; TODO: This button is outside the visible area on HUDMenu
+Button MaximumButton
 
 Button HitButton
 Button StandButton
@@ -93,12 +93,10 @@ State Starting
 		Wager = WagerMinimum
 
 		Display.Open()
-
 		Display.Score = 0
 		Display.Bet = Wager
 		Display.Caps = Bank
 		Display.Earnings = Earnings
-		Display.Visible = true
 
 		parent.Starting()
 	EndEvent
@@ -262,7 +260,6 @@ EndState
 
 State Exiting
 	Event Exiting()
-		Display.Visible = false
 		Display.Close()
 		parent.Exiting()
 	EndEvent

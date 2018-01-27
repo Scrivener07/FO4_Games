@@ -28,11 +28,11 @@ EndStruct
 DisplayData Function NewDisplay()
 	DisplayData display = new DisplayData
 	display.Menu = "ButtonHintMenu"
-	display.Asset = "ButtonHint.swf"
+	display.Asset = "ButtonHint"
+	display.Root = "root1.Menu"
 	Buttons = new Button[0]
 	return display
 EndFunction
-
 
 
 ; Methods
@@ -225,7 +225,6 @@ State Shown
 
 				string member = GetMember("SetButtons")
 				UI.Invoke(Menu, member, arguments)
-				Visible = true ; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
 
 				ShownEventArgs e = new ShownEventArgs
 				e.Showing = true
@@ -239,7 +238,7 @@ State Shown
 				TaskEnd(self)
 			EndIf
 		Else
-			WriteUnexpected(self, "Shown.OnBeginState", "Could not open menu for '"+GetState()+"'' state.")
+			WriteUnexpected(self, "Shown.OnBeginState", "Could not open menu for '"+GetState()+"' state.")
 			TaskEnd(self)
 		EndIf
 	EndEvent
@@ -289,8 +288,6 @@ State Shown
 
 	Event OnEndState(string asNewState)
 		WriteLine(self, "Ending the '"+GetState()+"' state.")
-
-		Visible = false
 		Close()
 
 		int index = 0

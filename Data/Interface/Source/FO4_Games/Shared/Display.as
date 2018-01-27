@@ -9,7 +9,7 @@ package Shared
 	public class Display extends MovieClip implements IDisplay
 	{
 		// IDisplay
-		public function get Exists():Boolean { return true; } // depreciate
+		public function get Exists():Boolean { return true; }
 		public function get Visible():Boolean { return this.visible; }
 		public function set Visible(argument:Boolean):void { this.visible = argument; }
 		private var isTrue:Boolean = true;
@@ -30,9 +30,9 @@ package Shared
 		private function OnAddedToStage(e:Event) : void
 		{
 			trace("[Display.as] OnAddedToStage:"+Shared.Utility.WalkMovie(this));
-			var baseMenu:MovieClip = stage.getChildAt(0) as MovieClip;
+			var movieStage:MovieClip = stage.getChildAt(0) as MovieClip;
 			trace("\n\n\n\n");
-			Shared.Utility.TraceDisplayList(baseMenu)
+			Shared.Utility.TraceDisplayList(movieStage)
 			trace("\n\n\n\n");
 		}
 

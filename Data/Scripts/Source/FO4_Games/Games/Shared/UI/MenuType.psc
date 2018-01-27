@@ -1,4 +1,5 @@
 Scriptname Games:Shared:UI:MenuType extends Quest Hidden Native Const
+import Games:Shared:Log
 
 
 Struct DisplayData

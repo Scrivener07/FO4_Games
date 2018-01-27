@@ -5,29 +5,32 @@ import Games:Shared:Papyrus
 DisplayData Display
 
 
+; 0xD = 0x01 + 0x08 + 0x04 ; Pause Game, Enable Menu Control, Show cursor
+
+
 ; Events
 ;---------------------------------------------
 
 Event OnInit()
 	OnGameReload()
 	RegisterForGameReload(self)
-	WriteLine(self, "Initialized "+ToString())
 EndEvent
 
 
 Event Actor.OnPlayerLoadGame(Actor akSender)
 	OnGameReload()
-	WriteLine(self, "Reloaded "+ToString())
 EndEvent
 
 
 Event OnGameReload()
-	{Event occurs when the game has been reloaded or initialized.}
 	Display = NewDisplay()
-	If (UI.RegisterCustomMenu(Display.Menu, Display.Asset, Display.Root, new UI:MenuData))
+
+	UI:MenuData data = new UI:MenuData
+	data.MenuFlags = 0x0
+	If (UI.RegisterCustomMenu(Display.Menu, Display.Asset, Display.Root, data))
 		WriteLine(self, ToString()+" has registered as a custom menu.")
 	Else
-		WriteUnexpectedValue(self, "OnGameReload", "Display", ToString()+" failed to registered as a custom menu.")
+		WriteUnexpectedValue(self, "OnGameReload", "Display", ToString()+" failed to register as a custom menu.")
 	EndIf
 EndEvent
 
@@ -36,7 +39,7 @@ EndEvent
 ;---------------------------------------------
 bool Function Open()
 	If (IsRegistered)
-		return UI.CloseMenu(Menu)
+		return UI.OpenMenu(Menu)
 	Else
 		WriteUnexpected(self, "Open", "The menu is not registered.")
 		return false
@@ -139,12 +142,12 @@ Group Properties
 		EndFunction
 	EndProperty
 
-	bool Property Visible Hidden
-		bool Function Get()
-			return GetVisible()
-		EndFunction
-		Function Set(bool value)
-			SetVisible(value)
-		EndFunction
-	EndProperty
+	; bool Property Visible Hidden
+	; 	bool Function Get()
+	; 		return GetVisible()
+	; 	EndFunction
+	; 	Function Set(bool value)
+	; 		SetVisible(value)
+	; 	EndFunction
+	; EndProperty
 EndGroup
