@@ -5,9 +5,6 @@ import Games:Shared:Papyrus
 DisplayData Display
 
 
-; 0xD = 0x01 + 0x08 + 0x04 ; Pause Game, Enable Menu Control, Show cursor
-
-
 ; Events
 ;---------------------------------------------
 
@@ -24,9 +21,9 @@ EndEvent
 
 Event OnGameReload()
 	Display = NewDisplay()
-
 	UI:MenuData data = new UI:MenuData
-	data.MenuFlags = 0x0
+	data.MenuFlags = FlagNone
+	data.ExtendedFlags = FlagInheritColors + FlagCheckForGamepad
 	If (UI.RegisterCustomMenu(Display.Menu, Display.Asset, Display.Root, data))
 		WriteLine(self, ToString()+" has registered as a custom menu.")
 	Else
@@ -79,7 +76,6 @@ EndFunction
 
 string Function GetMember(string member)
 	{Returns the full AS3 instance path for the given member name.}
-	; TODO: Stack too deep (infinite recursion likely) - aborting call and returning None
 	If (StringIsNoneOrEmpty(member))
 		WriteUnexpectedValue(self, "GetMember", "member", "Cannot operate on a none or empty display member.")
 		return none
@@ -87,7 +83,6 @@ string Function GetMember(string member)
 		WriteUnexpected(self, "GetMember", "Cannot operate on a none or empty display root.")
 		return none
 	Else
-		WriteLine(self, "GetMember for '"+member+"' member.")
 		return Root+"."+member
 	EndIf
 EndFunction
@@ -95,7 +90,7 @@ EndFunction
 
 string Function ToString()
 	{The string representation of this UI type.}
-	return "[Menu:"+Menu+", Asset:"+Asset+", Root:"+Root+" Instance:"+Instance+"]"
+	return "[Menu:"+Menu+", Asset:"+Asset+", Root:"+Root+"]"
 EndFunction
 
 
@@ -120,12 +115,6 @@ Group Display
 			return Display.Asset
 		EndFunction
 	EndProperty
-
-	string Property Instance Hidden
-		string Function Get()
-			return Display.Instance
-		EndFunction
-	EndProperty
 EndGroup
 
 
@@ -141,13 +130,17 @@ Group Properties
 			return UI.IsMenuOpen(Menu)
 		EndFunction
 	EndProperty
+EndGroup
 
-	; bool Property Visible Hidden
-	; 	bool Function Get()
-	; 		return GetVisible()
-	; 	EndFunction
-	; 	Function Set(bool value)
-	; 		SetVisible(value)
-	; 	EndFunction
-	; EndProperty
+Group MenuFlags
+	int Property FlagNone = 0x0 AutoReadOnly
+	int Property FlagPauseGame = 0x01 AutoReadOnly
+	int Property FlagShowCursor = 0x04 AutoReadOnly
+	int Property FlagEnableMenuControl = 0x08 AutoReadOnly
+EndGroup
+
+Group ExtendedFlags
+	; If you set extendedFlags & 2, it will disable your ShowCursor if the Gamepad is enabled
+	int Property FlagInheritColors = 1 AutoReadOnly
+	int Property FlagCheckForGamepad = 2 AutoReadOnly
 EndGroup

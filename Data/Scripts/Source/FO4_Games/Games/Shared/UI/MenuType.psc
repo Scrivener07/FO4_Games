@@ -1,6 +1,9 @@
 Scriptname Games:Shared:UI:MenuType extends Quest Hidden Native Const
-import Games:Shared:Log
+{Script for menu type displays.}
 
+
+; Display
+;---------------------------------------------
 
 Struct DisplayData
 	string Menu
@@ -11,9 +14,6 @@ Struct DisplayData
 
 	string Asset
 	{The asset file to load within the given menu. The root directory is "Data\Interface".}
-
-	string Instance
-	{The destination instance variable. Used by GetMember(string)}
 EndStruct
 
 DisplayData Function NewDisplay() Native
