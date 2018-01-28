@@ -6,8 +6,9 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 <img src="Documents/Screenshot03.png" height="200">
 
 #### Features
-- [ ] Blackjack
+- [x] Blackjack
 - [ ] Cadillac
+- [ ] Caravan
 
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing to this project.
