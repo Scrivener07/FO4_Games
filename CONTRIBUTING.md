@@ -38,3 +38,17 @@ To compile this projects papyrus source code, start a command prompt and run the
 
 #### Flash
 To publish this projects flash interface files, open the `FLA` file in Flash and publish the `SWF` file.
+
+
+## Release Checklist
+* Commit all source changes to the `master` branch.
+* Compile
+* * Compile the projects interface Flash files.
+* * Compile the prjects script Papyrus files.
+* Plugin
+* * Load `Games.esp` with the Creation Kit in order to check for errors.
+* * Load `Games.esp` with the xEdit in order to check for errors.
+* * In Wrye, use the `Copt to ESM` feature to convert `Games.esp` to `Games.esm`.
+* Archive
+* * Verify that `Games.achlist` is correct.
+* * Package the `Games.achlist` into the required `.ba2` archives.
