@@ -25,18 +25,18 @@ State Starting
 		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 		Player.MoveTo(Games_Blackjack_CellMarker)
 
-		;Game.SetInChargen(true, true, false)
+		Game.SetInChargen(true, true, false)
 		InputLayer = InputEnableLayer.Create()
-	 ;	InputLayer.EnableMovement(false)
-	; 	InputLayer.EnableLooking(false)
-	; 	InputLayer.EnableCamSwitch(false)
-	; ;	InputLayer.EnableMenu(false)
-	; 	InputLayer.EnableVATS(false)
- ; 		InputLayer.EnableFighting(false)
+	 	InputLayer.EnableMovement(false)
+	 	InputLayer.EnableLooking(false)
+	 	InputLayer.EnableCamSwitch(false)
+	 	InputLayer.EnableMenu(false)
+	 	InputLayer.EnableVATS(false)
+  		InputLayer.EnableFighting(false)
 
 		Game.SetPlayerAIDriven()
 		Game.ShowFirstPersonGeometry(false)
-		Player.SetScale(0.45)
+		Player.SetScale(0.35)
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
 
 		; Spend 2 seconds on a black screen before fading in to the game over 1 second and hide fader when done
@@ -50,7 +50,7 @@ State Exiting
 	Event OnBeginState(string asOldState)
 		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 
-	;	Game.SetInChargen(false, false, false)
+		Game.SetInChargen(false, false, false)
 		If (InputLayer)
 			InputLayer.Delete()
 			InputLayer = none

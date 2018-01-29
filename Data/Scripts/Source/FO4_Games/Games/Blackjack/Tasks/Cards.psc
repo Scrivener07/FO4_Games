@@ -74,13 +74,12 @@ Event OnInit()
 EndEvent
 
 
-; Component
+; Tasks
 ;---------------------------------------------
 
 State Starting
-	Event OnBeginState(string asOldState)
+	Event Starting()
 		CollectAll(true)
-		TaskEnd(self)
 	EndEvent
 EndState
 

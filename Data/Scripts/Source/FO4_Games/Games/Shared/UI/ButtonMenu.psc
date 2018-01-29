@@ -1,4 +1,4 @@
-ScriptName Games:Shared:UI:ButtonHint extends Games:Shared:UI:Menu Default
+ScriptName Games:Shared:UI:ButtonMenu extends Games:Shared:UI:Menu Default
 import Games
 import Games:Shared
 import Games:Shared:Log
@@ -27,15 +27,15 @@ EndStruct
 
 DisplayData Function NewDisplay()
 	DisplayData display = new DisplayData
-	display.Menu = "ButtonHintMenu"
-	display.Asset = "ButtonHint"
+	display.Menu = "GamesButtonMenu"
+	display.Asset = "Games\\ButtonMenu"
 	display.Root = "root1.Menu"
 	Buttons = new Button[0]
 	return display
 EndFunction
 
 
-; Methods
+; Tasks
 ;---------------------------------------------
 
 bool Function Show()
@@ -50,8 +50,102 @@ bool Function Hide()
 EndFunction
 
 
-;---------------------------------------------
+State Shown
+	Event OnBeginState(string asOldState)
+		If (Open())
+			If (Buttons)
+				var[] arguments = new var[0]
+				int index = 0
+				While (index < Buttons.Length)
+					arguments.Add(Buttons[index])
+					RegisterForKey(Buttons[index].KeyCode)
+					index += 1
+				EndWhile
 
+				string member = GetMember("SetButtons")
+				UI.Invoke(Menu, member, arguments)
+
+				ShownEventArgs e = new ShownEventArgs
+				e.Showing = true
+				var[] shownArguments = new var[1]
+				shownArguments[0] = e
+				SendCustomEvent("OnShown", shownArguments)
+
+				WriteLine(self, "Showing button press hints. Invoke:"+member+"("+arguments+") @"+Menu)
+			Else
+				WriteUnexpected(self, "Shown.OnBeginState", "The button array is none or empty.")
+				TaskEnd(self)
+			EndIf
+		Else
+			WriteUnexpected(self, "Shown.OnBeginState", "Could not open menu for '"+GetState()+"' state.")
+			TaskEnd(self)
+		EndIf
+	EndEvent
+
+
+	Event OnKeyDown(int keyCode)
+		selectedLast = Buttons[FindByKeyCode(keyCode)]
+
+		var[] arguments = new var[1]
+		arguments[0] = selectedLast
+		SendCustomEvent("OnSelected", arguments)
+
+		If (AutoHide)
+			WriteLine(self, "Automatically hiding for first selection.")
+			TaskEnd(self)
+		EndIf
+	EndEvent
+
+
+	bool Function Show()
+		{EMPTY}
+		WriteNotImplemented(self, "Show", "Not implemented in the '"+GetState()+"' state.")
+		return false
+	EndFunction
+
+
+	bool Function Add(Button value)
+		{EMPTY}
+		WriteNotImplemented(self, "Add", "Not implemented in the '"+GetState()+"' state.")
+		return false
+	EndFunction
+
+
+	bool Function Remove(Button value)
+		{EMPTY}
+		WriteNotImplemented(self, "Remove", "Not implemented in the '"+GetState()+"' state.")
+		return false
+	EndFunction
+
+
+	bool Function Clear()
+		{EMPTY}
+		WriteNotImplemented(self, "Clear", "Not implemented in the '"+GetState()+"' state.")
+		return false
+	EndFunction
+
+
+	Event OnEndState(string asNewState)
+		WriteLine(self, "Ending the '"+GetState()+"' state.")
+		Close()
+
+		int index = 0
+		While (index < Buttons.Length)
+			UnregisterForKey(Buttons[index].KeyCode)
+			index += 1
+		EndWhile
+
+		ShownEventArgs e = new ShownEventArgs
+		e.Showing = false
+		var[] arguments = new var[1]
+		arguments[0] = e
+		SendCustomEvent("OnShown", arguments)
+	EndEvent
+EndState
+
+
+; Methods
+;---------------------------------------------
 
 bool Function Add(Button value)
 	{Adds a button to the collection.}
@@ -132,9 +226,7 @@ int Function IndexOf(Button value)
 	EndIf
 EndFunction
 
-
 ;---------------------------------------------
-
 
 bool Function RegisterForSelectedEvent(ScriptObject script)
 	If (script)
@@ -167,9 +259,7 @@ Button Function GetSelectedEventArgs(var[] arguments)
 	EndIf
 EndFunction
 
-
 ;---------------------------------------------
-
 
 Struct ShownEventArgs
 	bool Showing = false
@@ -206,103 +296,6 @@ ShownEventArgs Function GetShownEventArgs(var[] arguments)
 		return none
 	EndIf
 EndFunction
-
-
-; Tasks
-;---------------------------------------------
-
-State Shown
-	Event OnBeginState(string asOldState)
-		If (Open())
-			If (Buttons)
-				var[] arguments = new var[0]
-				int index = 0
-				While (index < Buttons.Length)
-					arguments.Add(Buttons[index])
-					RegisterForKey(Buttons[index].KeyCode)
-					index += 1
-				EndWhile
-
-				string member = GetMember("SetButtons")
-				UI.Invoke(Menu, member, arguments)
-
-				ShownEventArgs e = new ShownEventArgs
-				e.Showing = true
-				var[] shownArguments = new var[1]
-				shownArguments[0] = e
-				SendCustomEvent("OnShown", shownArguments)
-
-				WriteLine(self, "Showing button press hints. Invoke: "+Menu+"."+member+"("+arguments+")")
-			Else
-				WriteUnexpected(self, "Shown.OnBeginState", "The button array is none or empty.")
-				TaskEnd(self)
-			EndIf
-		Else
-			WriteUnexpected(self, "Shown.OnBeginState", "Could not open menu for '"+GetState()+"' state.")
-			TaskEnd(self)
-		EndIf
-	EndEvent
-
-
-	Event OnKeyDown(int keyCode)
-		selectedLast = Buttons[FindByKeyCode(keyCode)]
-
-		var[] arguments = new var[1]
-		arguments[0] = selectedLast
-		SendCustomEvent("OnSelected", arguments)
-
-		If (AutoHide)
-			WriteLine(self, "Automatically hiding for first selection.")
-			TaskEnd(self)
-		EndIf
-	EndEvent
-
-
-	bool Function Show()
-		{EMPTY}
-		WriteNotImplemented(self, "Show", "Not implemented in the '"+GetState()+"' state.")
-		return false
-	EndFunction
-
-
-	bool Function Add(Button value)
-		{EMPTY}
-		WriteNotImplemented(self, "Add", "Not implemented in the '"+GetState()+"' state.")
-		return false
-	EndFunction
-
-
-	bool Function Remove(Button value)
-		{EMPTY}
-		WriteNotImplemented(self, "Remove", "Not implemented in the '"+GetState()+"' state.")
-		return false
-	EndFunction
-
-
-	bool Function Clear()
-		{EMPTY}
-		WriteNotImplemented(self, "Clear", "Not implemented in the '"+GetState()+"' state.")
-		return false
-	EndFunction
-
-
-	Event OnEndState(string asNewState)
-		WriteLine(self, "Ending the '"+GetState()+"' state.")
-		Close()
-
-		int index = 0
-		While (index < Buttons.Length)
-			UnregisterForKey(Buttons[index].KeyCode)
-			index += 1
-		EndWhile
-
-		ShownEventArgs e = new ShownEventArgs
-		e.Showing = false
-		var[] arguments = new var[1]
-		arguments[0] = e
-		SendCustomEvent("OnShown", arguments)
-	EndEvent
-EndState
 
 
 ; Properties

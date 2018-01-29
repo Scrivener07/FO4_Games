@@ -3,7 +3,7 @@ import Games
 import Games:Blackjack
 import Games:Shared:Log
 import Games:Shared
-import Games:Shared:UI:ButtonHint
+import Games:Shared:UI:ButtonMenu
 
 Actor PlayerRef
 
@@ -21,10 +21,11 @@ Button YesButton
 Button NoButton
 
 
-Blackjack:Display Property Display Auto Const Mandatory
 
-Group ButtonHint
-	UI:ButtonHint Property ButtonHint Auto Const Mandatory
+
+Group UI
+	Blackjack:Display Property Display Auto Const Mandatory
+	UI:ButtonMenu Property ButtonMenu Auto Const Mandatory
 	Shared:Keyboard Property Keyboard Auto Const Mandatory
 EndGroup
 
@@ -79,7 +80,7 @@ Event OnInit()
 EndEvent
 
 
-Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
+Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] arguments)
 	akSender.UnregisterForSelectedEvent(self)
 	WriteUnexpected(self, "OnSelected", "Unregistered for event in the '"+StateName+"' state.")
 EndEvent
@@ -121,26 +122,38 @@ EndState
 
 State Wagering
 	Event Wagering()
+		If (Bank < WagerMinimum)
+			; TODO: How/Should I quit here?
+			WriteUnexpectedValue(self, "Wagering", "Bank", "A bank of "+Bank+" cannot be less than the wager minimum of "+WagerMinimum)
+		EndIf
+
+		If (Wager > Bank)
+			Wager = WagerMinimum
+			WriteUnexpectedValue(self, "Wagering", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
+		EndIf
+
 		Display.Score = 0
 		Display.Bet = Wager ; last wager amount
+		Display.Earnings = Earnings
+		Display.Caps = Bank
 		parent.Wagering()
 		Display.Earnings = Earnings
 	EndEvent
 
 	int Function IWager()
-		ButtonHint.Clear()
-		ButtonHint.SelectOnce = false
-		ButtonHint.Add(AcceptButton)
-		ButtonHint.Add(IncreaseButton)
-		ButtonHint.Add(DecreaseButton)
-		ButtonHint.Add(MinimumButton)
-		ButtonHint.Add(MaximumButton)
-		ButtonHint.RegisterForSelectedEvent(self)
-		ButtonHint.Show()
+		ButtonMenu.Clear()
+		ButtonMenu.SelectOnce = false
+		ButtonMenu.Add(AcceptButton)
+		ButtonMenu.Add(IncreaseButton)
+		ButtonMenu.Add(DecreaseButton)
+		ButtonMenu.Add(MinimumButton)
+		ButtonMenu.Add(MaximumButton)
+		ButtonMenu.RegisterForSelectedEvent(self)
+		ButtonMenu.Show()
 		return Wager
 	EndFunction
 
-	Event Games:Shared:UI:ButtonHint.OnSelected(UI:ButtonHint akSender, var[] arguments)
+	Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] arguments)
 		If (arguments)
 			Button selected = akSender.GetSelectedEventArgs(arguments)
 
@@ -203,19 +216,19 @@ State Playing
 	EndEvent
 
 	int Function IChoice()
-		ButtonHint.Clear()
-		ButtonHint.SelectOnce = true
-		ButtonHint.Add(HitButton)
-		ButtonHint.Add(StandButton)
-		ButtonHint.Show()
+		ButtonMenu.Clear()
+		ButtonMenu.SelectOnce = true
+		ButtonMenu.Add(HitButton)
+		ButtonMenu.Add(StandButton)
+		ButtonMenu.Show()
 
-		If (ButtonHint.Selected)
-			If (ButtonHint.Selected == HitButton)
+		If (ButtonMenu.Selected)
+			If (ButtonMenu.Selected == HitButton)
 				return ChoiceHit
-			ElseIf (ButtonHint.Selected == StandButton)
+			ElseIf (ButtonMenu.Selected == StandButton)
 				return ChoiceStand
 			Else
-				WriteUnexpected(self, "IChoice", "The selected choice button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "IChoice", "The selected choice button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				return Invalid
 			EndIf
 		Else
@@ -233,21 +246,21 @@ State Scoring
 		Display.Earnings = Earnings
 		Display.Caps = Bank
 
-		ButtonHint.Clear()
-		ButtonHint.SelectOnce = true
-		ButtonHint.Add(YesButton)
-		ButtonHint.Add(NoButton)
-		ButtonHint.Show()
+		ButtonMenu.Clear()
+		ButtonMenu.SelectOnce = true
+		ButtonMenu.Add(YesButton)
+		ButtonMenu.Add(NoButton)
+		ButtonMenu.Show()
 
-		If (ButtonHint.Selected)
-			If (ButtonHint.Selected == YesButton)
-				WriteLine(self, "The '"+ButtonHint.Selected.Text+"' button was selected.")
+		If (ButtonMenu.Selected)
+			If (ButtonMenu.Selected == YesButton)
+				WriteLine(self, "The '"+ButtonMenu.Selected.Text+"' button was selected.")
 				Rematch(true)
-			ElseIf (ButtonHint.Selected == NoButton)
-				WriteLine(self, "The '"+ButtonHint.Selected.Text+"' button was selected.")
+			ElseIf (ButtonMenu.Selected == NoButton)
+				WriteLine(self, "The '"+ButtonMenu.Selected.Text+"' button was selected.")
 				Rematch(false)
 			Else
-				WriteUnexpected(self, "Scoring", "The selected button '"+ButtonHint.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "Scoring", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				Rematch(false)
 			EndIf
 		Else

@@ -34,8 +34,9 @@ EndEvent
 
 ; Methods
 ;---------------------------------------------
+
 bool Function Open()
-	If (IsRegistered)
+	If (UI.IsMenuRegistered(Menu))
 		return UI.OpenMenu(Menu)
 	Else
 		WriteUnexpected(self, "Open", "The menu is not registered.")
@@ -45,7 +46,7 @@ EndFunction
 
 
 bool Function Close()
-	If (IsRegistered)
+	If (UI.IsMenuRegistered(Menu))
 		return UI.CloseMenu(Menu)
 	Else
 		WriteUnexpected(self, "Close", "The menu is not registered.")
@@ -55,7 +56,7 @@ EndFunction
 
 
 bool Function GetVisible()
-	If (IsOpen)
+	If (UI.IsMenuOpen(Menu))
 		return UI.Get(Menu, GetMember("Visible")) as bool
 	Else
 		WriteUnexpected(self, "GetVisible", "The menu is not open.")
@@ -65,7 +66,7 @@ EndFunction
 
 
 bool Function SetVisible(bool value)
-	If (IsOpen)
+	If (UI.IsMenuOpen(Menu))
 		return UI.Set(Menu, GetMember("Visible"), value)
 	Else
 		WriteUnexpected(self, "SetVisible", "The menu is not open.")
@@ -113,21 +114,6 @@ Group Display
 	string Property Asset Hidden
 		string Function Get()
 			return Display.Asset
-		EndFunction
-	EndProperty
-EndGroup
-
-
-Group Properties
-	bool Property IsRegistered Hidden
-		bool Function Get()
-			return UI.IsMenuRegistered(Menu)
-		EndFunction
-	EndProperty
-
-	bool Property IsOpen Hidden
-		bool Function Get()
-			return UI.IsMenuOpen(Menu)
 		EndFunction
 	EndProperty
 EndGroup

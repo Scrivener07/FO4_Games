@@ -1,4 +1,4 @@
-Scriptname Games:Blackjack:Actions:Play extends ObjectReference Default
+Scriptname Games:Blackjack:Actions:ReferenceActivatePlay extends ObjectReference Default
 import Games
 import Games:Shared:Log
 
