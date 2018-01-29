@@ -18,7 +18,7 @@
 		public function Blackjack()
 		{
 			trace("[Blackjack] Constructor");
-			visible = false;
+			visible = true;
 			Reset();
 		}
 

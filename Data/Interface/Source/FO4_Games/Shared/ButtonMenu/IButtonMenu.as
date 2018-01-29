@@ -1,6 +1,6 @@
 package
 {
-	public interface IButtonHint
+	public interface IButtonMenu
 	{
 		function SetButtons(argument:Object, ... rest) : void;
 	}

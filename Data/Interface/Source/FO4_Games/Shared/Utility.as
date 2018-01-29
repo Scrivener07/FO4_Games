@@ -36,7 +36,6 @@ package Shared
 		}
 
 
-
 	    public static function TraceDisplayList(container:DisplayObjectContainer, options:* = undefined, indentString:String = "", depth:int = 0, childAt:int = 0):void
 	    {
 	        if (typeof options == "undefined") options = Number.POSITIVE_INFINITY;
@@ -71,7 +70,6 @@ package Shared
 	            if (child is DisplayObjectContainer) TraceDisplayList(DisplayObjectContainer(child), options, indentString + INDENT, depth + 1);
 	        }
 	    }
-
 
 
 	}

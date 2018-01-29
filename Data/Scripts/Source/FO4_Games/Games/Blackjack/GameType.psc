@@ -1,7 +1,7 @@
 ScriptName Games:Blackjack:GameType extends Quest Native Hidden
 import Games
-import Games:Papyrus:Log
-import Games:Papyrus:Script
+import Games:Shared:Log
+import Games:Shared:Papyrus
 
 
 ; FSM - Finite State Machine

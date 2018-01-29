@@ -1,15 +1,15 @@
-ScriptName Games:Blackjack:Display extends Games:Shared:UI:Display
-import Games:Blackjack
-import Games:Papyrus:Log
-
+ScriptName Games:Blackjack:Display extends Games:Shared:UI:Menu
 
 ; Display
 ;---------------------------------------------
 
-Event OnDisplayData(DisplayData display)
-	display.Menu = "HUDMenu"
-	display.Asset = "Blackjack.swf"
-EndEvent
+DisplayData Function NewDisplay()
+	DisplayData display = new DisplayData
+	display.Menu = "GamesBlackjack"
+	display.Asset = "Games\\Blackjack"
+	display.Root = "root1.Menu"
+	return display
+EndFunction
 
 
 Function Reset()

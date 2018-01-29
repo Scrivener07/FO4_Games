@@ -1,8 +1,5 @@
-ScriptName GamesTest:Framework:Lilac extends Quest
-import Games:Papyrus:Log
-import GamesTest:Framework
-import GamesTest:Framework:Library
-
+ScriptName GamesTest:Lilac extends Quest
+import Games:Shared:Log
 ;/
 	Papyrus unit test syntax and test runner.
 	Base script for creating and running Lilac unit tests. Must be extended.
@@ -36,6 +33,23 @@ EndEvent
 Event OnTimer(int aiTimerID)
 	RunTests()
 EndEvent
+
+
+Function LilacTrace(Lilac framework, int logLevel, string text) Global
+	{Modified to trace logs into Games.0.log}
+	string level
+	If (logLevel == 0)
+		level = ""
+	ElseIf (logLevel == 1)
+		level = "WARN - "
+	ElseIf (logLevel == 2)
+		level = "ERROR - "
+	Else
+		level = "??? - "
+	EndIf
+	string value = "[" + framework.SystemName + "] " +level + text
+	WriteLine("Lilac", value)
+EndFunction
 
 
 ; Methods

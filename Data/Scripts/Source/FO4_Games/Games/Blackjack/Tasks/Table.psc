@@ -1,8 +1,8 @@
 ScriptName Games:Blackjack:Tasks:Table extends Games:Blackjack:GameType
 import Games
 import Games:Blackjack
-import Games:Papyrus:Log
-import Games:Papyrus:Script
+import Games:Shared:Log
+import Games:Shared:Papyrus
 
 Actor Player
 InputEnableLayer InputLayer
@@ -25,18 +25,18 @@ State Starting
 		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 		Player.MoveTo(Games_Blackjack_CellMarker)
 
-		;Game.SetInChargen(true, true, false)
+		Game.SetInChargen(true, true, false)
 		InputLayer = InputEnableLayer.Create()
-	 ;	InputLayer.EnableMovement(false)
-	; 	InputLayer.EnableLooking(false)
-	; 	InputLayer.EnableCamSwitch(false)
-	; ;	InputLayer.EnableMenu(false)
-	; 	InputLayer.EnableVATS(false)
- ; 		InputLayer.EnableFighting(false)
+	 	InputLayer.EnableMovement(false)
+	 	InputLayer.EnableLooking(false)
+	 	InputLayer.EnableCamSwitch(false)
+	 	InputLayer.EnableMenu(false)
+	 	InputLayer.EnableVATS(false)
+  		InputLayer.EnableFighting(false)
 
 		Game.SetPlayerAIDriven()
 		Game.ShowFirstPersonGeometry(false)
-		Player.SetScale(0.45)
+		Player.SetScale(0.35)
 		Game.StartDialogueCameraOrCenterOnTarget(Games_Blackjack_CameraMarker)
 
 		; Spend 2 seconds on a black screen before fading in to the game over 1 second and hide fader when done
@@ -50,7 +50,7 @@ State Exiting
 	Event OnBeginState(string asOldState)
 		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 
-	;	Game.SetInChargen(false, false, false)
+		Game.SetInChargen(false, false, false)
 		If (InputLayer)
 			InputLayer.Delete()
 			InputLayer = none
@@ -60,7 +60,7 @@ State Exiting
 		Game.ShowFirstPersonGeometry(true)
 		Player.SetScale(1.0)
 
-		Player.MoveTo(Blackjack.EntryPoint, 120.0)
+		Player.MoveTo(Blackjack.EntryPoint, -120.0)
 		Game.FadeOutGame(false, true, 2.0, 1.0)
 		TaskEnd(self)
 	EndEvent

@@ -2,8 +2,8 @@ ScriptName Games:Blackjack:Tasks:Session extends Games:Blackjack:GameType
 import Games
 import Games:Blackjack
 import Games:Shared
-import Games:Papyrus:Log
-import Games:Papyrus:Script
+import Games:Shared:Log
+import Games:Shared:Papyrus
 
 Player[] Players
 float TimeWait = 3.0 const
