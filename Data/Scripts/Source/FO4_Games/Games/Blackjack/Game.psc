@@ -1,7 +1,6 @@
 ScriptName Games:Blackjack:Game extends Games:Blackjack:GameType
 import Games
 import Games:Shared
-import Games:Shared:Deck
 import Games:Shared:Log
 import Games:Shared:Papyrus
 
@@ -10,12 +9,6 @@ ObjectReference Entry
 CustomEvent PhaseEvent
 
 float TimeWait = 2.0 const
-
-
-Event OnInit()
-	{For Debug Only}
-	StartObjectProfiling()
-EndEvent
 
 
 ; Methods
@@ -27,11 +20,11 @@ bool Function Play(ObjectReference aEntryPoint)
 			Entry = aEntryPoint
 			return ChangeState(self, StartingTask)
 		Else
-			WriteLine(self, "The game needs an entry point reference to play.")
+			WriteUnexpectedValue(self, "Play", "aEntryPoint", "The entry point reference cannot be none.")
 			return false
 		EndIf
 	Else
-		WriteLine(self, "The game is not ready to play right now.")
+		WriteUnexpected(self, "Play", "The game is not ready to play in the '"+StateName+"' state.")
 		return false
 	EndIf
 EndFunction
@@ -49,7 +42,7 @@ bool Function PlayAsk(ObjectReference aEntryPoint)
 		WriteLine(self, "Chose not to play Blackjack.")
 		return false
 	Else
-		WriteLine(self, "The option '"+selected+"' is unhandled.")
+		WriteUnexpectedValue(self, "PlayAsk", "selected", "The option '"+selected+"' is unhandled.")
 		return false
 	EndIf
 EndFunction
@@ -70,7 +63,7 @@ bool Function RegisterForPhaseEvent(ScriptObject script)
 		script.RegisterForCustomEvent(self, "PhaseEvent")
 		return true
 	Else
-		WriteLine(self, "Cannot register a none script for phase events.")
+		WriteUnexpectedValue(self, "RegisterForPhaseEvent", "script", "Cannot register a none script for phase events.")
 		return false
 	EndIf
 EndFunction
@@ -81,7 +74,7 @@ bool Function UnregisterForPhaseEvent(Blackjack:Game script)
 		script.UnregisterForCustomEvent(self, "PhaseEvent")
 		return true
 	Else
-		WriteLine(self, "Cannot unregister a none script for phase events.")
+		WriteUnexpectedValue(self, "UnregisterForPhaseEvent", "script", "Cannot unregister a none script for phase events.")
 		return false
 	EndIf
 EndFunction

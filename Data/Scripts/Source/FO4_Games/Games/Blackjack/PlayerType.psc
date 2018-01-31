@@ -5,44 +5,44 @@ import Games:Shared:Log
 ;---------------------------------------------
 
 State Starting
-	Event Starting()
+	Event OnTask()
 		{Allocate data for new game session.}
-		WriteNotImplemented(self, "Starting")
+		WriteNotImplemented(self, "Starting.OnTask", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Wagering
-	Event Wagering()
+	Event OnTask()
 		{Wagering}
-		WriteNotImplemented(self, "Wagering")
+		WriteNotImplemented(self, "Wagering.OnTask", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Dealing
-	Event Dealing()
+	Event OnTask()
 		{Dealing}
-		WriteNotImplemented(self, "Dealing")
+		WriteNotImplemented(self, "Dealing.OnTask", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Playing
-	Event Playing()
+	Event OnTask()
 		{Playing}
-		WriteNotImplemented(self, "Playing")
+		WriteNotImplemented(self, "Playing.OnTask", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Scoring
-	Event Scoring()
+	Event OnTask()
 		{Scoring}
-		WriteNotImplemented(self, "Scoring")
+		WriteNotImplemented(self, "Scoring.OnTask", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Exiting
-	Event Exiting()
+	Event OnTask()
 		{Exiting}
-		WriteNotImplemented(self, "Exiting")
+		WriteNotImplemented(self, "Exiting.OnTask", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
@@ -55,7 +55,6 @@ Event OnScoreLose() Native
 Event OnScoreWin() Native
 Event OnScorePush() Native
 Event OnScoreError() Native
-
 
 
 ; Properties

@@ -45,7 +45,7 @@ State Busy
 				idx += 1
 			EndWhile
 		Else
-			WriteLine(self,  "No objects to translate.")
+			WriteUnexpectedValue(self, "Busy.OnBeginState", "Objects", "Cannot translate empty or none object array.")
 			TaskEnd(self)
 		EndIf
 	EndEvent
@@ -57,7 +57,7 @@ State Busy
 
 
 	Event ObjectReference.OnTranslationFailed(ObjectReference akSender)
-		WriteLine(self,  "Failed for reference '"+akSender+"' at index "+Index)
+		WriteUnexpectedValue(self, "Busy.ObjectReference.OnTranslationFailed", "akSender", "Failed for reference '"+akSender+"' at index "+Index)
 		Evaluate()
 	EndEvent
 
@@ -82,22 +82,27 @@ State Busy
 
 	Function Translate(ObjectReference aObject, ObjectReference aDestination, float aSpeed = 100.0)
 		{EMPTY}
+		WriteNotImplemented(self, "Busy.Translate", "The member is not implemented in the '"+GetState()+"' state.")
 	EndFunction
 
 	Function TranslateEach(ObjectReference[] aObjects, ObjectReference aDestination, float aSpeed = 100.0)
 		{EMPTY}
+		WriteNotImplemented(self, "Busy.TranslateEach", "The member is not implemented in the '"+GetState()+"' state.")
 	EndFunction
 EndState
 
 
 Event ObjectReference.OnTranslationComplete(ObjectReference akSender)
 	{EMPTY}
+	WriteNotImplemented(self, "ObjectReference.OnTranslationComplete", "The member is not implemented in the empty state.")
 EndEvent
 
 Event ObjectReference.OnTranslationFailed(ObjectReference akSender)
 	{EMPTY}
+	WriteNotImplemented(self, "ObjectReference.OnTranslationFailed", "The member is not implemented in the empty state.")
 EndEvent
 
 Function Evaluate()
 	{EMPTY}
+	WriteNotImplemented(self, "Evaluate", "The member is not implemented in the empty state.")
 EndFunction

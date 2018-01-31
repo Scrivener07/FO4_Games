@@ -7,58 +7,53 @@ import Games:Shared:Papyrus
 ; FSM - Finite State Machine
 ;---------------------------------------------
 
+Event OnTask()
+	{EMPTY}
+	WriteNotImplemented(self, "OnTask", "The member is not implemented in the empty state.")
+EndEvent
+
+
 State Starting
 	Event OnBeginState(string asOldState)
-		Starting()
+		OnTask()
 		TaskEnd(self)
 	EndEvent
 EndState
 
 State Wagering
 	Event OnBeginState(string asOldState)
-		Wagering()
+		OnTask()
 		TaskEnd(self)
 	EndEvent
 EndState
 
 State Dealing
 	Event OnBeginState(string asOldState)
-		Dealing()
+		OnTask()
 		TaskEnd(self)
 	EndEvent
 EndState
 
 State Playing
 	Event OnBeginState(string asOldState)
-		Playing()
+		OnTask()
 		TaskEnd(self)
 	EndEvent
 EndState
 
 State Scoring
 	Event OnBeginState(string asOldState)
-		Scoring()
+		OnTask()
 		TaskEnd(self)
 	EndEvent
 EndState
 
 State Exiting
 	Event OnBeginState(string asOldState)
-		Exiting()
+		OnTask()
 		TaskEnd(self)
 	EndEvent
 EndState
-
-
-; Abstract
-;---------------------------------------------
-
-Event Starting() Native
-Event Wagering() Native
-Event Dealing() Native
-Event Playing() Native
-Event Scoring() Native
-Event Exiting() Native
 
 
 ; Events
@@ -80,7 +75,7 @@ bool Function SendPhase(Blackjack:Game sender, string name, bool change)
 		sender.SendCustomEvent("PhaseEvent", arguments)
 		return true
 	Else
-		WriteLine(sender, "Cannot not send the phase '"+name+"' while in the '"+sender.StateName+"' state.")
+		WriteUnexpectedValue(sender, "SendPhase", "name", "Cannot not send the phase '"+name+"' while in the '"+sender.StateName+"' state.")
 		return false
 	EndIf
 EndFunction
@@ -101,7 +96,7 @@ Event Games:Blackjack:Game.PhaseEvent(Blackjack:Game sender, var[] arguments)
 	If (e)
 		self.OnGamePhase(e)
 	Else
-		WriteLine(self, "Invalid phase event arguments.")
+		WriteUnexpectedValue(self, "Games:Blackjack:Game.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
 	EndIf
 EndEvent
 

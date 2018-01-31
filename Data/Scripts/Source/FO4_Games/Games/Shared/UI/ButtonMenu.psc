@@ -5,10 +5,9 @@ import Games:Shared:Log
 import Games:Shared:Papyrus
 
 Button[] Buttons
-Button selectedLast
+Button SelectedButton
 CustomEvent OnShown
 CustomEvent OnSelected
-
 
 bool AutoHide = false
 int Invalid = -1 const
@@ -73,7 +72,7 @@ State Shown
 
 				WriteLine(self, "Showing button press hints. Invoke:"+member+"("+arguments+") @"+Menu)
 			Else
-				WriteUnexpected(self, "Shown.OnBeginState", "The button array is none or empty.")
+				WriteUnexpectedValue(self, "Shown.OnBeginState", "Buttons", "The button array is none or empty.")
 				TaskEnd(self)
 			EndIf
 		Else
@@ -84,43 +83,49 @@ State Shown
 
 
 	Event OnKeyDown(int keyCode)
-		selectedLast = Buttons[FindByKeyCode(keyCode)]
+		If (!UI.IsMenuOpen("Console"))
+			SelectedButton = Buttons[FindByKeyCode(keyCode)]
 
-		var[] arguments = new var[1]
-		arguments[0] = selectedLast
-		SendCustomEvent("OnSelected", arguments)
+			var[] arguments = new var[1]
+			arguments[0] = SelectedButton
+			SendCustomEvent("OnSelected", arguments)
 
-		If (AutoHide)
-			WriteLine(self, "Automatically hiding for first selection.")
-			TaskEnd(self)
+			If (AutoHide)
+				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected. Automatically hiding for select once.")
+				TaskEnd(self)
+			Else
+				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected.")
+			EndIf
+		Else
+			WriteUnexpected(self, "Shown.OnKeyDown", "Ignoring the "+keyCode+" key press for the developer console menu.")
 		EndIf
 	EndEvent
 
 
 	bool Function Show()
 		{EMPTY}
-		WriteNotImplemented(self, "Show", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(self, "Shown.Show", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Add(Button value)
 		{EMPTY}
-		WriteNotImplemented(self, "Add", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(self, "Shown.Add", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Remove(Button value)
 		{EMPTY}
-		WriteNotImplemented(self, "Remove", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(self, "Shown.Remove", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Clear()
 		{EMPTY}
-		WriteNotImplemented(self, "Clear", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(self, "Shown.Clear", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
@@ -155,7 +160,7 @@ bool Function Add(Button value)
 				Buttons.Add(value)
 				return true
 			Else
-				WriteUnexpected(self, "Add", "The button array already contains a button with keycode '"+value.KeyCode+"'.")
+				WriteUnexpected(self, "Add", "The button array already contains a button with key code '"+value.KeyCode+"'.")
 				return false
 			EndIf
 		Else
@@ -188,7 +193,7 @@ EndFunction
 
 bool Function Clear()
 	{Clears all buttons from the collection.}
-	selectedLast = none
+	SelectedButton = none
 	If (Buttons.Length > 0)
 		Buttons.Clear()
 		return true
@@ -310,7 +315,7 @@ Group ButtonHint
 
 	Button Property Selected Hidden
 		Button Function Get()
-			return selectedLast
+			return SelectedButton
 		EndFunction
 	EndProperty
 

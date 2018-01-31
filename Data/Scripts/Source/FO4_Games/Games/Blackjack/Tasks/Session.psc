@@ -58,7 +58,7 @@ EndFunction
 ;---------------------------------------------
 
 State Starting
-	Event Starting()
+	Event OnTask()
 		{Allocate players for this session.}
 		Add(Human)
 		Add(Dealer)
@@ -76,11 +76,11 @@ State Starting
 				Players.Add(value)
 				return true
 			Else
-				WriteLine(self, "The player array already contains '"+value+"'.")
+				WriteUnexpectedValue(self, "Add", "value", "The player array already contains '"+value+"'.")
 				return false
 			EndIf
 		Else
-			WriteLine(self, "Cannot add a none value to player array.")
+			WriteUnexpectedValue(self, "Add", "value", "Cannot add a none value to player array.")
 			return false
 		EndIf
 	EndFunction
@@ -88,7 +88,7 @@ EndState
 
 
 State Wagering
-	Event Wagering()
+	Event OnTask()
 		For(Players)
 	EndEvent
 
@@ -100,7 +100,7 @@ EndState
 
 
 State Dealing
-	Event Dealing()
+	Event OnTask()
 		For(Players)
 	EndEvent
 
@@ -120,7 +120,7 @@ State Dealing
 			EndWhile
 			return true
 		Else
-			WriteLine(self, "The array is empty or none.")
+			WriteUnexpectedValue(self, "For", "array", "The array cannot be empty or none.")
 			return false
 		EndIf
 	EndFunction
@@ -132,7 +132,7 @@ EndState
 
 
 State Playing
-	Event Playing()
+	Event OnTask()
 		For(Players)
 	EndEvent
 
@@ -144,7 +144,7 @@ EndState
 
 
 State Scoring
-	Event Scoring()
+	Event OnTask()
 		For(Players)
 	EndEvent
 
@@ -156,7 +156,7 @@ EndState
 
 
 State Exiting
-	Event Exiting()
+	Event OnTask()
 		For(Players)
 		Clear()
 	EndEvent
@@ -166,7 +166,7 @@ State Exiting
 		If (Players)
 			Players.Clear()
 		Else
-			WriteLine(self, "Cannot clear empty or none player array.")
+			WriteUnexpectedValue(self, "Clear", "Players", "Cannot clear empty or none player array.")
 		EndIf
 	EndFunction
 
@@ -188,7 +188,7 @@ bool Function For(Player[] array)
 		EndWhile
 		return true
 	Else
-		WriteLine(self, "Cannot iterate an empty or none player array.")
+		WriteUnexpectedValue(self, "For", "array", "Cannot iterate an empty or none player array.")
 		return false
 	EndIf
 EndFunction
@@ -196,7 +196,7 @@ EndFunction
 
 Function Each(Player gambler)
 	{EMPTY}
-	WriteLine(self, "'Each' is not implemented in the empty state.")
+	WriteNotImplemented(self, "Each", "The member is not implemented in the empty state.")
 EndFunction
 
 
