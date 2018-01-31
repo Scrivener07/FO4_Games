@@ -4,7 +4,7 @@ import Games:Shared
 import Games:Shared:Log
 import Games:Shared:UI:ButtonMenu
 
-; Console Command: StartQuest GamesTest
+; Console Command: StartQuest GamesTest_SharedUIButtonMenu
 
 ; Lilac
 ;---------------------------------------------
@@ -180,65 +180,49 @@ EndFunction
 ;---------------------------------------------
 
 bool Function ShowingSuite()
-;	It("should not show without any buttons", ShownNoButtonTest())
+	It("should not show without any buttons", ShownNoButtonTest())
 	It("should show with at least one button", ShownButtonTest())
 	return Done
 EndFunction
 
 
 bool Function ShownNoButtonTest()
+	GotoState("ShownNoButtonTest")
 	ButtonMenu.RegisterForShownEvent(self)
 	ButtonMenu.Show()
 	ButtonMenu.UnregisterForShownEvent(self)
 	return Done
 EndFunction
-
-
-bool Function ShownButtonTest()
-	GotoState("ShownButtonTest")
-
-	Button button1 = new Button
-	button1.Text = "Button"
-	button1.KeyCode = Keyboard.E
-	ButtonMenu.Add(button1)
-
-	ButtonMenu.RegisterForSelectedEvent(self)
-	ButtonMenu.RegisterForShownEvent(self)
-	ButtonMenu.Show()
-	ButtonMenu.UnregisterForShownEvent(self)
-	ButtonMenu.UnregisterForSelectedEvent(self)
-
-	return Done
-EndFunction
-
-
-State ShownButtonTest
+State ShownNoButtonTest
 	Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu akSender, var[] arguments)
-		Expect(akSender.GetState(), To, BeEqualTo, "Shown")
-		; Expect(akSender.Visible, To, BeTruthy)
-		; akSender.Hide()
-	EndEvent
-
-
-	Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] arguments)
-		Expect(akSender.GetState(), To, BeEqualTo, "Shown")
-		; Expect(akSender.Visible, To, BeTruthy)
+		WriteLine(self, "ShownNoButtonTest::Games:Shared:UI:ButtonMenu.OnShown:"+akSender.GetShownEventArgs(arguments))
 		akSender.Hide()
 	EndEvent
 EndState
 
 
+bool Function ShownButtonTest()
+	GotoState("ShownButtonTest")
+	Button button1 = new Button
+	button1.Text = "Button"
+	button1.KeyCode = Keyboard.E
+	ButtonMenu.Add(button1)
+
+	ButtonMenu.RegisterForShownEvent(self)
+	ButtonMenu.Show()
+	ButtonMenu.UnregisterForShownEvent(self)
+	return Done
+EndFunction
+State ShownButtonTest
+	Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu akSender, var[] arguments)
+		WriteLine(self, "ShownButtonTest::Games:Shared:UI:ButtonMenu.OnShown:"+akSender.GetShownEventArgs(arguments))
+		akSender.Hide()
+	EndEvent
+EndState
 
 
-
-; @ShownButtonTest
-Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] arguments)
-	{EMPTY}
-	; Expect(akSender.GetState(), To, BeEqualTo, "Shown")
-	; Expect(akSender.Visible, To, BeTruthy)
-	; akSender.Hide()
-EndEvent
-
+; Empty
+;---------------------------------------------
 
 Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu akSender, var[] arguments)
 	{EMPTY}

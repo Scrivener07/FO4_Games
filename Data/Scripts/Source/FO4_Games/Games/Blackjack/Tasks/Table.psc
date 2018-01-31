@@ -20,7 +20,7 @@ EndEvent
 ;---------------------------------------------
 
 State Starting
-	Event OnBeginState(string asOldState)
+	Event OnTask()
 		; Fade to a black screen over 1 second and leave up fader when done
 		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 		Player.MoveTo(Games_Blackjack_CellMarker)
@@ -41,13 +41,12 @@ State Starting
 
 		; Spend 2 seconds on a black screen before fading in to the game over 1 second and hide fader when done
 		Game.FadeOutGame(false, true, 2.0, 1.0)
-		TaskEnd(self)
 	EndEvent
 EndState
 
 
 State Exiting
-	Event OnBeginState(string asOldState)
+	Event OnTask()
 		Game.FadeOutGame(true, true, 1.0, 1.0, true)
 
 		Game.SetInChargen(false, false, false)
@@ -62,7 +61,6 @@ State Exiting
 
 		Player.MoveTo(Blackjack.EntryPoint, -120.0)
 		Game.FadeOutGame(false, true, 2.0, 1.0)
-		TaskEnd(self)
 	EndEvent
 EndState
 

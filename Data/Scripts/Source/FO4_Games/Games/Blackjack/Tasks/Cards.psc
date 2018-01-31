@@ -78,7 +78,7 @@ EndEvent
 ;---------------------------------------------
 
 State Starting
-	Event Starting()
+	Event OnTask()
 		CollectAll(true)
 	EndEvent
 EndState
@@ -110,7 +110,7 @@ Function CollectEach(Card[] aCards)
 			index += 1
 		EndWhile
 	Else
-		WriteLine(self, "Cannot collect none or empty cards.")
+		WriteUnexpectedValue(self, "CollectEach", "aCards", "Cannot collect none or empty card array.")
 	EndIf
 EndFunction
 
@@ -120,7 +120,7 @@ Function CollectFrom(Player gambler)
 		CollectEach(gambler.Hand)
 		gambler.Motion.TranslateEach(ToReferences(gambler.Hand), Games_Blackjack_DeckMarker)
 	Else
-		WriteLine(self, "Cannot collect cards from a none player.")
+		WriteUnexpectedValue(self, "CollectFrom", "gambler", "Cannot collect cards from a none player.")
 	EndIf
 EndFunction
 
@@ -136,6 +136,8 @@ Function CollectAll(bool aForce = false)
 		Else
 			Motion.TranslateEach(References, Games_Blackjack_DeckMarker)
 		EndIf
+	Else
+		WriteUnexpectedValue(self, "CollectAll", "References", "Cannot collect all for none references.")
 	EndIf
 EndFunction
 

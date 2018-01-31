@@ -17,11 +17,8 @@ Button MaximumButton
 Button HitButton
 Button StandButton
 
-Button YesButton
-Button NoButton
-
-
-
+Button PlayButton
+Button LeaveButton
 
 Group UI
 	Blackjack:Display Property Display Auto Const Mandatory
@@ -70,13 +67,13 @@ Event OnInit()
 	StandButton.Text = "Stand"
 	StandButton.KeyCode = Keyboard.S
 
-	YesButton = new Button
-	YesButton.Text = "Play Again"
-	YesButton.KeyCode = Keyboard.E
+	PlayButton = new Button
+	PlayButton.Text = "Play Again"
+	PlayButton.KeyCode = Keyboard.E
 
-	NoButton = new Button
-	NoButton.Text = "Leave"
-	NoButton.KeyCode = Keyboard.Tab
+	LeaveButton = new Button
+	LeaveButton.Text = "Leave"
+	LeaveButton.KeyCode = Keyboard.Tab
 EndEvent
 
 
@@ -90,7 +87,7 @@ EndEvent
 ;---------------------------------------------
 
 State Starting
-	Event Starting()
+	Event OnTask()
 		Wager = WagerMinimum
 
 		Display.Open()
@@ -99,7 +96,7 @@ State Starting
 		Display.Caps = Bank
 		Display.Earnings = Earnings
 
-		parent.Starting()
+		parent.OnTask()
 	EndEvent
 
 	MarkerValue Function IMarkers()
@@ -121,22 +118,22 @@ EndState
 
 
 State Wagering
-	Event Wagering()
+	Event OnTask()
 		If (Bank < WagerMinimum)
 			; TODO: How/Should I quit here?
-			WriteUnexpectedValue(self, "Wagering", "Bank", "A bank of "+Bank+" cannot be less than the wager minimum of "+WagerMinimum)
+			WriteUnexpectedValue(self, "Wagering.OnTask", "Bank", "A bank of "+Bank+" cannot be less than the wager minimum of "+WagerMinimum)
 		EndIf
 
 		If (Wager > Bank)
 			Wager = WagerMinimum
-			WriteUnexpectedValue(self, "Wagering", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
+			WriteUnexpectedValue(self, "Wagering.OnTask", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
 		EndIf
 
 		Display.Score = 0
 		Display.Bet = Wager ; last wager amount
 		Display.Earnings = Earnings
 		Display.Caps = Bank
-		parent.Wagering()
+		parent.OnTask()
 		Display.Earnings = Earnings
 	EndEvent
 
@@ -193,18 +190,18 @@ State Wagering
 					ITMBottlecapsDownx.Play(Player)
 				EndIf
 			Else
-				WriteUnexpected(self, "OnSelected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "Wagering.OnSelected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
 			EndIf
 		Else
-			WriteUnexpectedValue(self, "OnSelected", "arguments", "The arguments are null or empty.")
+			WriteUnexpectedValue(self, "Wagering.OnSelected", "arguments", "The arguments are null or empty.")
 		EndIf
 	EndEvent
 EndState
 
 
 State Dealing
-	Event Dealing()
-		parent.Dealing()
+	Event OnTask()
+		parent.OnTask()
 		Display.Score = Score
 	EndEvent
 EndState
@@ -228,11 +225,11 @@ State Playing
 			ElseIf (ButtonMenu.Selected == StandButton)
 				return ChoiceStand
 			Else
-				WriteUnexpected(self, "IChoice", "The selected choice button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "Playing.IChoice", "The selected choice button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				return Invalid
 			EndIf
 		Else
-			WriteUnexpected(self, "IChoice", "No choice button was selected.")
+			WriteUnexpected(self, "Playing.IChoice", "No choice button was selected.")
 			return Invalid
 		EndIf
 	EndFunction
@@ -240,31 +237,29 @@ EndState
 
 
 State Scoring
-	Event Scoring()
-		parent.Scoring()
+	Event OnTask()
+		parent.OnTask()
 		Game.GivePlayerCaps(Winnings)
 		Display.Earnings = Earnings
 		Display.Caps = Bank
 
 		ButtonMenu.Clear()
 		ButtonMenu.SelectOnce = true
-		ButtonMenu.Add(YesButton)
-		ButtonMenu.Add(NoButton)
+		ButtonMenu.Add(PlayButton)
+		ButtonMenu.Add(LeaveButton)
 		ButtonMenu.Show()
 
 		If (ButtonMenu.Selected)
-			If (ButtonMenu.Selected == YesButton)
-				WriteLine(self, "The '"+ButtonMenu.Selected.Text+"' button was selected.")
+			If (ButtonMenu.Selected == PlayButton)
 				Rematch(true)
-			ElseIf (ButtonMenu.Selected == NoButton)
-				WriteLine(self, "The '"+ButtonMenu.Selected.Text+"' button was selected.")
+			ElseIf (ButtonMenu.Selected == LeaveButton)
 				Rematch(false)
 			Else
-				WriteUnexpected(self, "Scoring", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "Scoring.OnTask", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				Rematch(false)
 			EndIf
 		Else
-			WriteUnexpected(self, "Scoring", "No button hint was selected.")
+			WriteUnexpected(self, "Scoring.OnTask", "No button hint was selected.")
 			Rematch(false)
 		EndIf
 	EndEvent
@@ -272,9 +267,9 @@ EndState
 
 
 State Exiting
-	Event Exiting()
+	Event OnTask()
 		Display.Close()
-		parent.Exiting()
+		parent.OnTask()
 	EndEvent
 EndState
 

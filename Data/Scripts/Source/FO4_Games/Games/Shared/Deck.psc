@@ -21,7 +21,7 @@ Card Function Draw()
 			return none
 		EndIf
 	Else
-		WriteLine(self, "Cannot draw empty or none deck.")
+		WriteUnexpectedValue(self, "Draw", "Cards", "The cards array cannot be empty or none.")
 		return none
 	EndIf
 EndFunction
@@ -38,7 +38,7 @@ bool Function Collect(Card value)
 			return false
 		EndIf
 	Else
-		WriteLine(self, "Cannot collect empty or none deck.")
+		WriteUnexpectedValue(self, "Collect", "Cards", "The cards array cannot be empty or none.")
 		return false
 	EndIf
 EndFunction
@@ -61,7 +61,7 @@ bool Function Shuffle()
 		WriteLine(self, "The deck has been shuffled.")
 		return true
 	Else
-		WriteLine(self, "Cannot shuffle a none deck.")
+		WriteUnexpectedValue(self, "Shuffle", "Cards", "The cards array cannot be empty or none.")
 		return false
 	EndIf
 EndFunction

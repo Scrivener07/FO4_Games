@@ -31,7 +31,7 @@ EndEvent
 ;---------------------------------------------
 
 State Starting
-	Event Starting()
+	Event OnTask()
 		Session = new SessionData
 		Marker = IMarkers()
 		WriteLine(self, "Joined")
@@ -40,7 +40,7 @@ EndState
 
 
 State Wagering
-	Event Wagering()
+	Event OnTask()
 		Cards = new Card[0]
 		Match = new MatchData
 		Match.Bet = IWager()
@@ -54,7 +54,7 @@ EndState
 
 
 State Dealing
-	Event Dealing()
+	Event OnTask()
 		TryDraw()
 		WriteLine(self, "Dealt a card..")
 	EndEvent
@@ -62,7 +62,7 @@ EndState
 
 
 State Playing
-	Event Playing()
+	Event OnTask()
 		{Play the next turn until a stand.}
 		bool Continue = true const
 		bool Break = false const
@@ -87,7 +87,7 @@ State Playing
 						WriteLine(self, "Drew a card." + Hand[Last])
 						next = Continue
 					Else
-						WriteMessage(self, "Error, problem drawing a card! "+self.ToString())
+						WriteUnexpected(self, "Playing.OnTask", "Encountered problem drawing a card!")
 						next = Break
 					EndIf
 
@@ -95,7 +95,7 @@ State Playing
 					WriteLine(self, "Chose to stand.")
 					next = Break
 				Else
-					WriteLine(self, "Error, the play choice "+Match.TurnChoice+" was out of range. "+self.ToString())
+					WriteUnexpectedValue(self, "Playing.OnTask", "Match.TurnChoice", "The play choice "+Match.TurnChoice+" was out of range.")
 					next = Break
 				EndIf
 			EndIf
@@ -113,7 +113,7 @@ EndState
 
 
 State Scoring
-	Event Scoring()
+	Event OnTask()
 		If (self is Players:Dealer)
 			WriteLine(self, "Skipped dealer for scoring.")
 		Else
@@ -137,7 +137,7 @@ State Scoring
 						WriteLine(self, "Score of "+Score+" pushes dealers "+dealer.Score+".")
 						OnScorePush()
 					Else
-						WriteLine(self, "Error, problem handling score "+Score+" against dealers "+dealer.Score+".")
+						WriteUnexpected(self, "Scoring.OnTask", "Encountered a problem handling score "+Score+" against dealers "+dealer.Score+".")
 						OnScoreError()
 					EndIf
 				EndIf
@@ -171,13 +171,13 @@ State Scoring
 	Event OnScoreError()
 		Match.Winnings = Bet
 		Session.Earnings += Bet
-		WriteLine(self, "Something unexpected happened. Refunded "+Bet+" caps.")
+		WriteUnexpected(self, "OnScoreError", "Something unexpected happened. Refunded "+Bet+" caps.")
 	EndEvent
 EndState
 
 
 State Exiting
-	Event Exiting()
+	Event OnTask()
 		{Exiting}
 		WriteLine(self, "Leaving")
 	EndEvent
@@ -281,21 +281,22 @@ bool Function TryDraw()
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
-					WriteLine(Name, "Cannot draw without a marker.")
+
 					Blackjack.Cards.Collect(drawn)
+					WriteUnexpectedValue(self, "TryDraw", "turnMarker", "The turn card marker cannot be none.")
 					return Failure
 				EndIf
 			Else
-				WriteLine(Name, "Cannot draw a none card reference.")
 				Blackjack.Cards.Collect(drawn)
+				WriteUnexpectedValue(self, "TryDraw", "drawn.Reference", "Cannot draw card with a none Card.Reference.")
 				return Failure
 			EndIf
 		Else
-			WriteLine(Name, "Cannot draw a none card.")
+			WriteUnexpectedValue(self, "TryDraw", "drawn", "The draw card cannot be none.")
 			return Failure
 		EndIf
 	Else
-		WriteLine(Name, "Cannot draw another card right now.")
+		WriteUnexpectedValue(self, "TryDraw", "CanDraw", "Cannot draw another card right now.")
 		return Failure
 	EndIf
 EndFunction
@@ -326,11 +327,11 @@ ObjectReference Function NextMarker()
 		ElseIf (Last == 9)
 			return Marker.Card11
 		Else
-			WriteLine(self, "The next marker "+Last+" is out of range.")
+			WriteUnexpectedValue(self, "NextMarker", "Last", "The next marker "+Last+" is out of range.")
 			return none
 		EndIf
 	Else
-		WriteLine(self, "Cannot get a none marker.")
+		WriteUnexpectedValue(self, "NextMarker", "Marker", "Cannot get a none marker.")
 		return none
 	EndIf
 EndFunction

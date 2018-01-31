@@ -5,9 +5,6 @@
 	"Data\\textures\\Games/Cards/Default/Card_s.dds",
 	"Data\\textures\\Games/Cards/Default/Club02_d.dds",
 	"Data\\Materials\\Games\\Cards\\Default\\Club02.bgsm",
-	"Data\\SCRIPTS\\ObjectReference.pex",
-	"Data\\SCRIPTS\\Form.pex",
-	"Data\\SCRIPTS\\ScriptObject.pex",
 	"Data\\Meshes\\Games\\Cards\\Default\\CardDeck.nif",
 	"Data\\Textures\\Games\\Cards\\Default\\CardDeck_d.dds",
 	"Data\\Textures\\Games\\Cards\\Default\\CardDeck_n.dds",
@@ -126,8 +123,8 @@
 	"Data\\SCRIPTS\\Games\\Shared\\UI\\MenuType.pex",
 	"Data\\SCRIPTS\\Games\\Blackjack\\Game.pex",
 	"Data\\SCRIPTS\\Games\\Blackjack\\GameType.pex",
-	"Data\\SCRIPTS\\games\\shared\\deck.pex",
 	"Data\\SCRIPTS\\Games\\Shared\\Motion.pex",
+	"Data\\SCRIPTS\\games\\shared\\deck.pex",
 	"Data\\SCRIPTS\\Games\\Blackjack\\Tasks\\cards.pex",
 	"Data\\SCRIPTS\\Games\\Blackjack\\Players\\Dealer.pex",
 	"Data\\SCRIPTS\\Games\\Blackjack\\Player.pex",
@@ -141,5 +138,7 @@
 	"Data\\SCRIPTS\\Games\\Blackjack\\Tasks\\Table.pex",
 	"Data\\SCRIPTS\\Games\\Shared\\UI\\ButtonMenu.pex",
 	"Data\\SCRIPTS\\Games\\Shared\\Keyboard.pex",
-	"Data\\Materials\\Games\\Cards\\Default\\Card.bgsm"
+	"Data\\Materials\\Games\\Cards\\Default\\Card.bgsm",
+	"Data\\Interface\\Games\\Blackjack.swf",
+	"Data\\Interface\\Games\\ButtonMenu.swf"
 ]
