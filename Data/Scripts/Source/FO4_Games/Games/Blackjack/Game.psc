@@ -86,6 +86,7 @@ EndFunction
 State Starting
 	Event OnBeginState(string asOldState)
 		{Session Begin}
+		StartObjectProfiling()
 		WriteLine("Blackjack", "Starting")
 		If (Session.Human.HasCaps == false)
 			ChangeState(self, NoTask)
@@ -99,6 +100,7 @@ State Starting
 			TaskAwait(Session, StartingTask)
 			ChangeState(self, WageringTask)
 		Else
+			WriteUnexpected(self, "Starting.OnBeginState", "Could not begin the '"+StartingTask+"' task.")
 			ChangeState(self, ExitingTask)
 		EndIf
 	EndEvent
@@ -131,6 +133,7 @@ State Wagering
 				ChangeState(self, DealingTask)
 			EndIf
 		Else
+			WriteUnexpected(self, "Wagering.OnBeginState", "Could not begin the '"+WageringTask+"' task.")
 			ChangeState(self, ExitingTask)
 		EndIf
 	EndEvent
@@ -151,6 +154,7 @@ State Dealing
 			TaskAwait(Session, DealingTask)
 			ChangeState(self, PlayingTask)
 		Else
+			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingTask+"' task.")
 			ChangeState(self, ExitingTask)
 		EndIf
 	EndEvent
@@ -170,6 +174,7 @@ State Playing
 			TaskAwait(Session, PlayingTask)
 			ChangeState(self, ScoringTask)
 		Else
+			WriteUnexpected(self, "Playing.OnBeginState", "Could not begin the '"+PlayingTask+"' task.")
 			ChangeState(self, ExitingTask)
 		EndIf
 	EndEvent
@@ -190,15 +195,19 @@ State Scoring
 
 			If (Session.Human.HasCaps)
 				If (Session.Human.Rematch)
+					WriteLine("Blackjack", "Chose to play again for a rematch.")
 					ChangeState(self, WageringTask)
 				Else
+					WriteLine("Blackjack", "Chose to leave the game.")
 					ChangeState(self, ExitingTask)
 				EndIf
 			Else
+				WriteLine("Blackjack", "Kicked from game for low funds.")
 				ChangeState(self, ExitingTask)
 				ShowKicked()
 			EndIf
 		Else
+			WriteUnexpected(self, "Scoring.OnBeginState", "Could not begin the '"+ScoringTask+"' task.")
 			ChangeState(self, ExitingTask)
 		EndIf
 	EndEvent
@@ -218,12 +227,16 @@ State Exiting
 			TaskAwait(Table, ExitingTask)
 			TaskAwait(Cards, ExitingTask)
 			TaskAwait(Session, ExitingTask)
+		Else
+			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingTask+"' task.")
 		EndIf
+
 		ChangeState(self, NoTask)
 	EndEvent
 
 	Event OnEndState(string asNewState)
 		SendPhase(self, ExitingTask, Ended)
+		StopObjectProfiling()
 	EndEvent
 EndState
 

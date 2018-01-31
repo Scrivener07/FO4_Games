@@ -1,7 +1,7 @@
 Scriptname Games:Shared:Papyrus Const Native Hidden
 import Games:Shared:Log
 
-; Tasks
+; States and Tasks
 ;---------------------------------------------
 ; Tasks are simply regular script states. These states can be run, awaited, or ended.
 
@@ -11,7 +11,7 @@ bool Function TaskAwait(ScriptObject this, string task = "Busy") Global
 		If (TaskRun(this, task))
 
 			int loops = 0
-			While (TaskRunning(this))
+			While (TaskRunning(this)) ; Polling until script is in the "empty" state.
 				loops += 1
 				Utility.Wait(0.1)
 				WriteLine(this, "Awaiting the '"+task+"' task. Attempt:"+loops+", Called from stack: " + Utility.GetCurrentStackID())
@@ -59,9 +59,8 @@ EndFunction
 
 bool Function TaskRunning(ScriptObject this) Global
 	{Return true if the given script has any state other than the default empty state.}
-	; TODO: Pretty much a duplicate of HasState(ScriptObject)
 	If (this)
-		return this.GetState() != EmptyState()
+		return this.GetState() != ""
 	Else
 		WriteUnexpectedValue("Games:Shared:Papyrus", "TaskRunning", "this", "The script cannot be none.")
 		return false
@@ -72,7 +71,7 @@ EndFunction
 bool Function TaskEnd(ScriptObject this) Global
 	{Ends any running task on the given script.}
 	If (this)
-		If (ChangeState(this, EmptyState()))
+		If (ChangeState(this, "")) ; empty state
 			WriteLine(this, "End task has completed. Called from stack: " + Utility.GetCurrentStackID())
 			return true
 		Else
@@ -85,15 +84,6 @@ bool Function TaskEnd(ScriptObject this) Global
 	EndIf
 EndFunction
 
-
-string Function TaskDefault() Global
-	{The default task is the busy state.}
-	return "Busy"
-EndFunction
-
-
-; States
-;---------------------------------------------
 
 bool Function ChangeState(ScriptObject this, string newState) Global
 	{Changes the given scripts state only to a different state.}
@@ -109,12 +99,6 @@ bool Function ChangeState(ScriptObject this, string newState) Global
 		WriteUnexpectedValue("Games:Shared:Papyrus", "ChangeState", "this", "The script cannot be none.")
 		return false
 	EndIf
-EndFunction
-
-
-string Function EmptyState() Global
-	{The default papyrus script state is the empty state.}
-	return ""
 EndFunction
 
 

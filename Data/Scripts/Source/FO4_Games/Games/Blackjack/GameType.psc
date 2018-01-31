@@ -15,6 +15,7 @@ EndEvent
 
 State Starting
 	Event OnBeginState(string asOldState)
+		StartObjectProfiling()
 		OnTask()
 		TaskEnd(self)
 	EndEvent
@@ -52,6 +53,7 @@ State Exiting
 	Event OnBeginState(string asOldState)
 		OnTask()
 		TaskEnd(self)
+		StopObjectProfiling()
 	EndEvent
 EndState
 
