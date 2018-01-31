@@ -1,10 +1,10 @@
 ScriptName Games:Blackjack:Tasks:Cards extends Games:Blackjack:GameType
 import Games
 import Games:Blackjack
-import Games:Papyrus:Log
-import Games:Papyrus:Script
 import Games:Shared
 import Games:Shared:Deck
+import Games:Shared:Log
+import Games:Shared:Papyrus
 
 ObjectReference[] References
 ReferenceData Data
@@ -74,13 +74,12 @@ Event OnInit()
 EndEvent
 
 
-; Component
+; Tasks
 ;---------------------------------------------
 
 State Starting
-	Event OnBeginState(string asOldState)
+	Event Starting()
 		CollectAll(true)
-		TaskEnd(self)
 	EndEvent
 EndState
 

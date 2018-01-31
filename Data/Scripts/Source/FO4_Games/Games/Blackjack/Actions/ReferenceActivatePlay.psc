@@ -1,15 +1,13 @@
-Scriptname Games:Blackjack:Actions:Play extends ObjectReference Default
+Scriptname Games:Blackjack:Actions:ReferenceActivatePlay extends ObjectReference Default
 import Games
-import Games:Papyrus:Log
+import Games:Shared:Log
 
 ; Events
 ;---------------------------------------------
 
 Event OnActivate(ObjectReference akActionRef)
     WriteLine(self, "OnActivate")
-	If (Blackjack.Dialog.PlayGame())
-		Blackjack.Play(self)
-	EndIf
+	Blackjack.PlayAsk(self)
 EndEvent
 
 

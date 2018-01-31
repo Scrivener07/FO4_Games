@@ -5,26 +5,29 @@
 	import Shared.AS3.BSButtonHintBar;
 	import Shared.AS3.BSButtonHintData;
 	import Shared.Display;
+	import Shared.GlobalFunc;
 	import Shared.IDisplay;
 
-	public class ButtonHint extends Display implements IButtonHint
+	public class ButtonMenu extends Display implements IButtonMenu
 	{
-		public var ButtonHintBar_mc:BSButtonHintBar;
+
+		public var ButtonBarHolder:MovieClip;
 
 
 		// Menu
 		//---------------------------------------------
 
-		public function ButtonHint()
+		public function ButtonMenu()
 		{
-			trace("[ButtonHint] Constructor");
-			addEventListener(Event.ADDED_TO_STAGE, OnAddedToStage);
+			trace("[ButtonMenu] Constructor");
+			ButtonBarHolder.ButtonHintBar_mc.bRedirectToButtonBarMenu = false;
 		}
 
 
-		private function OnAddedToStage(e:Event) : void
+		override protected function onSetSafeRect() : void
 		{
-			trace("[ButtonHint] OnAddedToStage:"+Shared.Utility.WalkMovie(this));
+			GlobalFunc.LockToSafeRect(ButtonBarHolder, "BC", SafeX, SafeY);
+			trace("[ButtonMenu] onSetSafeRect");
 		}
 
 
@@ -33,7 +36,7 @@
 
 		public function SetButtons(argument:Object, ... rest) : void
 		{
-			trace("[ButtonHint] SetButtons");
+			trace("[ButtonMenu] SetButtons");
 
 			if (argument != null)
 			{
@@ -57,11 +60,11 @@
 					}
 				}
 
-				this.ButtonHintBar_mc.SetButtonHintData(Buttons);
+				ButtonBarHolder.ButtonHintBar_mc.SetButtonHintData(Buttons);
 			}
 			else
 			{
-				trace("[ButtonHint] Argument was null!");
+				trace("[ButtonMenu] Argument was null!");
 			}
 		}
 

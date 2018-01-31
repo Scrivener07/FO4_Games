@@ -1,6 +1,5 @@
 ScriptName Games:Blackjack:Players:Dealer extends Games:Blackjack:Player
-import Games:Papyrus:Log
-
+import Games:Shared:Log
 
 ; FSM - Finite State Machine
 ;---------------------------------------------

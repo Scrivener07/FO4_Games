@@ -1,9 +1,9 @@
 ScriptName Games:Blackjack:Player extends Games:Blackjack:PlayerType Hidden
 import Games
 import Games:Blackjack
-import Games:Papyrus:Log
 import Games:Shared
 import Games:Shared:Deck
+import Games:Shared:Log
 
 Card[] Cards
 
@@ -188,23 +188,23 @@ EndState
 ;---------------------------------------------
 
 Event OnTurn(int aTurn)
-	WriteErrorNotImplemented(self, "OnTurn", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnTurn", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScoreLose()
-	WriteErrorNotImplemented(self, "OnScoreLose", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScoreLose", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScoreWin()
-	WriteErrorNotImplemented(self, "OnScoreWin", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScoreWin", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScorePush()
-	WriteErrorNotImplemented(self, "OnScorePush", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScorePush", "Not implemented in the empty state.")
 EndEvent
 
 Event OnScoreError()
-	WriteErrorNotImplemented(self, "OnScoreError", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "OnScoreError", "Not implemented in the empty state.")
 EndEvent
 
 
@@ -213,19 +213,19 @@ EndEvent
 
 MarkerValue Function IMarkers()
 	{Required - Destination markers for motion.}
-	WriteErrorNotImplemented(self, "IMarkers", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "IMarkers", "Not implemented in the empty state.")
 	return new MarkerValue
 EndFunction
 
 int Function IWager()
 	{Ask the amount of caps to wager.}
-	WriteErrorNotImplemented(self, "IWager", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "IWager", "Not implemented in the empty state.")
 	return Invalid
 EndFunction
 
 int Function IChoice()
 	{Ask the choice type for this turn.}
-	WriteErrorNotImplemented(self, "IChoice", "Not implemented in the empty state.")
+	WriteNotImplemented(self, "IChoice", "Not implemented in the empty state.")
 	return Invalid
 EndFunction
 

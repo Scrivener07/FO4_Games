@@ -2,14 +2,20 @@ ScriptName Games:Blackjack:Game extends Games:Blackjack:GameType
 import Games
 import Games:Shared
 import Games:Shared:Deck
-import Games:Papyrus:Log
-import Games:Papyrus:Script
+import Games:Shared:Log
+import Games:Shared:Papyrus
 
 
 ObjectReference Entry
 CustomEvent PhaseEvent
 
 float TimeWait = 2.0 const
+
+
+Event OnInit()
+	{For Debug Only}
+	StartObjectProfiling()
+EndEvent
 
 
 ; Methods
@@ -28,6 +34,34 @@ bool Function Play(ObjectReference aEntryPoint)
 		WriteLine(self, "The game is not ready to play right now.")
 		return false
 	EndIf
+EndFunction
+
+
+bool Function PlayAsk(ObjectReference aEntryPoint)
+	int selected = Games_Blackjack_MessagePlay.Show()
+	int OptionExit = 0 const
+	int OptionStart = 1 const
+
+	If (selected == OptionStart)
+		return Play(aEntryPoint)
+
+	ElseIf (selected == OptionExit || selected == Invalid)
+		WriteLine(self, "Chose not to play Blackjack.")
+		return false
+	Else
+		WriteLine(self, "The option '"+selected+"' is unhandled.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function PlayAgain()
+	return Games_Blackjack_MessagePlayAgain.Show() == 1
+EndFunction
+
+
+Function ShowKicked()
+	WriteMessage(self, "Kicked", "Your all out of caps. Better luck next time.")
 EndFunction
 
 
@@ -90,7 +124,7 @@ State Wagering
 		WriteLine("Blackjack", "Wagering")
 		If (Session.Human.HasCaps == false)
 			ChangeState(self, ExitingTask)
-			Dialog.ShowKicked()
+			ShowKicked()
 			return
 		EndIf
 
@@ -169,7 +203,7 @@ State Scoring
 				EndIf
 			Else
 				ChangeState(self, ExitingTask)
-				Dialog.ShowKicked()
+				ShowKicked()
 			EndIf
 		Else
 			ChangeState(self, ExitingTask)
@@ -210,14 +244,20 @@ Group Tasks
 	Tasks:Cards Property Cards Auto Const Mandatory
 EndGroup
 
-Group UI
-	Blackjack:Dialog Property Dialog Auto Const Mandatory
-EndGroup
-
 Group Actions
 	ObjectReference Property EntryPoint Hidden
 		ObjectReference Function Get()
 			return Entry
 		EndFunction
 	EndProperty
+EndGroup
+
+Group Messages
+	Message Property Games_Blackjack_MessageWager Auto Const Mandatory
+	Message Property Games_Blackjack_MessageTurn Auto Const Mandatory
+	Message Property Games_Blackjack_MessageTurnDealt Auto Const Mandatory
+	Message Property Games_Blackjack_MessagePlay Auto Const Mandatory
+	Message Property Games_Blackjack_MessagePlayAgain Auto Const Mandatory
+	Message Property Games_Blackjack_MessageWin Auto Const Mandatory
+	Message Property Games_Blackjack_MessageBust Auto Const Mandatory
 EndGroup
