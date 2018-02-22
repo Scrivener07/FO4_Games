@@ -1,12 +1,11 @@
 Scriptname Games:Blackjack:Actions:ReferenceActivatePlay extends ObjectReference Default
-import Games
-import Games:Shared:Log
+{Begin playing Blackjack after this object reference has been activated.}
 
 ; Events
 ;---------------------------------------------
 
 Event OnActivate(ObjectReference akActionRef)
-    WriteLine(self, "OnActivate")
+	Games:Shared:Log.WriteLine(self, "OnActivate is starting Blackjack.")
 	Blackjack.PlayAsk(self)
 EndEvent
 
@@ -15,5 +14,5 @@ EndEvent
 ;---------------------------------------------
 
 Group Properties
-	Blackjack:Game Property Blackjack Auto Const Mandatory
+	Games:Blackjack:Game Property Blackjack Auto Const Mandatory
 EndGroup
