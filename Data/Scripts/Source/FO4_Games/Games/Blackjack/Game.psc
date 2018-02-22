@@ -37,7 +37,6 @@ bool Function PlayAsk(ObjectReference aEntryPoint)
 
 	If (selected == OptionStart)
 		return Play(aEntryPoint)
-
 	ElseIf (selected == OptionExit || selected == Invalid)
 		WriteLine(self, "Chose not to play Blackjack.")
 		return false
