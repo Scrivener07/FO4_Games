@@ -1,6 +1,5 @@
 ScriptName Games:Blackjack:Main extends Games:Blackjack:Type
 import Games
-import Games:Blackjack ; needed?
 import Games:Shared
 import Games:Shared:Log
 import Games:Shared:Papyrus
@@ -16,38 +15,6 @@ int ScoringID  = 60 const
 int ExitingID  = 70 const
 
 float TimeDelay = 1.5 const
-
-
-; Properties
-;---------------------------------------------
-
-Group Actors
-	bool Property HasPlayers Hidden
-		bool Function Get()
-			return Actors.Count > 0
-		EndFunction
-	EndProperty
-
-	bool Property HasHuman Hidden
-		bool Function Get()
-			return Actors.Contains(Human)
-		EndFunction
-	EndProperty
-EndGroup
-
-
-Group Messages
-	Message Property Games_Blackjack_MessageNoFunds Auto Const Mandatory
-	Message Property Games_Blackjack_MessagePlay Auto Const Mandatory
-	Message Property Games_Blackjack_MessagePlayAgain Auto Const Mandatory
-EndGroup
-
-Group Scripts
-	Blackjack:Environment Property Environment Auto Const Mandatory
-	Blackjack:Actors Property Actors Auto Const Mandatory
-	Blackjack:Cards Property Cards Auto Const Mandatory
-	Blackjack:Players:Human Property Human Auto Const Mandatory
-EndGroup
 
 
 ; Events
@@ -74,12 +41,90 @@ Event OnTimer(int aiTimerID)
 EndEvent
 
 
+; Methods
+;---------------------------------------------
+
+bool Function Play(ObjectReference aExitMarker)
+	If (Idling)
+		If (Environment.SetExit(aExitMarker))
+			return RequestState(self, StartingID)
+		Else
+			WriteUnexpected(self, "Play", "Environment could not set the exit marker.")
+			return false
+		EndIf
+	Else
+		WriteUnexpected(self, "Play", "The game is not ready to play in the '"+StateName+"' state.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function PlayAsk(ObjectReference aExitMarker)
+	int selected = Games_Blackjack_MessagePlay.Show()
+	int OptionExit = 0 const
+	int OptionStart = 1 const
+
+	If (selected == OptionStart)
+		return Play(aExitMarker)
+	ElseIf (selected == OptionExit || selected == Invalid)
+		WriteLine(self, "Chose not to play Blackjack.")
+		return false
+	Else
+		WriteUnexpectedValue(self, "PlayAsk", "selected", "The option '"+selected+"' is unhandled.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function PlayAgain()
+	return Games_Blackjack_MessagePlayAgain.Show() == 1
+EndFunction
+
+
+Function ShowNoFunds()
+	Games_Blackjack_MessageNoFunds.Show()
+EndFunction
+
+
+bool Function RequestState(ScriptObject script, int stateID)
+	If (script)
+		script.StartTimer(0.1, stateID)
+		return true
+	Else
+		WriteUnexpectedValue(self, "RequestState", "script", "Cannot request state ID "+stateID+" on a none script.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function RegisterForPhaseEvent(ScriptObject script)
+	If (script)
+		script.RegisterForCustomEvent(self, "PhaseEvent")
+		return true
+	Else
+		WriteUnexpectedValue(self, "RegisterForPhaseEvent", "script", "Cannot register a none script for phase events.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function UnregisterForPhaseEvent(Blackjack:Main script)
+	If (script)
+		script.UnregisterForCustomEvent(self, "PhaseEvent")
+		return true
+	Else
+		WriteUnexpectedValue(self, "UnregisterForPhaseEvent", "script", "Cannot unregister a none script for phase events.")
+		return false
+	EndIf
+EndFunction
+
+
 ; States
 ;---------------------------------------------
 
 State Starting
 	Event OnBeginState(string asOldState)
-		{Session Begin - Allocate players for this session.}
+		{Session Begin}
 		WriteLine("Blackjack", "Starting")
 
 		If (Human.HasCaps == false)
@@ -235,82 +280,18 @@ State Exiting
 EndState
 
 
-; Methods
+; Properties
 ;---------------------------------------------
 
-bool Function Play(ObjectReference aExitMarker)
-	If (Idling)
-		If (Environment.SetExit(aExitMarker))
-			return RequestState(self, StartingID)
-		Else
-			WriteUnexpected(self, "Play", "Environment could not set the exit marker.")
-			return false
-		EndIf
-	Else
-		WriteUnexpected(self, "Play", "The game is not ready to play in the '"+StateName+"' state.")
-		return false
-	EndIf
-EndFunction
+Group Messages
+	Message Property Games_Blackjack_MessageNoFunds Auto Const Mandatory
+	Message Property Games_Blackjack_MessagePlay Auto Const Mandatory
+	Message Property Games_Blackjack_MessagePlayAgain Auto Const Mandatory
+EndGroup
 
-
-bool Function PlayAsk(ObjectReference aExitMarker)
-	int selected = Games_Blackjack_MessagePlay.Show()
-	int OptionExit = 0 const
-	int OptionStart = 1 const
-
-	If (selected == OptionStart)
-		return Play(aExitMarker)
-	ElseIf (selected == OptionExit || selected == Invalid)
-		WriteLine(self, "Chose not to play Blackjack.")
-		return false
-	Else
-		WriteUnexpectedValue(self, "PlayAsk", "selected", "The option '"+selected+"' is unhandled.")
-		return false
-	EndIf
-EndFunction
-
-
-bool Function PlayAgain()
-	return Games_Blackjack_MessagePlayAgain.Show() == 1
-EndFunction
-
-
-Function ShowNoFunds()
-	Games_Blackjack_MessageNoFunds.Show()
-EndFunction
-
-
-; States
-;---------------------------------------------
-
-bool Function RequestState(ScriptObject script, int stateID)
-	If (script)
-		script.StartTimer(0.1, stateID)
-		return true
-	Else
-		WriteUnexpectedValue(self, "RequestState", "script", "Cannot request state ID "+stateID+" on a none script.")
-		return false
-	EndIf
-EndFunction
-
-
-bool Function RegisterForPhaseEvent(ScriptObject script)
-	If (script)
-		script.RegisterForCustomEvent(self, "PhaseEvent")
-		return true
-	Else
-		WriteUnexpectedValue(self, "RegisterForPhaseEvent", "script", "Cannot register a none script for phase events.")
-		return false
-	EndIf
-EndFunction
-
-
-bool Function UnregisterForPhaseEvent(Blackjack:Main script)
-	If (script)
-		script.UnregisterForCustomEvent(self, "PhaseEvent")
-		return true
-	Else
-		WriteUnexpectedValue(self, "UnregisterForPhaseEvent", "script", "Cannot unregister a none script for phase events.")
-		return false
-	EndIf
-EndFunction
+Group Scripts
+	Blackjack:Environment Property Environment Auto Const Mandatory
+	Blackjack:Cards Property Cards Auto Const Mandatory
+	Blackjack:Actors Property Actors Auto Const Mandatory
+	Blackjack:Players:Human Property Human Auto Const Mandatory
+EndGroup
