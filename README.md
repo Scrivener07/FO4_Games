@@ -7,8 +7,14 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 
 #### Features
 - [x] Blackjack
-- [ ] Cadillac
+- [ ] Slots
+- [ ] Roulette
 - [ ] Caravan
+- [ ] Cadillac
+
+#### Requirments
+* A computer, PC only.
+* [F4SE](http://f4se.silverlock.org/)
 
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing to this project.
