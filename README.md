@@ -43,6 +43,7 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/con
 * **Kinggath** - Help, counsel regarding scripting for adding game tables to settlements.
 * **Spooknik** - Help, counsel regarding creation of custom material swaps.
 * **Gilles, Sagittarius** - This project was inspired by Sagittarius's [Tavern Games - Mini Games in Skyrim](https://www.nexusmods.com/skyrim/mods/68553/). Sagittarius has also provided support and feedback during development.
+* **shavkacagarikia** - Help, counsel regarding papyrus scripting.
 
 ## License
 This project is licensed under the permissive MIT License.
