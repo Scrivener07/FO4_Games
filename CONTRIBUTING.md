@@ -5,11 +5,6 @@ This project uses the following import and namespace for scripting and assets.
 
 #### Required
 * [F4SE](http://f4se.silverlock.org/)
-* * Papyrus: `Fallout 4\Data\Scripts\Source\F4SE`
-* [HUD Framework](http://www.nexusmods.com/fallout4/mods/20309/)
-* * Papyrus: `Fallout 4\Data\Scripts\Source\HUD_FRAMEWORK`
-* * Flash: `Fallout 4\Data\Interface\Source\HUD_FRAMEWORK`
-
 
 ## Git
 
@@ -38,7 +33,6 @@ To compile this projects papyrus source code, start a command prompt and run the
 
 #### Flash
 To publish this projects flash interface files, open the `FLA` file in Flash and publish the `SWF` file.
-
 
 ## Release Checklist
 * Commit all source changes to the `master` branch.

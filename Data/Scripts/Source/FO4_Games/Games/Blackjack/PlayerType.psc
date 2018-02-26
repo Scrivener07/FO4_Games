@@ -1,48 +1,48 @@
-ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:GameType Native Hidden
+ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:Type Native Hidden
 import Games:Shared:Log
 
-; FSM - Finite State Machine
+; States
 ;---------------------------------------------
 
 State Starting
-	Event OnTask()
+	Event OnState()
 		{Allocate data for new game session.}
-		WriteNotImplemented(self, "Starting.OnTask", "The member must be implemented on and extending script.")
+		WriteNotImplemented(self, "Starting.OnState", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Wagering
-	Event OnTask()
+	Event OnState()
 		{Wagering}
-		WriteNotImplemented(self, "Wagering.OnTask", "The member must be implemented on and extending script.")
+		WriteNotImplemented(self, "Wagering.OnState", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Dealing
-	Event OnTask()
+	Event OnState()
 		{Dealing}
-		WriteNotImplemented(self, "Dealing.OnTask", "The member must be implemented on and extending script.")
+		WriteNotImplemented(self, "Dealing.OnState", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Playing
-	Event OnTask()
+	Event OnState()
 		{Playing}
-		WriteNotImplemented(self, "Playing.OnTask", "The member must be implemented on and extending script.")
+		WriteNotImplemented(self, "Playing.OnState", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Scoring
-	Event OnTask()
+	Event OnState()
 		{Scoring}
-		WriteNotImplemented(self, "Scoring.OnTask", "The member must be implemented on and extending script.")
+		WriteNotImplemented(self, "Scoring.OnState", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 
 State Exiting
-	Event OnTask()
+	Event OnState()
 		{Exiting}
-		WriteNotImplemented(self, "Exiting.OnTask", "The member must be implemented on and extending script.")
+		WriteNotImplemented(self, "Exiting.OnState", "The member must be implemented on and extending script.")
 	EndEvent
 EndState
 

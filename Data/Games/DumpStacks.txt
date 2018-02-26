@@ -1,0 +1,3 @@
+CallStackTraceDepth
+DumpPapyrusStacks
+Screenshot

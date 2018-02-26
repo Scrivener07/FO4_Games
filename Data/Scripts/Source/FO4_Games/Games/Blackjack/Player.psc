@@ -15,6 +15,8 @@ MarkerValue Marker
 bool Success = true const
 bool Failure = false const
 
+int Win = 21 const
+
 
 ; Events
 ;---------------------------------------------
@@ -27,11 +29,29 @@ Event OnInit()
 EndEvent
 
 
-; FSM - Finite State Machine
+; Functions
+;---------------------------------------------
+
+bool Function IsWin(int aScore)
+	return aScore == Win
+EndFunction
+
+
+bool Function IsInPlay(int aScore)
+	return aScore < Win
+EndFunction
+
+
+bool Function IsBust(int aScore)
+	return aScore > Win
+EndFunction
+
+
+; States
 ;---------------------------------------------
 
 State Starting
-	Event OnTask()
+	Event OnState()
 		Session = new SessionData
 		Marker = IMarkers()
 		WriteLine(self, "Joined")
@@ -40,7 +60,7 @@ EndState
 
 
 State Wagering
-	Event OnTask()
+	Event OnState()
 		Cards = new Card[0]
 		Match = new MatchData
 		Match.Bet = IWager()
@@ -54,7 +74,7 @@ EndState
 
 
 State Dealing
-	Event OnTask()
+	Event OnState()
 		TryDraw()
 		WriteLine(self, "Dealt a card..")
 	EndEvent
@@ -62,7 +82,7 @@ EndState
 
 
 State Playing
-	Event OnTask()
+	Event OnState()
 		{Play the next turn until a stand.}
 		bool Continue = true const
 		bool Break = false const
@@ -72,11 +92,11 @@ State Playing
 			Match.Turn += 1
 			OnTurn(Match.Turn)
 
-			If (Blackjack.Session.IsWin(Score))
+			If (IsWin(Score))
 				WriteLine(self, "Standing with 21.")
 				next = Break
 
-			ElseIf (Blackjack.Session.IsBust(Score))
+			ElseIf (IsBust(Score))
 				WriteLine(self, "Busted!")
 				next = Break
 			Else
@@ -87,7 +107,7 @@ State Playing
 						WriteLine(self, "Drew a card." + Hand[Last])
 						next = Continue
 					Else
-						WriteUnexpected(self, "Playing.OnTask", "Encountered problem drawing a card!")
+						WriteUnexpected(self, "Playing.OnState", "Encountered problem drawing a card!")
 						next = Break
 					EndIf
 
@@ -95,7 +115,7 @@ State Playing
 					WriteLine(self, "Chose to stand.")
 					next = Break
 				Else
-					WriteUnexpectedValue(self, "Playing.OnTask", "Match.TurnChoice", "The play choice "+Match.TurnChoice+" was out of range.")
+					WriteUnexpectedValue(self, "Playing.OnState", "Match.TurnChoice", "The play choice "+Match.TurnChoice+" was out of range.")
 					next = Break
 				EndIf
 			EndIf
@@ -113,31 +133,29 @@ EndState
 
 
 State Scoring
-	Event OnTask()
+	Event OnState()
 		If (self is Players:Dealer)
 			WriteLine(self, "Skipped dealer for scoring.")
 		Else
-			Player dealer = Blackjack.Session.Dealer
-
-			If (Blackjack.Session.IsBust(Score))
+			If (IsBust(Score))
 				WriteLine(self, "Score of "+Score+" is a bust.")
 				OnScoreLose()
 			Else
-				If (Blackjack.Session.IsBust(dealer.Score))
-					WriteLine(self, "The dealer busted with "+dealer.Score+".")
+				If (IsBust(Dealer.Score))
+					WriteLine(self, "The dealer busted with "+Dealer.Score+".")
 					OnScoreWin()
 				Else
-					If (Score > dealer.Score)
-						WriteLine(self, "Score of "+Score+" beats dealers "+dealer.Score+".")
+					If (Score > Dealer.Score)
+						WriteLine(self, "Score of "+Score+" beats dealers "+Dealer.Score+".")
 						OnScoreWin()
-					ElseIf (Score < dealer.Score)
-						WriteLine(self, "Score of "+Score+" loses to dealers "+dealer.Score+".")
+					ElseIf (Score < Dealer.Score)
+						WriteLine(self, "Score of "+Score+" loses to dealers "+Dealer.Score+".")
 						OnScoreLose()
-					ElseIf (Score == dealer.Score)
-						WriteLine(self, "Score of "+Score+" pushes dealers "+dealer.Score+".")
+					ElseIf (Score == Dealer.Score)
+						WriteLine(self, "Score of "+Score+" pushes dealers "+Dealer.Score+".")
 						OnScorePush()
 					Else
-						WriteUnexpected(self, "Scoring.OnTask", "Encountered a problem handling score "+Score+" against dealers "+dealer.Score+".")
+						WriteUnexpected(self, "Scoring.OnState", "Encountered a problem handling score "+Score+" against dealers "+dealer.Score+".")
 						OnScoreError()
 					EndIf
 				EndIf
@@ -177,7 +195,7 @@ EndState
 
 
 State Exiting
-	Event OnTask()
+	Event OnState()
 		{Exiting}
 		WriteLine(self, "Leaving")
 	EndEvent
@@ -271,23 +289,23 @@ EndFunction
 
 bool Function TryDraw()
 	If (CanDraw)
-		Card drawn = Blackjack.Cards.Draw()
+		Card drawn = CardDeck.Draw()
 		If (drawn)
 			If (drawn.Reference)
 				ObjectReference turnMarker = NextMarker()
 				If (turnMarker)
 					Cards.Add(drawn)
-					SetScore(Blackjack.Session.Score(self))
+					SetScore(Actors.Score(self))
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
 
-					Blackjack.Cards.Collect(drawn)
+					CardDeck.Collect(drawn)
 					WriteUnexpectedValue(self, "TryDraw", "turnMarker", "The turn card marker cannot be none.")
 					return Failure
 				EndIf
 			Else
-				Blackjack.Cards.Collect(drawn)
+				CardDeck.Collect(drawn)
 				WriteUnexpectedValue(self, "TryDraw", "drawn.Reference", "Cannot draw card with a none Card.Reference.")
 				return Failure
 			EndIf
@@ -345,8 +363,12 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Object
-	Blackjack:Game Property Blackjack Auto Const Mandatory
+Group Scripts
+;	Blackjack:Main Property Blackjack Auto Const Mandatory
+	Blackjack:Cards Property CardDeck Auto Const Mandatory
+	Blackjack:Actors Property Actors Auto Const Mandatory
+	Blackjack:Players:Dealer Property Dealer Auto Const Mandatory
+	Blackjack:Players:Human Property Human Auto Const Mandatory
 	Shared:Motion Property Motion Auto Const Mandatory
 EndGroup
 
@@ -421,7 +443,7 @@ Group Hand
 
 	bool Property CanDraw Hidden
 		bool Function Get()
-			return Blackjack.Session.IsInPlay(Score)
+			return IsInPlay(Score)
 		EndFunction
 	EndProperty
 EndGroup

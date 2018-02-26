@@ -1,13 +1,11 @@
-ScriptName Games:Blackjack:Tasks:Cards extends Games:Blackjack:GameType
+ScriptName Games:Blackjack:Cards extends Games:Blackjack:Type
 import Games
-import Games:Blackjack
 import Games:Shared
 import Games:Shared:Deck
 import Games:Shared:Log
-import Games:Shared:Papyrus
 
-ObjectReference[] References
 ReferenceData Data
+ObjectReference[] References
 
 
 ; Events
@@ -74,17 +72,26 @@ Event OnInit()
 EndEvent
 
 
-; Tasks
+; States
 ;---------------------------------------------
 
 State Starting
-	Event OnTask()
+	Event OnState()
+		{Starting}
 		CollectAll(true)
 	EndEvent
 EndState
 
 
-; Methods
+State Dealing
+	Event OnState()
+		{Dealing}
+		Shuffle()
+	EndEvent
+EndState
+
+
+; Functions
 ;---------------------------------------------
 
 Function Shuffle()
@@ -115,12 +122,12 @@ Function CollectEach(Card[] aCards)
 EndFunction
 
 
-Function CollectFrom(Player gambler)
-	If (gambler)
-		CollectEach(gambler.Hand)
-		gambler.Motion.TranslateEach(ToReferences(gambler.Hand), Games_Blackjack_DeckMarker)
+Function CollectFrom(Blackjack:Player player)
+	If (player)
+		CollectEach(player.Hand)
+		player.Motion.TranslateEach(ToReferences(player.Hand), Games_Blackjack_DeckMarker)
 	Else
-		WriteUnexpectedValue(self, "CollectFrom", "gambler", "Cannot collect cards from a none player.")
+		WriteUnexpectedValue(self, "CollectFrom", "player", "Cannot collect cards from a none player.")
 	EndIf
 EndFunction
 
@@ -145,8 +152,7 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Object
-	Blackjack:Game Property Blackjack Auto Const Mandatory
+Group Scripts
 	Shared:Deck Property Deck Auto Const Mandatory
 	Shared:Motion Property Motion Auto Const Mandatory
 EndGroup
@@ -155,7 +161,7 @@ Group Markers
 	ObjectReference Property Games_Blackjack_DeckMarker Auto Const Mandatory
 EndGroup
 
-Group References
+Group Cards
 	ObjectReference Property Games_Blackjack_JokerBlack Auto Const Mandatory
 	ObjectReference Property Games_Blackjack_JokerRed Auto Const Mandatory
 

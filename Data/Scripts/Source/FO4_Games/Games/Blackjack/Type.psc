@@ -1,59 +1,56 @@
-ScriptName Games:Blackjack:GameType extends Quest Native Hidden
+ScriptName Games:Blackjack:Type extends Quest Native Hidden
 import Games
 import Games:Shared:Log
 import Games:Shared:Papyrus
 
 
-; FSM - Finite State Machine
+; States
 ;---------------------------------------------
 
-Event OnTask()
+Event OnState()
 	{EMPTY}
-	WriteNotImplemented(self, "OnTask", "The member is not implemented in the empty state.")
+	WriteNotImplemented(self, "OnState", "The member is not implemented in the empty state.")
 EndEvent
-
 
 State Starting
 	Event OnBeginState(string asOldState)
-		StartObjectProfiling()
-		OnTask()
-		TaskEnd(self)
+		OnState()
+		ClearState(self)
 	EndEvent
 EndState
 
 State Wagering
 	Event OnBeginState(string asOldState)
-		OnTask()
-		TaskEnd(self)
+		OnState()
+		ClearState(self)
 	EndEvent
 EndState
 
 State Dealing
 	Event OnBeginState(string asOldState)
-		OnTask()
-		TaskEnd(self)
+		OnState()
+		ClearState(self)
 	EndEvent
 EndState
 
 State Playing
 	Event OnBeginState(string asOldState)
-		OnTask()
-		TaskEnd(self)
+		OnState()
+		ClearState(self)
 	EndEvent
 EndState
 
 State Scoring
 	Event OnBeginState(string asOldState)
-		OnTask()
-		TaskEnd(self)
+		OnState()
+		ClearState(self)
 	EndEvent
 EndState
 
 State Exiting
 	Event OnBeginState(string asOldState)
-		OnTask()
-		TaskEnd(self)
-		StopObjectProfiling()
+		OnState()
+		ClearState(self)
 	EndEvent
 EndState
 
@@ -67,7 +64,7 @@ Struct PhaseEventArgs
 EndStruct
 
 
-bool Function SendPhase(Blackjack:Game sender, string name, bool change)
+bool Function SendPhase(Blackjack:Main sender, string name, bool change)
 	If (sender.StateName == name)
 		PhaseEventArgs phase = new PhaseEventArgs
 		phase.Name = name
@@ -93,12 +90,12 @@ EndFunction
 
 
 Event OnGamePhase(PhaseEventArgs e) Native
-Event Games:Blackjack:Game.PhaseEvent(Blackjack:Game sender, var[] arguments)
+Event Games:Blackjack:Main.PhaseEvent(Blackjack:Main sender, var[] arguments)
 	PhaseEventArgs e = GetPhaseEventArgs(arguments)
 	If (e)
 		self.OnGamePhase(e)
 	Else
-		WriteUnexpectedValue(self, "Games:Blackjack:Game.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
+		WriteUnexpectedValue(self, "Games:Blackjack:Main.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
 	EndIf
 EndEvent
 
@@ -113,16 +110,13 @@ Group Properties
 EndGroup
 
 Group Tasks
-	string Property NoTask = "" AutoReadOnly
-	string Property StartingTask = "Starting" AutoReadOnly
-	string Property WageringTask = "Wagering" AutoReadOnly
-	string Property DealingTask = "Dealing" AutoReadOnly
-	string Property PlayingTask = "Playing" AutoReadOnly
-	string Property ScoringTask = "Scoring" AutoReadOnly
-	string Property ExitingTask = "Exiting" AutoReadOnly
-
-	string Property EmptyState = "" AutoReadOnly
-	string Property BusyState = "Busy" AutoReadOnly
+	string Property IdlingState = "" AutoReadOnly
+	string Property StartingState = "Starting" AutoReadOnly
+	string Property WageringState = "Wagering" AutoReadOnly
+	string Property DealingState = "Dealing" AutoReadOnly
+	string Property PlayingState = "Playing" AutoReadOnly
+	string Property ScoringState = "Scoring" AutoReadOnly
+	string Property ExitingState = "Exiting" AutoReadOnly
 
 	string Property StateName Hidden
 		string Function Get()
@@ -132,13 +126,13 @@ Group Tasks
 
 	bool Property Idling Hidden
 		bool Function Get()
-			return GetState() == NoTask
+			return GetState() == IdlingState
 		EndFunction
 	EndProperty
 
 	bool Property IsBusy Hidden
 		bool Function Get()
-			return TaskRunning(self)
+			return StateRunning(self)
 		EndFunction
 	EndProperty
 EndGroup

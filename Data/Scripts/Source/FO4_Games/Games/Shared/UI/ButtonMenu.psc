@@ -34,20 +34,26 @@ DisplayData Function NewDisplay()
 EndFunction
 
 
-; Tasks
-;---------------------------------------------
-
 bool Function Show()
 	{Begin the shown task.}
-	return TaskAwait(self, "Shown")
+	bool awaited = AwaitState(self, "Shown")
+	If (awaited)
+		WriteLine(self, "Awaited the `Show` method.")
+	Else
+		WriteUnexpectedValue(self, "Show", "awaited", "Something went wrong awaiting the Shown task.")
+	EndIf
+	return awaited
 EndFunction
 
 
 bool Function Hide()
 	{End any running task.}
-	return TaskEnd(self)
+	return ClearState(self)
 EndFunction
 
+
+; States
+;---------------------------------------------
 
 State Shown
 	Event OnBeginState(string asOldState)
@@ -73,11 +79,11 @@ State Shown
 				WriteLine(self, "Showing button press hints. Invoke:"+member+"("+arguments+") @"+Menu)
 			Else
 				WriteUnexpectedValue(self, "Shown.OnBeginState", "Buttons", "The button array is none or empty.")
-				TaskEnd(self)
+				ClearState(self)
 			EndIf
 		Else
 			WriteUnexpected(self, "Shown.OnBeginState", "Could not open menu for '"+GetState()+"' state.")
-			TaskEnd(self)
+			ClearState(self)
 		EndIf
 	EndEvent
 
@@ -92,7 +98,7 @@ State Shown
 
 			If (AutoHide)
 				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected. Automatically hiding for select once.")
-				TaskEnd(self)
+				ClearState(self)
 			Else
 				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected.")
 			EndIf
