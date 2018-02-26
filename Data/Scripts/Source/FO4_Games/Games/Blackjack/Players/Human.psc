@@ -243,6 +243,8 @@ State Scoring
 		Display.Earnings = Earnings
 		Display.Caps = Bank
 
+		Game.ShowPerkVaultBoyOnHUD("Components\\VaultBoys\\Perks\\PerkClip_Default.swf")
+
 		ButtonMenu.Clear()
 		ButtonMenu.SelectOnce = true
 		ButtonMenu.Add(PlayButton)

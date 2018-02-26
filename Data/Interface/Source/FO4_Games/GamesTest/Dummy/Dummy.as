@@ -1,8 +1,8 @@
 package
 {
 	import flash.display.MovieClip;
-	import Shared.IDisplay;
-	import Shared.Display;
+	import Games.Display;
+	import Games.IDisplay;
 
 	public class Dummy extends Display implements IDisplay
 	{

@@ -1,7 +1,7 @@
-package Shared
+package Games
 {
-	import flash.display.DisplayObjectContainer;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 
 	public class Utility

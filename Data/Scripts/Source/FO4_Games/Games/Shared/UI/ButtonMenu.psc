@@ -27,7 +27,7 @@ EndStruct
 DisplayData Function NewDisplay()
 	DisplayData display = new DisplayData
 	display.Menu = "GamesButtonMenu"
-	display.Asset = "Games\\ButtonMenu"
+	display.Asset = "GamesButtonMenu"
 	display.Root = "root1.Menu"
 	Buttons = new Button[0]
 	return display

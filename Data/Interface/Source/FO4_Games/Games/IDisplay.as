@@ -1,4 +1,4 @@
-package Shared
+package Games
 {
 	public interface IDisplay
 	{
