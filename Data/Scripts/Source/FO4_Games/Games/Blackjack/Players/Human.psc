@@ -83,11 +83,11 @@ Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] argume
 EndEvent
 
 
-; FSM - Finite State Machine
+; States
 ;---------------------------------------------
 
 State Starting
-	Event OnTask()
+	Event OnState()
 		Wager = WagerMinimum
 
 		Display.Open()
@@ -96,7 +96,7 @@ State Starting
 		Display.Caps = Bank
 		Display.Earnings = Earnings
 
-		parent.OnTask()
+		parent.OnState()
 	EndEvent
 
 	MarkerValue Function IMarkers()
@@ -118,22 +118,22 @@ EndState
 
 
 State Wagering
-	Event OnTask()
+	Event OnState()
 		If (Bank < WagerMinimum)
 			; TODO: How/Should I quit here?
-			WriteUnexpectedValue(self, "Wagering.OnTask", "Bank", "A bank of "+Bank+" cannot be less than the wager minimum of "+WagerMinimum)
+			WriteUnexpectedValue(self, "Wagering.OnState", "Bank", "A bank of "+Bank+" cannot be less than the wager minimum of "+WagerMinimum)
 		EndIf
 
 		If (Wager > Bank)
 			Wager = WagerMinimum
-			WriteUnexpectedValue(self, "Wagering.OnTask", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
+			WriteUnexpectedValue(self, "Wagering.OnState", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
 		EndIf
 
 		Display.Score = 0
 		Display.Bet = Wager ; last wager amount
 		Display.Earnings = Earnings
 		Display.Caps = Bank
-		parent.OnTask()
+		parent.OnState()
 		Display.Earnings = Earnings
 	EndEvent
 
@@ -200,8 +200,8 @@ EndState
 
 
 State Dealing
-	Event OnTask()
-		parent.OnTask()
+	Event OnState()
+		parent.OnState()
 		Display.Score = Score
 	EndEvent
 EndState
@@ -237,8 +237,8 @@ EndState
 
 
 State Scoring
-	Event OnTask()
-		parent.OnTask()
+	Event OnState()
+		parent.OnState()
 		Game.GivePlayerCaps(Winnings)
 		Display.Earnings = Earnings
 		Display.Caps = Bank
@@ -255,11 +255,11 @@ State Scoring
 			ElseIf (ButtonMenu.Selected == LeaveButton)
 				Rematch(false)
 			Else
-				WriteUnexpected(self, "Scoring.OnTask", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpected(self, "Scoring.OnState", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				Rematch(false)
 			EndIf
 		Else
-			WriteUnexpected(self, "Scoring.OnTask", "No button hint was selected.")
+			WriteUnexpected(self, "Scoring.OnState", "No button hint was selected.")
 			Rematch(false)
 		EndIf
 	EndEvent
@@ -267,9 +267,9 @@ EndState
 
 
 State Exiting
-	Event OnTask()
+	Event OnState()
 		Display.Close()
-		parent.OnTask()
+		parent.OnState()
 	EndEvent
 EndState
 

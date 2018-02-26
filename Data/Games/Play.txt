@@ -1,0 +1,4 @@
+GetF4SEVersion
+GetINI "iMaxStackDepth:Papyrus"
+COC GamesTestCell
+Player.AddItem F 10
