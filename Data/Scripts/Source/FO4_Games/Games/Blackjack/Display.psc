@@ -6,7 +6,7 @@ ScriptName Games:Blackjack:Display extends Games:Shared:UI:Menu
 DisplayData Function NewDisplay()
 	DisplayData display = new DisplayData
 	display.Menu = "GamesBlackjack"
-	display.Asset = "Games\\Blackjack"
+	display.Asset = "GamesBlackjack"
 	display.Root = "root1.Menu"
 	return display
 EndFunction

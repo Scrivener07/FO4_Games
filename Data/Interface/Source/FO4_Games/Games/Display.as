@@ -1,9 +1,9 @@
-package Shared
+package Games
 {
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.events.Event;
-	import Shared.IDisplay;
+	import Games.IDisplay;
 	import Shared.IMenu;
 
 	public class Display extends IMenu implements IDisplay
@@ -25,9 +25,9 @@ package Shared
 
 		private function OnAddedToStage(e:Event) : void
 		{
-			trace("[Display.as] OnAddedToStage:"+Shared.Utility.WalkMovie(this));
+			trace("[Display.as] OnAddedToStage:"+Games.Utility.WalkMovie(this));
 			var movieStage:MovieClip = stage.getChildAt(0) as MovieClip;
-			Shared.Utility.TraceDisplayList(movieStage)
+			Games.Utility.TraceDisplayList(movieStage)
 		}
 
 

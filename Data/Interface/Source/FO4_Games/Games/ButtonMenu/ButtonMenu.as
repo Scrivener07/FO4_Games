@@ -2,11 +2,11 @@
 {
 	import flash.display.MovieClip;
 	import flash.events.Event;
+	import Games.Display;
+	import Games.IDisplay;
 	import Shared.AS3.BSButtonHintBar;
 	import Shared.AS3.BSButtonHintData;
-	import Shared.Display;
 	import Shared.GlobalFunc;
-	import Shared.IDisplay;
 
 	public class ButtonMenu extends Display implements IButtonMenu
 	{
@@ -42,7 +42,7 @@
 			{
 				var Buttons:Vector.<BSButtonHintData> = new Vector.<BSButtonHintData>();
 
-				Shared.Utility.TraceObject(argument);
+				Games.Utility.TraceObject(argument);
 				var button:BSButtonHintData = ToButtonHint(argument);
 				button.ButtonVisible = true;
 				button.ButtonEnabled = true;
@@ -52,7 +52,7 @@
 				{
 					for (var i:uint = 0; i < rest.length; i++)
 					{
-						Shared.Utility.TraceObject(rest[i]);
+						Games.Utility.TraceObject(rest[i]);
 						var exbutton:BSButtonHintData = ToButtonHint(rest[i]);
 						exbutton.ButtonVisible = true;
 						exbutton.ButtonEnabled = true;
@@ -77,7 +77,7 @@
 			var hint:BSButtonHintData = new BSButtonHintData
 			(
 				textValue,
-				Shared.Input.KeyCodeToPC(keyCode),
+				Games.Input.KeyCodeToPC(keyCode),
 				"PlayStation",
 				"Xbox",
 				1,
