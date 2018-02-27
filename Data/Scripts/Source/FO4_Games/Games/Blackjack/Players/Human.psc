@@ -6,6 +6,7 @@ import Games:Shared
 import Games:Shared:UI:ButtonMenu
 
 Actor PlayerRef
+MiscObject Caps
 
 int Wager = 0
 Button AcceptButton
@@ -38,6 +39,7 @@ EndGroup
 Event OnInit()
 	parent.OnInit()
 	PlayerRef = Game.GetPlayer()
+	Caps = Game.GetCaps()
 
 	AcceptButton = new Button
 	AcceptButton.Text = "Accept"
@@ -145,6 +147,7 @@ State Wagering
 		ButtonMenu.Add(DecreaseButton)
 		ButtonMenu.Add(MinimumButton)
 		ButtonMenu.Add(MaximumButton)
+		ButtonMenu.Add(LeaveButton)
 		ButtonMenu.RegisterForSelectedEvent(self)
 		ButtonMenu.Show()
 		return Wager
@@ -158,7 +161,7 @@ State Wagering
 				If (IsValidWager(Wager))
 					akSender.UnregisterForSelectedEvent(self)
 					akSender.Hide()
-					Game.RemovePlayerCaps(Wager)
+					Player.RemoveItem(Caps, Wager, true)
 					Display.Caps = Bank
 				EndIf
 
@@ -239,10 +242,11 @@ EndState
 State Scoring
 	Event OnState()
 		parent.OnState()
-		Game.GivePlayerCaps(Winnings)
+		Player.AddItem(Caps, Winnings, true)
 		Display.Earnings = Earnings
 		Display.Caps = Bank
 
+		; TODO: Add UI element for match results.
 		Game.ShowPerkVaultBoyOnHUD("Components\\VaultBoys\\Perks\\PerkClip_Default.swf")
 
 		ButtonMenu.Clear()

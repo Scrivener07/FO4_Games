@@ -3,6 +3,7 @@ package Games
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.events.Event;
+	import Games.Debug;
 	import Games.IDisplay;
 	import Shared.IMenu;
 
@@ -25,7 +26,7 @@ package Games
 
 		private function OnAddedToStage(e:Event) : void
 		{
-			trace("[Display.as] OnAddedToStage:"+Games.Utility.WalkMovie(this));
+			Debug.WriteLine("Display", "OnAddedToStage:"+Games.Utility.WalkMovie(this));
 			var movieStage:MovieClip = stage.getChildAt(0) as MovieClip;
 			Games.Utility.TraceDisplayList(movieStage)
 		}

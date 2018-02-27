@@ -1,7 +1,8 @@
 package
 {
-	import Shared.AS3.BSButtonHintBar;
 	import flash.display.MovieClip;
+	import Shared.AS3.BSButtonHintBar;
+	import Games.Debug;
 
 	public dynamic class ButtonBarHolder extends MovieClip
 	{
@@ -24,7 +25,7 @@ package
 			}
 			catch(e:Error)
 			{
-				trace(e);
+				Debug.WriteLine(e);
 			}
 
 			this.ButtonHintBar_mc.BackgroundAlpha = 1;
@@ -44,7 +45,7 @@ package
 			}
 			catch(e:Error)
 			{
-				trace(e);
+				Debug.WriteLine(e);
 			}
 		}
 

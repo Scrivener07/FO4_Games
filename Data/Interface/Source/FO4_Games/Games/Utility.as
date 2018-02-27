@@ -3,6 +3,7 @@ package Games
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
+	import Games.Debug;
 
 	public class Utility
 	{
@@ -30,7 +31,7 @@ package Games
 			prefix == "" ? prefix = "---" : prefix += "---";
 			for (var element:* in object)
 			{
-				trace (prefix, element + " : " + object[element], "  ");
+				Debug.WriteLine(prefix, element + " : " + object[element], "  ");
 				if (typeof(object[element]) == "object") TraceObject(object[element], prefix);
 			}
 		}
@@ -61,10 +62,10 @@ package Games
 	            output += ", h:"+child.height+"px ("+child.scaleY.toFixed(2)+")";
 	            output += ", r:"+child.rotation.toFixed(1)+"";
 
-	            if (typeof options == "number") trace(output);
+	            if (typeof options == "number") Debug.WriteLine(output);
 	                else if (typeof options == "string" && output.match(new RegExp(options, "gi")).length != 0)
 	                {
-	                    trace(output, "in", container.name, "-->", container);
+	                   Debug.WriteLine(output, "in", container.name, "-->", container);
 	                }
 
 	            if (child is DisplayObjectContainer) TraceDisplayList(DisplayObjectContainer(child), options, indentString + INDENT, depth + 1);
