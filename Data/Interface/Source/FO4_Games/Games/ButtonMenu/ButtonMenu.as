@@ -2,6 +2,7 @@
 {
 	import flash.display.MovieClip;
 	import flash.events.Event;
+	import Games.Debug;
 	import Games.Display;
 	import Games.IDisplay;
 	import Shared.AS3.BSButtonHintBar;
@@ -19,7 +20,7 @@
 
 		public function ButtonMenu()
 		{
-			trace("[ButtonMenu] Constructor");
+			Debug.WriteLine("[ButtonMenu] Constructor");
 			ButtonBarHolder.ButtonHintBar_mc.bRedirectToButtonBarMenu = false;
 		}
 
@@ -27,7 +28,7 @@
 		override protected function onSetSafeRect() : void
 		{
 			GlobalFunc.LockToSafeRect(ButtonBarHolder, "BC", SafeX, SafeY);
-			trace("[ButtonMenu] onSetSafeRect");
+			Debug.WriteLine("[ButtonMenu] onSetSafeRect");
 		}
 
 
@@ -36,7 +37,7 @@
 
 		public function SetButtons(argument:Object, ... rest) : void
 		{
-			trace("[ButtonMenu] SetButtons");
+			Debug.WriteLine("[ButtonMenu] SetButtons");
 
 			if (argument != null)
 			{
@@ -64,7 +65,7 @@
 			}
 			else
 			{
-				trace("[ButtonMenu] Argument was null!");
+				Debug.WriteLine("[ButtonMenu] Argument was null!");
 			}
 		}
 

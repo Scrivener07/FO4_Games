@@ -1,6 +1,7 @@
 package
 {
 	import flash.display.MovieClip;
+	import Games.Debug;
 	import Games.Display;
 	import Games.IDisplay;
 
@@ -12,7 +13,7 @@ package
 
 		public function Dummy()
 		{
-			trace("[Dummy] Constructor");
+			Debug.WriteLine("Dummy", "Constructor");
 		}
 
 	}
