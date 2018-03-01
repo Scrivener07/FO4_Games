@@ -9,6 +9,7 @@ Actor PlayerRef
 MiscObject Caps
 
 int Wager = 0
+
 Button AcceptButton
 Button IncreaseButton
 Button DecreaseButton
@@ -21,16 +22,10 @@ Button StandButton
 Button PlayButton
 Button LeaveButton
 
-Group UI
-	Blackjack:Display Property Display Auto Const Mandatory
-	UI:ButtonMenu Property ButtonMenu Auto Const Mandatory
-	Shared:Keyboard Property Keyboard Auto Const Mandatory
-EndGroup
-
-Group SFX
-	Sound Property ITMBottlecapsUpx Auto Const Mandatory
-	Sound Property ITMBottlecapsDownx Auto Const Mandatory
-EndGroup
+string ScoreLoseSwf = "GamesBlackjackScoreLose.swf" const
+string ScoreWinSwf = "GamesBlackjackScoreWin.swf" const
+string ScoreBlackjackSwf = "GamesBlackjackScore21.swf" const
+string ScorePushSwf = "GamesBlackjackScorePush.swf" const
 
 
 ; Events
@@ -121,11 +116,6 @@ EndState
 
 State Wagering
 	Event OnState()
-		If (Bank < WagerMinimum)
-			; TODO: How/Should I quit here?
-			WriteUnexpectedValue(self, "Wagering.OnState", "Bank", "A bank of "+Bank+" cannot be less than the wager minimum of "+WagerMinimum)
-		EndIf
-
 		If (Wager > Bank)
 			Wager = WagerMinimum
 			WriteUnexpectedValue(self, "Wagering.OnState", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
@@ -135,6 +125,7 @@ State Wagering
 		Display.Bet = Wager ; last wager amount
 		Display.Earnings = Earnings
 		Display.Caps = Bank
+
 		parent.OnState()
 		Display.Earnings = Earnings
 	EndEvent
@@ -163,6 +154,14 @@ State Wagering
 					akSender.Hide()
 					Player.RemoveItem(Caps, Wager, true)
 					Display.Caps = Bank
+				EndIf
+
+			ElseIf (selected == LeaveButton)
+				If (Players.LeaveRequest(self))
+					akSender.UnregisterForSelectedEvent(self)
+					akSender.Hide()
+				Else
+					WriteUnexpected(self, "Wagering.OnSelected", "The request to leave the game failed for some reason.")
 				EndIf
 
 			ElseIf (selected == IncreaseButton)
@@ -246,9 +245,6 @@ State Scoring
 		Display.Earnings = Earnings
 		Display.Caps = Bank
 
-		; TODO: Add UI element for match results.
-		Game.ShowPerkVaultBoyOnHUD("Components\\VaultBoys\\Perks\\PerkClip_Default.swf")
-
 		ButtonMenu.Clear()
 		ButtonMenu.SelectOnce = true
 		ButtonMenu.Add(PlayButton)
@@ -257,16 +253,32 @@ State Scoring
 
 		If (ButtonMenu.Selected)
 			If (ButtonMenu.Selected == PlayButton)
-				Rematch(true)
+				; Selected the play button, no further action required.
 			ElseIf (ButtonMenu.Selected == LeaveButton)
-				Rematch(false)
+				Players.LeaveRequest(self)
 			Else
 				WriteUnexpected(self, "Scoring.OnState", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
-				Rematch(false)
+				Players.LeaveRequest(self)
 			EndIf
 		Else
 			WriteUnexpected(self, "Scoring.OnState", "No button hint was selected.")
-			Rematch(false)
+			Players.LeaveRequest(self)
+		EndIf
+	EndEvent
+
+	Event OnScoring(int scoring)
+		parent.OnScoring(scoring)
+
+		If (scoring == ScoreLose)
+			Game.ShowPerkVaultBoyOnHUD(ScoreLoseSwf)
+		ElseIf (scoring == ScoreWin)
+			Game.ShowPerkVaultBoyOnHUD(ScoreWinSwf)
+		ElseIf (scoring == ScoreBlackjack)
+			Game.ShowPerkVaultBoyOnHUD(ScoreBlackjackSwf)
+		ElseIf (scoring == ScorePush)
+			Game.ShowPerkVaultBoyOnHUD(ScorePushSwf)
+		Else
+			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
 		EndIf
 	EndEvent
 EndState
@@ -274,6 +286,8 @@ EndState
 
 State Exiting
 	Event OnState()
+		; The exiting state is run after a successful leave request.
+		Wager = 0
 		Display.Close()
 		parent.OnState()
 	EndEvent
@@ -316,7 +330,18 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Human
+Group UI
+	Blackjack:Display Property Display Auto Const Mandatory
+	UI:ButtonMenu Property ButtonMenu Auto Const Mandatory
+	Shared:Keyboard Property Keyboard Auto Const Mandatory
+EndGroup
+
+Group SFX
+	Sound Property ITMBottlecapsUpx Auto Const Mandatory
+	Sound Property ITMBottlecapsDownx Auto Const Mandatory
+EndGroup
+
+Group Player
 	Actor Property Player Hidden
 		Actor Function Get()
 			return PlayerRef

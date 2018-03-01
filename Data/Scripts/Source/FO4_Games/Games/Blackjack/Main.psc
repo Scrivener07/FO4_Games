@@ -47,7 +47,7 @@ EndEvent
 bool Function Play(ObjectReference aExitMarker)
 	If (Idling)
 		If (Environment.SetExit(aExitMarker))
-			return RequestState(self, StartingID)
+			return TryState(self, StartingID)
 		Else
 			WriteUnexpected(self, "Play", "Environment could not set the exit marker.")
 			return false
@@ -76,26 +76,8 @@ bool Function PlayAsk(ObjectReference aExitMarker)
 EndFunction
 
 
-bool Function PlayAgain()
-	return Games_Blackjack_MessagePlayAgain.Show() == 1
-EndFunction
-
-
-Function ShowNoFunds()
-	Games_Blackjack_MessageNoFunds.Show()
-EndFunction
-
-
-bool Function RequestState(ScriptObject script, int stateID)
-	If (script)
-		script.StartTimer(0.1, stateID)
-		return true
-	Else
-		WriteUnexpectedValue(self, "RequestState", "script", "Cannot request state ID "+stateID+" on a none script.")
-		return false
-	EndIf
-EndFunction
-
+; Functions
+;---------------------------------------------
 
 bool Function RegisterForPhaseEvent(ScriptObject script)
 	If (script)
@@ -128,19 +110,19 @@ State Starting
 		WriteLine("Blackjack", "Starting")
 
 		If (Human.HasCaps == false)
-			RequestState(self, IdlingID)
-			ShowNoFunds()
+			TryState(self, IdlingID)
+			Games_Blackjack_MessageNoFunds.Show()
 			return
 		EndIf
 
 		If (SendPhase(self, StartingState, Begun))
 			AwaitState(Environment, StartingState)
 			AwaitState(Cards, StartingState)
-			AwaitState(Actors, StartingState)
-			RequestState(self, WageringID)
+			AwaitState(Players, StartingState)
+			TryState(self, WageringID)
 		Else
 			WriteUnexpected(self, "Starting.OnBeginState", "Could not begin the '"+StartingState+"' task.")
-			RequestState(self, ExitingID)
+			TryState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -159,23 +141,28 @@ State Wagering
 		WriteLine("Blackjack", "Wagering")
 
 		If (Human.HasCaps == false)
-			RequestState(self, ExitingID)
-			ShowNoFunds()
+			WriteLine("Blackjack", "Kicking because there are no funds to wager.")
+			TryState(self, ExitingID)
+			Games_Blackjack_MessageNoFunds.Show()
 			return
 		EndIf
 
 		If (SendPhase(self, WageringState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Actors, WageringState)
+			AwaitState(Players, WageringState)
 
-			If (Human.Bet == Invalid)
-				RequestState(self, ExitingID)
+			If (Players.HasHuman)
+				If (Human.Bet == Invalid)
+					TryState(self, ExitingID)
+				Else
+					TryState(self, DealingID)
+				EndIf
 			Else
-				RequestState(self, DealingID)
+				TryState(self, ExitingID)
 			EndIf
 		Else
 			WriteUnexpected(self, "Wagering.OnBeginState", "Could not begin the '"+WageringState+"' task.")
-			RequestState(self, ExitingID)
+			TryState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -192,11 +179,11 @@ State Dealing
 		If (SendPhase(self, DealingState, Begun))
 			Utility.Wait(TimeDelay)
 			AwaitState(Cards, DealingState)
-			AwaitState(Actors, DealingState)
-			RequestState(self, PlayingID)
+			AwaitState(Players, DealingState)
+			TryState(self, PlayingID)
 		Else
 			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' task.")
-			RequestState(self, ExitingID)
+			TryState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -212,11 +199,11 @@ State Playing
 		WriteLine("Blackjack", "Playing")
 		If (SendPhase(self, PlayingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Actors, PlayingState)
-			RequestState(self, ScoringID)
+			AwaitState(Players, PlayingState)
+			TryState(self, ScoringID)
 		Else
 			WriteUnexpected(self, "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' task.")
-			RequestState(self, ExitingID)
+			TryState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -232,24 +219,24 @@ State Scoring
 		WriteLine("Blackjack", "Scoring")
 		If (SendPhase(self, ScoringState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Actors, ScoringState)
+			AwaitState(Players, ScoringState)
 
-			If (Human.HasCaps)
-				If (Human.Rematch)
-					WriteLine("Blackjack", "Chose to play again for a rematch.")
-					RequestState(self, WageringID)
+			If (Players.HasHuman)
+				If (Human.HasCaps)
+					WriteLine("Blackjack", "The player will continue playing game.")
+					TryState(self, WageringID)
 				Else
-					WriteLine("Blackjack", "Chose to leave the game.")
-					RequestState(self, ExitingID)
+					WriteLine("Blackjack", "Kicked from game for low funds.")
+					TryState(self, ExitingID)
+					Games_Blackjack_MessageNoFunds.Show()
 				EndIf
 			Else
-				WriteLine("Blackjack", "Kicked from game for low funds.")
-				RequestState(self, ExitingID)
-				ShowNoFunds()
+				WriteLine("Blackjack", "The human player left the game.")
+				TryState(self, ExitingID)
 			EndIf
 		Else
 			WriteUnexpected(self, "Scoring.OnBeginState", "Could not begin the '"+ScoringState+"' task.")
-			RequestState(self, ExitingID)
+			TryState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -265,13 +252,13 @@ State Exiting
 		WriteLine("Blackjack", "Exiting")
 		If (SendPhase(self, ExitingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Actors, ExitingState)
+			AwaitState(Players, ExitingState)
 			AwaitState(Environment, ExitingState)
 		Else
 			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' task.")
 		EndIf
 
-		RequestState(self, IdlingID)
+		TryState(self, IdlingID)
 	EndEvent
 
 	Event OnEndState(string asNewState)
@@ -284,14 +271,13 @@ EndState
 ;---------------------------------------------
 
 Group Messages
-	Message Property Games_Blackjack_MessageNoFunds Auto Const Mandatory
 	Message Property Games_Blackjack_MessagePlay Auto Const Mandatory
-	Message Property Games_Blackjack_MessagePlayAgain Auto Const Mandatory
+	Message Property Games_Blackjack_MessageNoFunds Auto Const Mandatory
 EndGroup
 
 Group Scripts
 	Blackjack:Environment Property Environment Auto Const Mandatory
 	Blackjack:Cards Property Cards Auto Const Mandatory
-	Blackjack:Actors Property Actors Auto Const Mandatory
+	Blackjack:Players Property Players Auto Const Mandatory
 	Blackjack:Players:Human Property Human Auto Const Mandatory
 EndGroup

@@ -51,10 +51,7 @@ EndState
 ;---------------------------------------------
 
 Event OnTurn(int aTurn) Native
-Event OnScoreLose() Native
-Event OnScoreWin() Native
-Event OnScorePush() Native
-Event OnScoreError() Native
+Event OnScoring(int scoring) Native
 
 
 ; Properties
@@ -65,7 +62,6 @@ Struct SessionData
 EndStruct
 
 Struct MatchData
-	bool Rematch = false
 	int Bet = 0
 	int Score = 0
 	int Turn = 0
@@ -87,6 +83,12 @@ Struct MarkerValue
 	ObjectReference Card11
 EndStruct
 
+Group Wager
+	int Property WagerStep = 5 AutoReadOnly
+	int Property WagerMinimum = 5 AutoReadOnly
+	int Property WagerMaximum = 50 AutoReadOnly
+EndGroup
+
 Group Choice
 	{The choice type for playing.}
 	int Property ChoiceHit = 0 AutoReadOnly
@@ -95,16 +97,10 @@ Group Choice
 	int Property ChoiceSplit = 3 AutoReadOnly  ; not supported
 EndGroup
 
-Group Result
+Group Score
 	{The result type for scoring.}
 	int Property ScoreLose = 0 AutoReadOnly
 	int Property ScoreWin = 1 AutoReadOnly
-	int Property ScorePush = 2 AutoReadOnly
-EndGroup
-
-
-Group Wager
-	int Property WagerStep = 5 AutoReadOnly
-	int Property WagerMinimum = 5 AutoReadOnly
-	int Property WagerMaximum = 50 AutoReadOnly
+	int Property ScoreBlackjack = 2 AutoReadOnly
+	int Property ScorePush = 3 AutoReadOnly
 EndGroup
