@@ -4,13 +4,13 @@ import Games:Blackjack
 import Games:Shared
 import Games:Shared:Deck
 import Games:Shared:Log
+import Games:Blackjack:Players
 
+Seat SeatValue
 Card[] Cards
 
 SessionData Session
 MatchData Match
-
-MarkerValue Marker
 
 bool Success = true const
 bool Failure = false const
@@ -25,7 +25,6 @@ Event OnInit()
 	Cards = new Card[0]
 	Match = new MatchData
 	Session = new SessionData
-	Marker = new MarkerValue
 EndEvent
 
 
@@ -56,6 +55,7 @@ EndFunction
 
 
 bool Function HasBlackjack()
+	; TODO: There is possibly a problem with this.
 	return (Score == 21 == Hand.Length == 2)
 EndFunction
 
@@ -97,14 +97,13 @@ bool Function TryDraw()
 		Card drawn = CardDeck.Draw()
 		If (drawn)
 			If (drawn.Reference)
-				ObjectReference turnMarker = NextMarker()
+				ObjectReference turnMarker = Players.GetMarkerFor(self, HandLast)
 				If (turnMarker)
 					Cards.Add(drawn)
 					SetScore(Players.Score(self))
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
-
 					CardDeck.Collect(drawn)
 					WriteUnexpectedValue(self, "TryDraw", "turnMarker", "The turn card marker cannot be none.")
 					return Failure
@@ -125,49 +124,8 @@ bool Function TryDraw()
 EndFunction
 
 
-ObjectReference Function NextMarker()
-	If (Marker)
-		If (HandLast == Invalid)
-			return Marker.Card01
-		ElseIf (HandLast == 0)
-			return Marker.Card02
-		ElseIf (HandLast == 1)
-			return Marker.Card03
-		ElseIf (HandLast == 2)
-			return Marker.Card04
-		ElseIf (HandLast == 3)
-			return Marker.Card05
-		ElseIf (HandLast == 4)
-			return Marker.Card06
-		ElseIf (HandLast == 5)
-			return Marker.Card07
-		ElseIf (HandLast == 6)
-			return Marker.Card08
-		ElseIf (HandLast == 7)
-			return Marker.Card09
-		ElseIf (HandLast == 8)
-			return Marker.Card10
-		ElseIf (HandLast == 9)
-			return Marker.Card11
-		Else
-			WriteUnexpectedValue(self, "NextMarker", "HandLast", "The next marker "+HandLast+" is out of range.")
-			return none
-		EndIf
-	Else
-		WriteUnexpectedValue(self, "NextMarker", "Marker", "Cannot get a none marker.")
-		return none
-	EndIf
-EndFunction
-
-
-; Abstract
+; Virtual
 ;---------------------------------------------
-
-MarkerValue Function IMarkers()
-	{Required - Destination markers for motion.}
-	WriteNotImplemented(self, "IMarkers", "Not implemented in the empty state.")
-	return new MarkerValue
-EndFunction
 
 int Function IWager()
 	{Ask the amount of caps to wager.}
@@ -181,7 +139,7 @@ int Function IChoice()
 	return Invalid
 EndFunction
 
-Event OnTurn(int aTurn)
+Event OnTurn(int number)
 	WriteNotImplemented(self, "OnTurn", "Not implemented in the empty state.")
 EndEvent
 
@@ -195,9 +153,14 @@ EndEvent
 
 State Starting
 	Event OnState()
-		Session = new SessionData
-		Marker = IMarkers()
-		WriteLine(self, "Joined")
+		int index = Players.FindBy(self)
+		If (index > Invalid)
+			SeatValue =  Players.GetAt(index)
+			Session = new SessionData
+			WriteLine(self, "Sitting, "+SeatValue)
+		Else
+			WriteUnexpected(self, "Starting.OnState", "Could not find seat for self.")
+		EndIf
 	EndEvent
 EndState
 
@@ -354,6 +317,12 @@ Group Scripts
 EndGroup
 
 Group Player
+	Seat Property Seating Hidden
+		Seat Function Get()
+			return SeatValue
+		EndFunction
+	EndProperty
+
 	string Property Name Hidden
 		string Function Get()
 			return self.GetName()

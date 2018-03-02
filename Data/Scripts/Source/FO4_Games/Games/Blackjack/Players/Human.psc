@@ -22,10 +22,10 @@ Button StandButton
 Button PlayButton
 Button LeaveButton
 
-string ScoreLoseSwf = "GamesBlackjackScoreLose.swf" const
-string ScoreWinSwf = "GamesBlackjackScoreWin.swf" const
-string ScoreBlackjackSwf = "GamesBlackjackScore21.swf" const
-string ScorePushSwf = "GamesBlackjackScorePush.swf" const
+string LoseFX = "GamesBlackjackScoreLose.swf" const
+string WinFX = "GamesBlackjackScoreWin.swf" const
+string BlackjackFX = "GamesBlackjackScore21.swf" const
+string PushFX = "GamesBlackjackScorePush.swf" const
 
 
 ; Events
@@ -85,6 +85,8 @@ EndEvent
 
 State Starting
 	Event OnState()
+		parent.OnState()
+
 		Wager = WagerMinimum
 
 		Display.Open()
@@ -92,25 +94,7 @@ State Starting
 		Display.Bet = Wager
 		Display.Caps = Bank
 		Display.Earnings = Earnings
-
-		parent.OnState()
 	EndEvent
-
-	MarkerValue Function IMarkers()
-		MarkerValue marker = new MarkerValue
-		marker.Card01 = Games_Blackjack_P1C01
-		marker.Card02 = Games_Blackjack_P1C02
-		marker.Card03 = Games_Blackjack_P1C03
-		marker.Card04 = Games_Blackjack_P1C04
-		marker.Card05 = Games_Blackjack_P1C05
-		marker.Card06 = Games_Blackjack_P1C06
-		marker.Card07 = Games_Blackjack_P1C07
-		marker.Card08 = Games_Blackjack_P1C08
-		marker.Card09 = Games_Blackjack_P1C09
-		marker.Card10 = Games_Blackjack_P1C10
-		marker.Card11 = Games_Blackjack_P1C11
-		return marker
-	EndFunction
 EndState
 
 
@@ -122,7 +106,7 @@ State Wagering
 		EndIf
 
 		Display.Score = 0
-		Display.Bet = Wager ; last wager amount
+		Display.Bet = Wager
 		Display.Earnings = Earnings
 		Display.Caps = Bank
 
@@ -157,7 +141,7 @@ State Wagering
 				EndIf
 
 			ElseIf (selected == LeaveButton)
-				If (Players.LeaveRequest(self))
+				If (Players.Leave(self))
 					akSender.UnregisterForSelectedEvent(self)
 					akSender.Hide()
 				Else
@@ -210,7 +194,7 @@ EndState
 
 
 State Playing
-	Event OnTurn(int aTurn)
+	Event OnTurn(int number)
 		Display.Score = Score
 	EndEvent
 
@@ -242,6 +226,7 @@ State Scoring
 	Event OnState()
 		parent.OnState()
 		Player.AddItem(Caps, Winnings, true)
+
 		Display.Earnings = Earnings
 		Display.Caps = Bank
 
@@ -255,14 +240,14 @@ State Scoring
 			If (ButtonMenu.Selected == PlayButton)
 				; Selected the play button, no further action required.
 			ElseIf (ButtonMenu.Selected == LeaveButton)
-				Players.LeaveRequest(self)
+				Players.Leave(self)
 			Else
 				WriteUnexpected(self, "Scoring.OnState", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
-				Players.LeaveRequest(self)
+				Players.Leave(self)
 			EndIf
 		Else
 			WriteUnexpected(self, "Scoring.OnState", "No button hint was selected.")
-			Players.LeaveRequest(self)
+			Players.Leave(self)
 		EndIf
 	EndEvent
 
@@ -270,13 +255,13 @@ State Scoring
 		parent.OnScoring(scoring)
 
 		If (scoring == ScoreLose)
-			Game.ShowPerkVaultBoyOnHUD(ScoreLoseSwf)
+			Game.ShowPerkVaultBoyOnHUD(LoseFX)
 		ElseIf (scoring == ScoreWin)
-			Game.ShowPerkVaultBoyOnHUD(ScoreWinSwf)
+			Game.ShowPerkVaultBoyOnHUD(WinFX)
 		ElseIf (scoring == ScoreBlackjack)
-			Game.ShowPerkVaultBoyOnHUD(ScoreBlackjackSwf)
+			Game.ShowPerkVaultBoyOnHUD(BlackjackFX)
 		ElseIf (scoring == ScorePush)
-			Game.ShowPerkVaultBoyOnHUD(ScorePushSwf)
+			Game.ShowPerkVaultBoyOnHUD(PushFX)
 		Else
 			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
 		EndIf
@@ -296,11 +281,6 @@ EndState
 
 ; Requests
 ;---------------------------------------------
-
-MarkerValue Function IMarkers()
-	; Required for type-check return because function is not on object.
-	return parent.IMarkers()
-EndFunction
 
 int Function IWager()
 	; Required for type-check return because function is not on object.
@@ -347,18 +327,4 @@ Group Player
 			return PlayerRef
 		EndFunction
 	EndProperty
-EndGroup
-
-Group Markers
-	ObjectReference Property Games_Blackjack_P1C01 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C02 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C03 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C04 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C05 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C06 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C07 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C08 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C09 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C10 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C11 Auto Const Mandatory
 EndGroup

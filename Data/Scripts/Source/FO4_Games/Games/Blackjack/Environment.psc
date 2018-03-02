@@ -1,7 +1,6 @@
 ScriptName Games:Blackjack:Environment extends Games:Blackjack:Type
 import Games:Shared:Log
 
-; TODO: Assign seating to players here.
 
 Actor Player
 ObjectReference ExitMarker

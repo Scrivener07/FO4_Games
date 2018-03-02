@@ -50,11 +50,11 @@ EndState
 ; Abstract
 ;---------------------------------------------
 
-Event OnTurn(int aTurn) Native
+Event OnTurn(int number) Native
 Event OnScoring(int scoring) Native
 
 
-; Properties
+; Structures
 ;---------------------------------------------
 
 Struct SessionData
@@ -69,19 +69,9 @@ Struct MatchData
 	int Winnings = 0
 EndStruct
 
-Struct MarkerValue
-	ObjectReference Card01
-	ObjectReference Card02
-	ObjectReference Card03
-	ObjectReference Card04
-	ObjectReference Card05
-	ObjectReference Card06
-	ObjectReference Card07
-	ObjectReference Card08
-	ObjectReference Card09
-	ObjectReference Card10
-	ObjectReference Card11
-EndStruct
+
+; Properties
+;---------------------------------------------
 
 Group Wager
 	int Property WagerStep = 5 AutoReadOnly

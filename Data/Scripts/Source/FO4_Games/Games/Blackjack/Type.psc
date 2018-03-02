@@ -3,7 +3,6 @@ import Games
 import Games:Shared:Log
 import Games:Shared:Papyrus
 
-
 ; States
 ;---------------------------------------------
 
