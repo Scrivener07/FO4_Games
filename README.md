@@ -12,7 +12,7 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 - [ ] Caravan
 - [ ] Cadillac
 
-#### Requirments
+#### Requirements
 * A computer, PC only.
 * [F4SE](http://f4se.silverlock.org/)
 
