@@ -108,7 +108,7 @@ Group Properties
 	bool Property Incomplete = false AutoReadOnly
 EndGroup
 
-Group Tasks
+Group States
 	string Property IdlingState = "" AutoReadOnly
 	string Property StartingState = "Starting" AutoReadOnly
 	string Property WageringState = "Wagering" AutoReadOnly

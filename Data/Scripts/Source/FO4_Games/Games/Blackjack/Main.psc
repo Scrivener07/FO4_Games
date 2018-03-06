@@ -121,7 +121,7 @@ State Starting
 			AwaitState(Players, StartingState)
 			TryState(self, WageringID)
 		Else
-			WriteUnexpected(self, "Starting.OnBeginState", "Could not begin the '"+StartingState+"' task.")
+			WriteUnexpected(self, "Starting.OnBeginState", "Could not begin the '"+StartingState+"' state.")
 			TryState(self, ExitingID)
 		EndIf
 	EndEvent
@@ -161,7 +161,7 @@ State Wagering
 				TryState(self, ExitingID)
 			EndIf
 		Else
-			WriteUnexpected(self, "Wagering.OnBeginState", "Could not begin the '"+WageringState+"' task.")
+			WriteUnexpected(self, "Wagering.OnBeginState", "Could not begin the '"+WageringState+"' state.")
 			TryState(self, ExitingID)
 		EndIf
 	EndEvent
@@ -182,7 +182,7 @@ State Dealing
 			AwaitState(Players, DealingState)
 			TryState(self, PlayingID)
 		Else
-			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' task.")
+			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' state.")
 			TryState(self, ExitingID)
 		EndIf
 	EndEvent
@@ -202,7 +202,7 @@ State Playing
 			AwaitState(Players, PlayingState)
 			TryState(self, ScoringID)
 		Else
-			WriteUnexpected(self, "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' task.")
+			WriteUnexpected(self, "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' state.")
 			TryState(self, ExitingID)
 		EndIf
 	EndEvent
@@ -235,7 +235,7 @@ State Scoring
 				TryState(self, ExitingID)
 			EndIf
 		Else
-			WriteUnexpected(self, "Scoring.OnBeginState", "Could not begin the '"+ScoringState+"' task.")
+			WriteUnexpected(self, "Scoring.OnBeginState", "Could not begin the '"+ScoringState+"' state.")
 			TryState(self, ExitingID)
 		EndIf
 	EndEvent
@@ -255,7 +255,7 @@ State Exiting
 			AwaitState(Players, ExitingState)
 			AwaitState(Environment, ExitingState)
 		Else
-			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' task.")
+			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' state.")
 		EndIf
 
 		TryState(self, IdlingID)

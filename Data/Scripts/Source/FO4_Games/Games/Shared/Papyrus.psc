@@ -25,7 +25,7 @@ bool Function AwaitState(ScriptObject this, string statename = "Busy") Global
 			WriteLine(this, "Completed awaiting the '"+statename+"' state.")
 			return true
 		Else
-			WriteUnexpected(this, "AwaitState", "Task could not await the '"+statename+"' state.")
+			WriteUnexpected(this, "AwaitState", "Could not await the '"+statename+"' state.")
 			return false
 		EndIf
 	Else
