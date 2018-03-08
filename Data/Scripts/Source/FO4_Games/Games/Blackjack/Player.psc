@@ -2,19 +2,17 @@ ScriptName Games:Blackjack:Player extends Games:Blackjack:PlayerType Hidden
 import Games
 import Games:Blackjack
 import Games:Shared
+import Games:Shared:papyrus
 import Games:Shared:Deck
 import Games:Shared:Log
+import Games:Blackjack:Players
 
-Card[] Cards
-
+Card[] HandArray
 SessionData Session
 MatchData Match
 
-MarkerValue Marker
-
 bool Success = true const
 bool Failure = false const
-
 int Win = 21 const
 
 
@@ -22,29 +20,10 @@ int Win = 21 const
 ;---------------------------------------------
 
 Event OnInit()
-	Cards = new Card[0]
+	HandArray = new Card[0]
 	Match = new MatchData
 	Session = new SessionData
-	Marker = new MarkerValue
 EndEvent
-
-
-; Functions
-;---------------------------------------------
-
-bool Function IsWin(int aScore)
-	return aScore == Win
-EndFunction
-
-
-bool Function IsInPlay(int aScore)
-	return aScore < Win
-EndFunction
-
-
-bool Function IsBust(int aScore)
-	return aScore > Win
-EndFunction
 
 
 ; States
@@ -53,15 +32,14 @@ EndFunction
 State Starting
 	Event OnState()
 		Session = new SessionData
-		Marker = IMarkers()
-		WriteLine(self, "Joined")
+		WriteLine(self, "Sitting, "+Seating)
 	EndEvent
 EndState
 
 
 State Wagering
 	Event OnState()
-		Cards = new Card[0]
+		HandArray = new Card[0]
 		Match = new MatchData
 		Match.Bet = IWager()
 		WriteLine(self, "Wagered a bet of "+Bet)
@@ -84,9 +62,9 @@ EndState
 State Playing
 	Event OnState()
 		{Play the next turn until a stand.}
-		bool Continue = true const
-		bool Break = false const
-		bool next = Continue
+		bool move = true const
+		bool break = false const
+		bool next = move
 
 		While (next)
 			Match.Turn += 1
@@ -94,29 +72,29 @@ State Playing
 
 			If (IsWin(Score))
 				WriteLine(self, "Standing with 21.")
-				next = Break
+				next = break
 
 			ElseIf (IsBust(Score))
 				WriteLine(self, "Busted!")
-				next = Break
+				next = break
 			Else
 				Match.TurnChoice = IChoice()
 
 				If (Match.TurnChoice == ChoiceHit)
 					If (TryDraw())
-						WriteLine(self, "Drew a card." + Hand[Last])
-						next = Continue
+						WriteLine(self, "Drew a card." + Hand[HandLast])
+						next = move
 					Else
 						WriteUnexpected(self, "Playing.OnState", "Encountered problem drawing a card!")
-						next = Break
+						next = break
 					EndIf
 
 				ElseIf (Match.TurnChoice == ChoiceStand)
 					WriteLine(self, "Chose to stand.")
-					next = Break
+					next = break
 				Else
 					WriteUnexpectedValue(self, "Playing.OnState", "Match.TurnChoice", "The play choice "+Match.TurnChoice+" was out of range.")
-					next = Break
+					next = break
 				EndIf
 			EndIf
 		EndWhile
@@ -139,57 +117,55 @@ State Scoring
 		Else
 			If (IsBust(Score))
 				WriteLine(self, "Score of "+Score+" is a bust.")
-				OnScoreLose()
+				OnScoring(ScoreLose)
 			Else
 				If (IsBust(Dealer.Score))
 					WriteLine(self, "The dealer busted with "+Dealer.Score+".")
-					OnScoreWin()
+					OnScoring(ScoreWin)
 				Else
 					If (Score > Dealer.Score)
 						WriteLine(self, "Score of "+Score+" beats dealers "+Dealer.Score+".")
-						OnScoreWin()
+						If (HasBlackjack())
+							OnScoring(ScoreBlackjack)
+						Else
+							OnScoring(ScoreWin)
+						EndIf
 					ElseIf (Score < Dealer.Score)
 						WriteLine(self, "Score of "+Score+" loses to dealers "+Dealer.Score+".")
-						OnScoreLose()
+						OnScoring(ScoreLose)
 					ElseIf (Score == Dealer.Score)
 						WriteLine(self, "Score of "+Score+" pushes dealers "+Dealer.Score+".")
-						OnScorePush()
+						OnScoring(ScorePush)
 					Else
-						WriteUnexpected(self, "Scoring.OnState", "Encountered a problem handling score "+Score+" against dealers "+dealer.Score+".")
-						OnScoreError()
+						WriteUnexpected(self, "Scoring.OnState", "Encountered a problem handling score "+Score+" against dealers "+dealer.Score+". Refunded "+Bet+" caps.")
+						OnScoring(Invalid)
 					EndIf
 				EndIf
 			EndIf
 		EndIf
 	EndEvent
 
-	Event OnScoreLose()
-		Session.Earnings -= Bet
-		WriteLine(self, "Lost "+Bet+" caps.")
-	EndEvent
-
-	Event OnScoreWin()
-		If (Score == 21 == Hand.Length == 2)
-			Match.Winnings = Bet + (Bet * 1.5) as int
-			Session.Earnings += Winnings
-			WriteLine(self, "Won "+Winnings+" caps with a Blackjack.")
-		Else
+	Event OnScoring(int scoring)
+		If (scoring == Invalid)
+			Match.Winnings = 0
+		ElseIf (scoring == ScoreLose)
+			Match.Winnings -= Bet
+			Session.Earnings -= Bet
+			WriteLine(self, "Lost "+Bet+" caps.")
+		ElseIf (scoring == ScoreWin)
 			Match.Winnings = Bet * 2
 			Session.Earnings += Winnings
 			WriteLine(self, "Won "+Winnings+" caps.")
+		ElseIf (scoring == ScoreBlackjack)
+			Match.Winnings = Bet + (Bet * 1.5) as int
+			Session.Earnings += Winnings
+			WriteLine(self, "Won "+Winnings+" caps with a Blackjack.")
+		ElseIf (scoring == ScorePush)
+			Match.Winnings = 0
+			WriteLine(self, "Pushed "+Bet+" caps.")
+		Else
+			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
 		EndIf
-	EndEvent
-
-	Event OnScorePush()
-		Match.Winnings = Bet
-		Session.Earnings += Bet
-		WriteLine(self, "Pushed "+Bet+" caps.")
-	EndEvent
-
-	Event OnScoreError()
-		Match.Winnings = Bet
-		Session.Earnings += Bet
-		WriteUnexpected(self, "OnScoreError", "Something unexpected happened. Refunded "+Bet+" caps.")
 	EndEvent
 EndState
 
@@ -202,54 +178,45 @@ State Exiting
 EndState
 
 
-; Abstract
+; Methods
 ;---------------------------------------------
 
-Event OnTurn(int aTurn)
-	WriteNotImplemented(self, "OnTurn", "Not implemented in the empty state.")
-EndEvent
-
-Event OnScoreLose()
-	WriteNotImplemented(self, "OnScoreLose", "Not implemented in the empty state.")
-EndEvent
-
-Event OnScoreWin()
-	WriteNotImplemented(self, "OnScoreWin", "Not implemented in the empty state.")
-EndEvent
-
-Event OnScorePush()
-	WriteNotImplemented(self, "OnScorePush", "Not implemented in the empty state.")
-EndEvent
-
-Event OnScoreError()
-	WriteNotImplemented(self, "OnScoreError", "Not implemented in the empty state.")
-EndEvent
-
-
-; Interface
-;---------------------------------------------
-
-MarkerValue Function IMarkers()
-	{Required - Destination markers for motion.}
-	WriteNotImplemented(self, "IMarkers", "Not implemented in the empty state.")
-	return new MarkerValue
-EndFunction
-
-int Function IWager()
-	{Ask the amount of caps to wager.}
-	WriteNotImplemented(self, "IWager", "Not implemented in the empty state.")
-	return Invalid
-EndFunction
-
-int Function IChoice()
-	{Ask the choice type for this turn.}
-	WriteNotImplemented(self, "IChoice", "Not implemented in the empty state.")
-	return Invalid
+Function SetScore(int value)
+	{Set the players match score.}
+	Match.Score = value
 EndFunction
 
 
-; Virtual
-;---------------------------------------------
+bool Function Quit()
+	Session.Continue = false
+	return true
+EndFunction
+
+
+string Function ToString()
+	return Match + " " + Session
+EndFunction
+
+
+bool Function IsWin(int aScore)
+	return aScore == Win
+EndFunction
+
+
+bool Function IsInPlay(int aScore)
+	return aScore < Win
+EndFunction
+
+
+bool Function IsBust(int aScore)
+	return aScore > Win
+EndFunction
+
+
+bool Function HasBlackjack()
+	return (Score == 21 == Hand.Length == 2)
+EndFunction
+
 
 bool Function IsValidWager(int value)
 	If (value == Match.Bet)
@@ -274,38 +241,24 @@ int Function GetBank()
 EndFunction
 
 
-Function SetScore(int value)
-	Match.Score = value
-EndFunction
-
-
-Function Rematch(bool value)
-	Match.Rematch = value
-EndFunction
-
-
-; Functions
-;---------------------------------------------
-
 bool Function TryDraw()
 	If (CanDraw)
-		Card drawn = CardDeck.Draw()
+		Card drawn = Cards.Deck.Draw()
 		If (drawn)
 			If (drawn.Reference)
-				ObjectReference turnMarker = NextMarker()
+				ObjectReference turnMarker = GetMarkerFor(HandLast)
 				If (turnMarker)
-					Cards.Add(drawn)
-					SetScore(Actors.Score(self))
+					HandArray.Add(drawn)
+					SetScore(Players.Score(self))
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
-
-					CardDeck.Collect(drawn)
+					Cards.Deck.Collect(drawn)
 					WriteUnexpectedValue(self, "TryDraw", "turnMarker", "The turn card marker cannot be none.")
 					return Failure
 				EndIf
 			Else
-				CardDeck.Collect(drawn)
+				Cards.Deck.Collect(drawn)
 				WriteUnexpectedValue(self, "TryDraw", "drawn.Reference", "Cannot draw card with a none Card.Reference.")
 				return Failure
 			EndIf
@@ -320,68 +273,84 @@ bool Function TryDraw()
 EndFunction
 
 
-ObjectReference Function NextMarker()
-	If (Marker)
-		If (Last == Invalid)
-			return Marker.Card01
-		ElseIf (Last == 0)
-			return Marker.Card02
-		ElseIf (Last == 1)
-			return Marker.Card03
-		ElseIf (Last == 2)
-			return Marker.Card04
-		ElseIf (Last == 3)
-			return Marker.Card05
-		ElseIf (Last == 4)
-			return Marker.Card06
-		ElseIf (Last == 5)
-			return Marker.Card07
-		ElseIf (Last == 6)
-			return Marker.Card08
-		ElseIf (Last == 7)
-			return Marker.Card09
-		ElseIf (Last == 8)
-			return Marker.Card10
-		ElseIf (Last == 9)
-			return Marker.Card11
+ObjectReference Function GetMarkerFor(int next)
+	If (Seating)
+		If (next == Invalid)
+			return Seating.Card01
+		ElseIf (next == 0)
+			return Seating.Card02
+		ElseIf (next == 1)
+			return Seating.Card03
+		ElseIf (next == 2)
+			return Seating.Card04
+		ElseIf (next == 3)
+			return Seating.Card05
+		ElseIf (next == 4)
+			return Seating.Card06
+		ElseIf (next == 5)
+			return Seating.Card07
+		ElseIf (next == 6)
+			return Seating.Card08
+		ElseIf (next == 7)
+			return Seating.Card09
+		ElseIf (next == 8)
+			return Seating.Card10
+		ElseIf (next == 9)
+			return Seating.Card11
 		Else
-			WriteUnexpectedValue(self, "NextMarker", "Last", "The next marker "+Last+" is out of range.")
+			WriteUnexpectedValue(self, "NextMarker", "next", "The next marker "+next+" is out of range.")
 			return none
 		EndIf
 	Else
-		WriteUnexpectedValue(self, "NextMarker", "Marker", "Cannot get a none marker.")
+		WriteUnexpectedValue(self, "NextMarker", "Seating", "Could not find a seat for the '"+Name+"' player in the array.")
 		return none
 	EndIf
 EndFunction
 
 
-string Function ToString()
-	return Match + " " + Session
+; Virtual
+;---------------------------------------------
+
+int Function IWager()
+	{Ask the amount of caps to wager.}
+	WriteNotImplemented(self, "IWager", "Not implemented in the empty state.")
+	return Invalid
 EndFunction
+
+int Function IChoice()
+	{Ask the choice type for this turn.}
+	WriteNotImplemented(self, "IChoice", "Not implemented in the empty state.")
+	return Invalid
+EndFunction
+
+Event OnTurn(int number)
+	WriteNotImplemented(self, "OnTurn", "Not implemented in the empty state.")
+EndEvent
+
+Event OnScoring(int scoring)
+	WriteNotImplemented(self, "OnScoring", "Not implemented in the empty state.")
+EndEvent
 
 
 ; Properties
 ;---------------------------------------------
 
 Group Scripts
-;	Blackjack:Main Property Blackjack Auto Const Mandatory
-	Blackjack:Cards Property CardDeck Auto Const Mandatory
-	Blackjack:Actors Property Actors Auto Const Mandatory
+	Blackjack:Players Property Players Auto Const Mandatory
 	Blackjack:Players:Dealer Property Dealer Auto Const Mandatory
 	Blackjack:Players:Human Property Human Auto Const Mandatory
+	Blackjack:Cards Property Cards Auto Const Mandatory
 	Shared:Motion Property Motion Auto Const Mandatory
+EndGroup
+
+Group Properties
+	Seat Property Seating Auto Hidden
 EndGroup
 
 Group Player
 	string Property Name Hidden
 		string Function Get()
 			return self.GetName()
-		EndFunction
-	EndProperty
-
-	bool Property Rematch Hidden
-		bool Function Get()
-			return Match.Rematch
 		EndFunction
 	EndProperty
 
@@ -426,18 +395,30 @@ Group Player
 			return Bank > 0
 		EndFunction
 	EndProperty
+
+	bool Property Continue Hidden
+		bool Function Get()
+			return Session.Continue
+		EndFunction
+	EndProperty
 EndGroup
 
 Group Hand
 	Card[] Property Hand Hidden
 		Card[] Function Get()
-			return Cards
+			return HandArray
 		EndFunction
 	EndProperty
 
-	int Property Last Hidden
+	int Property HandSize Hidden
 		int Function Get()
-			return Cards.Length - 1
+			return HandArray.Length
+		EndFunction
+	EndProperty
+
+	int Property HandLast Hidden
+		int Function Get()
+			return HandArray.Length - 1
 		EndFunction
 	EndProperty
 

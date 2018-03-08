@@ -27,7 +27,7 @@ Event OnGameReload()
 	If (UI.RegisterCustomMenu(Display.Menu, Display.Asset, Display.Root, data))
 		WriteLine(self, ToString()+" has registered as a custom menu.")
 	Else
-		WriteUnexpectedValue(self, "OnGameReload", "Display", ToString()+" failed to register as a custom menu.")
+		WriteUnexpected(self, "OnGameReload", ToString()+" failed to register as a custom menu.")
 	EndIf
 EndEvent
 

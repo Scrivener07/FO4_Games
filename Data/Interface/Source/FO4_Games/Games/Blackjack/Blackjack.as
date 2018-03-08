@@ -4,10 +4,10 @@
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.text.TextField;
+	import flash.utils.getQualifiedClassName;
+	import Games.Debug;
 	import Games.Display;
 	import Games.IDisplay;
-	import Games.Debug;
-	import flash.utils.getQualifiedClassName;
 
 	public class Blackjack extends Display implements IDisplay
 	{

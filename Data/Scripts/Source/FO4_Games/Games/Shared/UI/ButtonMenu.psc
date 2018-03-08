@@ -35,19 +35,13 @@ EndFunction
 
 
 bool Function Show()
-	{Begin the shown task.}
-	bool awaited = AwaitState(self, "Shown")
-	If (awaited)
-		WriteLine(self, "Awaited the `Show` method.")
-	Else
-		WriteUnexpectedValue(self, "Show", "awaited", "Something went wrong awaiting the Shown task.")
-	EndIf
-	return awaited
+	{Begin the shown state.}
+	return AwaitState(self, "Shown")
 EndFunction
 
 
 bool Function Hide()
-	{End any running task.}
+	{End any running state.}
 	return ClearState(self)
 EndFunction
 

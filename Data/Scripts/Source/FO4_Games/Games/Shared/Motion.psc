@@ -29,7 +29,7 @@ Function TranslateEach(ObjectReference[] aObjects, ObjectReference aDestination,
 EndFunction
 
 
-; Task
+; States
 ;---------------------------------------------
 
 State Busy
