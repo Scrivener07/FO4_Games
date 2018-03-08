@@ -47,7 +47,7 @@ EndEvent
 bool Function Play(ObjectReference aExitMarker)
 	If (Idling)
 		If (Environment.SetExit(aExitMarker))
-			return TryState(self, StartingID)
+			return NewState(self, StartingID)
 		Else
 			WriteUnexpected(self, "Play", "Environment could not set the exit marker.")
 			return false
@@ -110,7 +110,7 @@ State Starting
 		WriteLine("Blackjack", "Starting")
 
 		If (Human.HasCaps == false)
-			TryState(self, IdlingID)
+			NewState(self, IdlingID)
 			Games_Blackjack_MessageNoFunds.Show()
 			return
 		EndIf
@@ -119,10 +119,10 @@ State Starting
 			AwaitState(Environment, StartingState)
 			AwaitState(Cards, StartingState)
 			AwaitState(Players, StartingState)
-			TryState(self, WageringID)
+			NewState(self, WageringID)
 		Else
 			WriteUnexpected(self, "Starting.OnBeginState", "Could not begin the '"+StartingState+"' state.")
-			TryState(self, ExitingID)
+			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -142,7 +142,7 @@ State Wagering
 
 		If (Human.HasCaps == false)
 			WriteLine("Blackjack", "Kicking because there are no funds to wager.")
-			TryState(self, ExitingID)
+			NewState(self, ExitingID)
 			Games_Blackjack_MessageNoFunds.Show()
 			return
 		EndIf
@@ -151,18 +151,20 @@ State Wagering
 			Utility.Wait(TimeDelay)
 			AwaitState(Players, WageringState)
 
-			If (Players.HasHuman)
+			If (Human.Continue)
 				If (Human.Bet == Invalid)
-					TryState(self, ExitingID)
+					WriteUnexpected(self, "Wagering.OnBeginState", "Exiting. Human bet of "+Human.Bet+" is invalid.")
+					NewState(self, ExitingID)
 				Else
-					TryState(self, DealingID)
+					NewState(self, DealingID)
 				EndIf
 			Else
-				TryState(self, ExitingID)
+				WriteUnexpected(self, "Wagering.OnBeginState", "Exiting. Has no human. State:"+Human.StateName)
+				NewState(self, ExitingID)
 			EndIf
 		Else
 			WriteUnexpected(self, "Wagering.OnBeginState", "Could not begin the '"+WageringState+"' state.")
-			TryState(self, ExitingID)
+			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -180,10 +182,10 @@ State Dealing
 			Utility.Wait(TimeDelay)
 			AwaitState(Cards, DealingState)
 			AwaitState(Players, DealingState)
-			TryState(self, PlayingID)
+			NewState(self, PlayingID)
 		Else
 			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' state.")
-			TryState(self, ExitingID)
+			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -200,10 +202,10 @@ State Playing
 		If (SendPhase(self, PlayingState, Begun))
 			Utility.Wait(TimeDelay)
 			AwaitState(Players, PlayingState)
-			TryState(self, ScoringID)
+			NewState(self, ScoringID)
 		Else
 			WriteUnexpected(self, "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' state.")
-			TryState(self, ExitingID)
+			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -221,22 +223,22 @@ State Scoring
 			Utility.Wait(TimeDelay)
 			AwaitState(Players, ScoringState)
 
-			If (Players.HasHuman)
+			If (Human.Continue)
 				If (Human.HasCaps)
 					WriteLine("Blackjack", "The player will continue playing game.")
-					TryState(self, WageringID)
+					NewState(self, WageringID)
 				Else
 					WriteLine("Blackjack", "Kicked from game for low funds.")
-					TryState(self, ExitingID)
+					NewState(self, ExitingID)
 					Games_Blackjack_MessageNoFunds.Show()
 				EndIf
 			Else
 				WriteLine("Blackjack", "The human player left the game.")
-				TryState(self, ExitingID)
+				NewState(self, ExitingID)
 			EndIf
 		Else
 			WriteUnexpected(self, "Scoring.OnBeginState", "Could not begin the '"+ScoringState+"' state.")
-			TryState(self, ExitingID)
+			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
@@ -258,7 +260,7 @@ State Exiting
 			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' state.")
 		EndIf
 
-		TryState(self, IdlingID)
+		NewState(self, IdlingID)
 	EndEvent
 
 	Event OnEndState(string asNewState)

@@ -4,12 +4,12 @@ import Games:Shared:Log
 ; States
 ;---------------------------------------------
 
-bool Function TryState(ScriptObject this, int stateID) Global
+bool Function NewState(ScriptObject this, int stateID) Global
 	If (this)
 		this.StartTimer(0.1, stateID)
 		return true
 	Else
-		WriteUnexpectedValue("Games:Shared:Papyrus", "TryState", "this", "Cannot request state ID "+stateID+" on a none script.")
+		WriteUnexpectedValue("Games:Shared:Papyrus", "NewState", "this", "Cannot request state ID "+stateID+" on a none script.")
 		return false
 	EndIf
 EndFunction
@@ -18,7 +18,7 @@ EndFunction
 bool Function AwaitState(ScriptObject this, string statename = "Busy") Global
 	{Polling until the given script is in the "empty" state.}
 	If (this)
-		If (StartState(this, statename))
+		If (BeginState(this, statename))
 			While (StateRunning(this))
 				Utility.Wait(0.1)
 			EndWhile
@@ -35,11 +35,11 @@ bool Function AwaitState(ScriptObject this, string statename = "Busy") Global
 EndFunction
 
 
-bool Function StartState(ScriptObject this, string statename = "Busy") Global
-	{Starts the given state without waiting for it to end.}
+bool Function BeginState(ScriptObject this, string statename = "Busy") Global
+	{Begins the given state without waiting for it to end.}
 	If (this)
 		If (StateRunning(this))
-			WriteUnexpected(this, "StartState", "Cannot start the '"+statename+"' state while '"+this.GetState()+"' state is running.")
+			WriteUnexpected(this, "BeginState", "Cannot start the '"+statename+"' state while '"+this.GetState()+"' state is running.")
 			return false
 		Else
 			If !(StringIsNoneOrEmpty(statename))
@@ -47,16 +47,16 @@ bool Function StartState(ScriptObject this, string statename = "Busy") Global
 					WriteLine(this, "Started the '"+statename+"' state.")
 					return true
 				Else
-					WriteUnexpected(this, "StartState", "Start state cannot change state for the '"+statename+"' state.")
+					WriteUnexpected(this, "BeginState", "Start state cannot change state for the '"+statename+"' state.")
 					return false
 				EndIf
 			Else
-				WriteUnexpectedValue(this, "StartState", "statename", "Cannot operate on a none or empty state.")
+				WriteUnexpectedValue(this, "BeginState", "statename", "Cannot operate on a none or empty state.")
 				return false
 			EndIf
 		EndIf
 	Else
-		WriteUnexpectedValue("Games:Shared:Papyrus", "StartState", "this", "The script cannot be none.")
+		WriteUnexpectedValue("Games:Shared:Papyrus", "BeginState", "this", "The script cannot be none.")
 		return false
 	EndIf
 EndFunction
@@ -74,7 +74,7 @@ EndFunction
 
 
 bool Function ClearState(ScriptObject this) Global
-	{Clears any running state on the given script.}
+	{Ends any running state on the given script.}
 	If (this)
 		If (ChangeState(this, ""))
 			WriteLine(this, "Clear state has completed.")

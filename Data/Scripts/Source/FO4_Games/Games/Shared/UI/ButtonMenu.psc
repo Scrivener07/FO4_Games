@@ -36,13 +36,7 @@ EndFunction
 
 bool Function Show()
 	{Begin the shown state.}
-	bool awaited = AwaitState(self, "Shown")
-	If (awaited)
-		WriteLine(self, "Awaited the `Show` method.")
-	Else
-		WriteUnexpectedValue(self, "Show", "awaited", "Something went wrong awaiting the Shown state.")
-	EndIf
-	return awaited
+	return AwaitState(self, "Shown")
 EndFunction
 
 

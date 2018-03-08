@@ -1,8 +1,8 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
 import Games
 import Games:Blackjack
-import Games:Shared:Log
 import Games:Shared
+import Games:Shared:Log
 import Games:Shared:UI:ButtonMenu
 
 Actor PlayerRef
@@ -86,9 +86,7 @@ EndEvent
 State Starting
 	Event OnState()
 		parent.OnState()
-
 		Wager = WagerMinimum
-
 		Display.Open()
 		Display.Score = 0
 		Display.Bet = Wager
@@ -101,17 +99,15 @@ EndState
 State Wagering
 	Event OnState()
 		If (Wager > Bank)
+			WriteLine(self, "A wager of "+Wager+" cannot be greater than a bank of "+Bank+". Resetting wager to "+WagerMinimum)
 			Wager = WagerMinimum
-			WriteUnexpectedValue(self, "Wagering.OnState", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
 		EndIf
 
 		Display.Score = 0
 		Display.Bet = Wager
-		Display.Earnings = Earnings
 		Display.Caps = Bank
 
 		parent.OnState()
-		Display.Earnings = Earnings
 	EndEvent
 
 	int Function IWager()
@@ -136,12 +132,11 @@ State Wagering
 				If (IsValidWager(Wager))
 					akSender.UnregisterForSelectedEvent(self)
 					akSender.Hide()
-					Player.RemoveItem(Caps, Wager, true)
-					Display.Caps = Bank
+					; Player.RemoveItem(Caps, Wager, true)
+					; Display.Caps = Bank
 				EndIf
-
 			ElseIf (selected == LeaveButton)
-				If (Players.Leave(self))
+				If (Quit())
 					akSender.UnregisterForSelectedEvent(self)
 					akSender.Hide()
 				Else
@@ -225,10 +220,6 @@ EndState
 State Scoring
 	Event OnState()
 		parent.OnState()
-		Player.AddItem(Caps, Winnings, true)
-
-		Display.Earnings = Earnings
-		Display.Caps = Bank
 
 		ButtonMenu.Clear()
 		ButtonMenu.SelectOnce = true
@@ -238,23 +229,34 @@ State Scoring
 
 		If (ButtonMenu.Selected)
 			If (ButtonMenu.Selected == PlayButton)
-				; Selected the play button, no further action required.
+				WriteLine(self, "Selected the play button.")
 			ElseIf (ButtonMenu.Selected == LeaveButton)
-				Players.Leave(self)
+				Quit()
 			Else
 				WriteUnexpected(self, "Scoring.OnState", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
-				Players.Leave(self)
+				Quit()
 			EndIf
 		Else
 			WriteUnexpected(self, "Scoring.OnState", "No button hint was selected.")
-			Players.Leave(self)
+			Quit()
 		EndIf
 	EndEvent
 
 	Event OnScoring(int scoring)
 		parent.OnScoring(scoring)
 
-		If (scoring == ScoreLose)
+		If (Winnings > 0)
+			Player.AddItem(Caps, Winnings, true)
+		ElseIf (Winnings < 0)
+			Player.RemoveItem(Caps, Wager, true)
+		EndIf
+
+		Display.Earnings = Earnings
+		Display.Caps = Bank
+
+		If (scoring == Invalid)
+			return
+		ElseIf (scoring == ScoreLose)
 			Game.ShowPerkVaultBoyOnHUD(LoseFX)
 		ElseIf (scoring == ScoreWin)
 			Game.ShowPerkVaultBoyOnHUD(WinFX)
@@ -271,7 +273,6 @@ EndState
 
 State Exiting
 	Event OnState()
-		; The exiting state is run after a successful leave request.
 		Wager = 0
 		Display.Close()
 		parent.OnState()

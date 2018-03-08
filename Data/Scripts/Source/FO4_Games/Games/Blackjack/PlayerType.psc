@@ -59,6 +59,7 @@ Event OnScoring(int scoring) Native
 
 Struct SessionData
 	int Earnings = 0
+	bool Continue = true
 EndStruct
 
 Struct MatchData
@@ -83,8 +84,8 @@ Group Choice
 	{The choice type for playing.}
 	int Property ChoiceHit = 0 AutoReadOnly
 	int Property ChoiceStand = 1 AutoReadOnly
-	int Property ChoiceDouble = 2 AutoReadOnly ; not supported
-	int Property ChoiceSplit = 3 AutoReadOnly  ; not supported
+	; int Property ChoiceDouble = 2 AutoReadOnly ; not supported
+	; int Property ChoiceSplit = 3 AutoReadOnly  ; not supported
 EndGroup
 
 Group Score
