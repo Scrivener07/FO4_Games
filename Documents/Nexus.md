@@ -48,6 +48,11 @@
 4) Launch the game.
 [/size]
 
+[size=6]For Support[/size]
+[size=3]-The [url=https://github.com/Scrivener07/FO4_Games]source code[/url] in its entirety, under MIT license.
+-Visit [url=https://discord.gg/uhqu9ey]Scribes Discord[/url] for advanced technical support or discussions.
+[/size]
+
 [size=6]Who to Thank[/size]
 [size=3]-[url=https://www.nexusmods.com/users/1493226]Scrivener07[/url], the brilliant and exceptionally talented individual without whom this entire project would not be possible.
 -[url=https://www.nexusmods.com/fallout4/users/184696]Se7enraven[/url] , who created the wonderful card assets you see.
