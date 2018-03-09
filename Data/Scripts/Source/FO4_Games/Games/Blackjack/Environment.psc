@@ -32,12 +32,14 @@ EndFunction
 Function FadeGameOut()
 	{Fade to a black screen over 1 second and leave up fader when done.}
 	Game.FadeOutGame(true, true, 1.0, 1.0, true)
+	Utility.Wait(2.1)
 EndFunction
 
 
 Function FadeGameIn()
 	{Spend 2 seconds on a black screen before fading in to the game over 1 second and hide fader when done.}
 	Game.FadeOutGame(false, true, 2.0, 1.0)
+	Utility.Wait(3.1)
 EndFunction
 
 
@@ -49,6 +51,8 @@ State Starting
 		{Starting}
 		FadeGameOut()
 		Player.MoveTo(Games_Blackjack_CellMarker)
+
+		Utility.Wait(1.0)
 
 		InputLayer = InputEnableLayer.Create()
 		InputLayer.EnableMovement(false)
