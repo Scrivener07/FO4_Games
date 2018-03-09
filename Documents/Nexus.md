@@ -7,6 +7,8 @@
 | Current Version | 0.1.0.0                                                           |
 | Author or Team  | Scrivener07 and TheWhiteCollarPlayers                             |
 | Brief Overview  | Brings classic games such as Blackjack to the world of Fallout 4. |
+| Classification  | None                                                              |
+| Tags            | FAIR AND BALANCED, ENGLISH, F4SE                                  |
 
 ```
 [size=6]What it does:
@@ -15,8 +17,6 @@
 [/size]
 [size=6]Video Introduction:
 [/size][size=3]This video covers everything you need to know to get the mod properly installed, and how to access the new games. While reading the rest of the mod page is highly recommended, this video is all you need to get the mod installed and gambling. Watching this video is very very strongly recommended if you do not plan on reading the rest of this page.[/size]
-
-
 
 [size=6]What's Included:[/size]
 [size=3]-Playable Blackjack
