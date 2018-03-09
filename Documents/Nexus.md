@@ -10,6 +10,14 @@
 | Classification  | None                                                              |
 | Tags            | FAIR AND BALANCED, ENGLISH, F4SE                                  |
 
+| **Required**              | **URL**                     | **Notes**                 |
+|---------------------------|-----------------------------|---------------------------|
+| Fallout 4 Script Extender | http://f4se.silverlock.org/ | Current version required. |
+
+| **Mirrors**        | **URL**                                           |
+|--------------------|---------------------------------------------------|
+| Download on GitHub | https://github.com/Scrivener07/FO4_Games/releases |
+
 ```
 [size=6]What it does:
 [/size][size=3]Barstool Games restores gambling related minigames like those found in Fallout: New Vegas, to the world of Fallout 4. Currently, the only minigame added is Blackjack which can be played in a variety of ways. However in the future all of the minigames from Fallout: New Vegas as well as others will be added.
