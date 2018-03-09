@@ -147,22 +147,23 @@ State Scoring
 
 	Event OnScoring(int scoring)
 		If (scoring == Invalid)
-			Match.Winnings = 0
-		ElseIf (scoring == ScoreLose)
-			Match.Winnings -= Bet
-			Session.Earnings -= Bet
-			WriteLine(self, "Lost "+Bet+" caps.")
-		ElseIf (scoring == ScoreWin)
-			Match.Winnings = Bet * 2
-			Session.Earnings += Winnings
-			WriteLine(self, "Won "+Winnings+" caps.")
-		ElseIf (scoring == ScoreBlackjack)
-			Match.Winnings = Bet + (Bet * 1.5) as int
-			Session.Earnings += Winnings
-			WriteLine(self, "Won "+Winnings+" caps with a Blackjack.")
+			Match.Debt = 0
+			WriteLine(self, "No caps were won or lost.")
 		ElseIf (scoring == ScorePush)
-			Match.Winnings = 0
+			Match.Debt = 0
 			WriteLine(self, "Pushed "+Bet+" caps.")
+		ElseIf (scoring == ScoreLose)
+			Match.Debt = Bet
+			Session.Earnings -= Debt
+			WriteLine(self, "Lost "+Debt+" caps.")
+		ElseIf (scoring == ScoreWin)
+			Match.Debt = Bet
+			Session.Earnings += Debt
+			WriteLine(self, "Won "+Debt+" caps.")
+		ElseIf (scoring == ScoreBlackjack)
+			Match.Debt = (Bet * 1.5) as int
+			Session.Earnings += Debt
+			WriteLine(self, "Won "+Debt+" caps with a Blackjack.")
 		Else
 			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
 		EndIf
@@ -214,7 +215,7 @@ EndFunction
 
 
 bool Function HasBlackjack()
-	return (Score == 21 == Hand.Length == 2)
+	return (Score == 21 && Hand.Length == 2)
 EndFunction
 
 
@@ -372,9 +373,9 @@ Group Player
 		EndFunction
 	EndProperty
 
-	int Property Winnings Hidden
+	int Property Debt Hidden
 		int Function Get()
-			return Match.Winnings
+			return Match.Debt
 		EndFunction
 	EndProperty
 

@@ -67,7 +67,7 @@ Struct MatchData
 	int Score = 0
 	int Turn = 0
 	int TurnChoice = -1
-	int Winnings = 0
+	int Debt = 0
 EndStruct
 
 
