@@ -22,7 +22,7 @@ bool Function AwaitState(ScriptObject this, string statename = "Busy") Global
 			While (StateRunning(this))
 				Utility.Wait(0.1)
 			EndWhile
-			WriteLine(this, "Completed awaiting the '"+statename+"' state.")
+			; WriteLine(this, "Completed awaiting the '"+statename+"' state.")
 			return true
 		Else
 			WriteUnexpected(this, "AwaitState", "Could not await the '"+statename+"' state.")
@@ -44,7 +44,7 @@ bool Function BeginState(ScriptObject this, string statename = "Busy") Global
 		Else
 			If !(StringIsNoneOrEmpty(statename))
 				If (ChangeState(this, statename))
-					WriteLine(this, "Started the '"+statename+"' state.")
+					; WriteLine(this, "Started the '"+statename+"' state.")
 					return true
 				Else
 					WriteUnexpected(this, "BeginState", "Start state cannot change state for the '"+statename+"' state.")
@@ -77,7 +77,7 @@ bool Function ClearState(ScriptObject this) Global
 	{Ends any running state on the given script.}
 	If (this)
 		If (ChangeState(this, ""))
-			WriteLine(this, "Clear state has completed.")
+			; WriteLine(this, "Clear state has completed.")
 			return true
 		Else
 			WriteUnexpected(this, "ClearState", "Unable to change the scripts state to empty.")

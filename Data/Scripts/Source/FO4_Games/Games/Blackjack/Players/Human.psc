@@ -106,6 +106,7 @@ State Wagering
 		Display.Score = 0
 		Display.Bet = Wager
 		Display.Caps = Bank
+		Display.Earnings = Earnings
 
 		parent.OnState()
 	EndEvent
@@ -132,8 +133,6 @@ State Wagering
 				If (IsValidWager(Wager))
 					akSender.UnregisterForSelectedEvent(self)
 					akSender.Hide()
-					; Player.RemoveItem(Caps, Wager, true)
-					; Display.Caps = Bank
 				EndIf
 			ElseIf (selected == LeaveButton)
 				If (Quit())
@@ -245,28 +244,25 @@ State Scoring
 	Event OnScoring(int scoring)
 		parent.OnScoring(scoring)
 
-		If (Winnings > 0)
-			Player.AddItem(Caps, Winnings, true)
-		ElseIf (Winnings < 0)
-			Player.RemoveItem(Caps, Wager, true)
+		If (scoring == Invalid)
+			return
+		ElseIf (scoring == ScorePush)
+			Game.ShowPerkVaultBoyOnHUD(PushFX)
+		ElseIf (scoring == ScoreLose)
+			Game.ShowPerkVaultBoyOnHUD(LoseFX)
+			Player.RemoveItem(Caps, Debt, true)
+		ElseIf (scoring == ScoreWin)
+			Game.ShowPerkVaultBoyOnHUD(WinFX)
+			Player.AddItem(Caps, Debt, true)
+		ElseIf (scoring == ScoreBlackjack)
+			Game.ShowPerkVaultBoyOnHUD(BlackjackFX)
+			Player.AddItem(Caps, Debt, true)
+		Else
+			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
 		EndIf
 
 		Display.Earnings = Earnings
 		Display.Caps = Bank
-
-		If (scoring == Invalid)
-			return
-		ElseIf (scoring == ScoreLose)
-			Game.ShowPerkVaultBoyOnHUD(LoseFX)
-		ElseIf (scoring == ScoreWin)
-			Game.ShowPerkVaultBoyOnHUD(WinFX)
-		ElseIf (scoring == ScoreBlackjack)
-			Game.ShowPerkVaultBoyOnHUD(BlackjackFX)
-		ElseIf (scoring == ScorePush)
-			Game.ShowPerkVaultBoyOnHUD(PushFX)
-		Else
-			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
-		EndIf
 	EndEvent
 EndState
 
