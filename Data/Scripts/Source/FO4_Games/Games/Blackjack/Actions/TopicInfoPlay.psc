@@ -14,5 +14,5 @@ EndEvent
 ;---------------------------------------------
 
 Group Properties
-	Games:Blackjack:Game Property Blackjack Auto Const Mandatory
+	Games:Blackjack:Main Property Blackjack Auto Const Mandatory
 EndGroup

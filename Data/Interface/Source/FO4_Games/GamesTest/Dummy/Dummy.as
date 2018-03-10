@@ -1,8 +1,9 @@
 package
 {
 	import flash.display.MovieClip;
-	import Shared.IDisplay;
-	import Shared.Display;
+	import Games.Debug;
+	import Games.Display;
+	import Games.IDisplay;
 
 	public class Dummy extends Display implements IDisplay
 	{
@@ -12,7 +13,7 @@ package
 
 		public function Dummy()
 		{
-			trace("[Dummy] Constructor");
+			Debug.WriteLine("Dummy", "Constructor");
 		}
 
 	}

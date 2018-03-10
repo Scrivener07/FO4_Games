@@ -25,11 +25,11 @@ Function TranslateEach(ObjectReference[] aObjects, ObjectReference aDestination,
 	Objects = aObjects
 	Destination = aDestination
 	Speed = aSpeed
-	TaskAwait(self)
+	AwaitState(self)
 EndFunction
 
 
-; Task
+; States
 ;---------------------------------------------
 
 State Busy
@@ -46,7 +46,7 @@ State Busy
 			EndWhile
 		Else
 			WriteUnexpectedValue(self, "Busy.OnBeginState", "Objects", "Cannot translate empty or none object array.")
-			TaskEnd(self)
+			ClearState(self)
 		EndIf
 	EndEvent
 
@@ -67,7 +67,7 @@ State Busy
 		int last = Objects.Length - 1
 
 		If (Index >= last)
-			TaskEnd(self)
+			ClearState(self)
 		EndIf
 	EndFunction
 

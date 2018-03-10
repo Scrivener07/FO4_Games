@@ -27,27 +27,27 @@ EndStruct
 DisplayData Function NewDisplay()
 	DisplayData display = new DisplayData
 	display.Menu = "GamesButtonMenu"
-	display.Asset = "Games\\ButtonMenu"
+	display.Asset = "GamesButtonMenu"
 	display.Root = "root1.Menu"
 	Buttons = new Button[0]
 	return display
 EndFunction
 
 
-; Tasks
-;---------------------------------------------
-
 bool Function Show()
-	{Begin the shown task.}
-	return TaskAwait(self, "Shown")
+	{Begin the shown state.}
+	return AwaitState(self, "Shown")
 EndFunction
 
 
 bool Function Hide()
-	{End any running task.}
-	return TaskEnd(self)
+	{End any running state.}
+	return ClearState(self)
 EndFunction
 
+
+; States
+;---------------------------------------------
 
 State Shown
 	Event OnBeginState(string asOldState)
@@ -73,11 +73,11 @@ State Shown
 				WriteLine(self, "Showing button press hints. Invoke:"+member+"("+arguments+") @"+Menu)
 			Else
 				WriteUnexpectedValue(self, "Shown.OnBeginState", "Buttons", "The button array is none or empty.")
-				TaskEnd(self)
+				ClearState(self)
 			EndIf
 		Else
 			WriteUnexpected(self, "Shown.OnBeginState", "Could not open menu for '"+GetState()+"' state.")
-			TaskEnd(self)
+			ClearState(self)
 		EndIf
 	EndEvent
 
@@ -92,7 +92,7 @@ State Shown
 
 			If (AutoHide)
 				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected. Automatically hiding for select once.")
-				TaskEnd(self)
+				ClearState(self)
 			Else
 				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected.")
 			EndIf

@@ -8,7 +8,7 @@ import Games:Shared:Log
 DisplayData Function NewDisplay()
 	DisplayData display = new DisplayData
 	display.Menu = "GamesTestDummy"
-	display.Asset = "GamesTest\\Dummy"
+	display.Asset = "GamesTestDummy"
 	display.Root = "root1.Menu"
 	RegisterForKey(Keyboard.J)
 	RegisterForKey(Keyboard.K)

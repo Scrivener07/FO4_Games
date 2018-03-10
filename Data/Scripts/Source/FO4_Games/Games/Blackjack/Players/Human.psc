@@ -1,13 +1,15 @@
 ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
 import Games
 import Games:Blackjack
-import Games:Shared:Log
 import Games:Shared
+import Games:Shared:Log
 import Games:Shared:UI:ButtonMenu
 
 Actor PlayerRef
+MiscObject Caps
 
 int Wager = 0
+
 Button AcceptButton
 Button IncreaseButton
 Button DecreaseButton
@@ -20,16 +22,10 @@ Button StandButton
 Button PlayButton
 Button LeaveButton
 
-Group UI
-	Blackjack:Display Property Display Auto Const Mandatory
-	UI:ButtonMenu Property ButtonMenu Auto Const Mandatory
-	Shared:Keyboard Property Keyboard Auto Const Mandatory
-EndGroup
-
-Group SFX
-	Sound Property ITMBottlecapsUpx Auto Const Mandatory
-	Sound Property ITMBottlecapsDownx Auto Const Mandatory
-EndGroup
+string LoseFX = "GamesBlackjackScoreLose.swf" const
+string WinFX = "GamesBlackjackScoreWin.swf" const
+string BlackjackFX = "GamesBlackjackScore21.swf" const
+string PushFX = "GamesBlackjackScorePush.swf" const
 
 
 ; Events
@@ -38,6 +34,7 @@ EndGroup
 Event OnInit()
 	parent.OnInit()
 	PlayerRef = Game.GetPlayer()
+	Caps = Game.GetCaps()
 
 	AcceptButton = new Button
 	AcceptButton.Text = "Accept"
@@ -83,58 +80,35 @@ Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] argume
 EndEvent
 
 
-; FSM - Finite State Machine
+; States
 ;---------------------------------------------
 
 State Starting
-	Event OnTask()
+	Event OnState()
+		parent.OnState()
 		Wager = WagerMinimum
-
 		Display.Open()
 		Display.Score = 0
 		Display.Bet = Wager
 		Display.Caps = Bank
 		Display.Earnings = Earnings
-
-		parent.OnTask()
 	EndEvent
-
-	MarkerValue Function IMarkers()
-		MarkerValue marker = new MarkerValue
-		marker.Card01 = Games_Blackjack_P1C01
-		marker.Card02 = Games_Blackjack_P1C02
-		marker.Card03 = Games_Blackjack_P1C03
-		marker.Card04 = Games_Blackjack_P1C04
-		marker.Card05 = Games_Blackjack_P1C05
-		marker.Card06 = Games_Blackjack_P1C06
-		marker.Card07 = Games_Blackjack_P1C07
-		marker.Card08 = Games_Blackjack_P1C08
-		marker.Card09 = Games_Blackjack_P1C09
-		marker.Card10 = Games_Blackjack_P1C10
-		marker.Card11 = Games_Blackjack_P1C11
-		return marker
-	EndFunction
 EndState
 
 
 State Wagering
-	Event OnTask()
-		If (Bank < WagerMinimum)
-			; TODO: How/Should I quit here?
-			WriteUnexpectedValue(self, "Wagering.OnTask", "Bank", "A bank of "+Bank+" cannot be less than the wager minimum of "+WagerMinimum)
-		EndIf
-
+	Event OnState()
 		If (Wager > Bank)
+			WriteLine(self, "A wager of "+Wager+" cannot be greater than a bank of "+Bank+". Resetting wager to "+WagerMinimum)
 			Wager = WagerMinimum
-			WriteUnexpectedValue(self, "Wagering.OnTask", "Wager", "A wager of "+Wager+" cannot be greater than a bank of "+Bank)
 		EndIf
 
 		Display.Score = 0
-		Display.Bet = Wager ; last wager amount
-		Display.Earnings = Earnings
+		Display.Bet = Wager
 		Display.Caps = Bank
-		parent.OnTask()
 		Display.Earnings = Earnings
+
+		parent.OnState()
 	EndEvent
 
 	int Function IWager()
@@ -145,6 +119,7 @@ State Wagering
 		ButtonMenu.Add(DecreaseButton)
 		ButtonMenu.Add(MinimumButton)
 		ButtonMenu.Add(MaximumButton)
+		ButtonMenu.Add(LeaveButton)
 		ButtonMenu.RegisterForSelectedEvent(self)
 		ButtonMenu.Show()
 		return Wager
@@ -158,8 +133,13 @@ State Wagering
 				If (IsValidWager(Wager))
 					akSender.UnregisterForSelectedEvent(self)
 					akSender.Hide()
-					Game.RemovePlayerCaps(Wager)
-					Display.Caps = Bank
+				EndIf
+			ElseIf (selected == LeaveButton)
+				If (Quit())
+					akSender.UnregisterForSelectedEvent(self)
+					akSender.Hide()
+				Else
+					WriteUnexpected(self, "Wagering.OnSelected", "The request to leave the game failed for some reason.")
 				EndIf
 
 			ElseIf (selected == IncreaseButton)
@@ -200,15 +180,15 @@ EndState
 
 
 State Dealing
-	Event OnTask()
-		parent.OnTask()
+	Event OnState()
+		parent.OnState()
 		Display.Score = Score
 	EndEvent
 EndState
 
 
 State Playing
-	Event OnTurn(int aTurn)
+	Event OnTurn(int number)
 		Display.Score = Score
 	EndEvent
 
@@ -237,11 +217,8 @@ EndState
 
 
 State Scoring
-	Event OnTask()
-		parent.OnTask()
-		Game.GivePlayerCaps(Winnings)
-		Display.Earnings = Earnings
-		Display.Caps = Bank
+	Event OnState()
+		parent.OnState()
 
 		ButtonMenu.Clear()
 		ButtonMenu.SelectOnce = true
@@ -251,36 +228,56 @@ State Scoring
 
 		If (ButtonMenu.Selected)
 			If (ButtonMenu.Selected == PlayButton)
-				Rematch(true)
+				WriteLine(self, "Selected the play button.")
 			ElseIf (ButtonMenu.Selected == LeaveButton)
-				Rematch(false)
+				Quit()
 			Else
-				WriteUnexpected(self, "Scoring.OnTask", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
-				Rematch(false)
+				WriteUnexpected(self, "Scoring.OnState", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
+				Quit()
 			EndIf
 		Else
-			WriteUnexpected(self, "Scoring.OnTask", "No button hint was selected.")
-			Rematch(false)
+			WriteUnexpected(self, "Scoring.OnState", "No button hint was selected.")
+			Quit()
 		EndIf
+	EndEvent
+
+	Event OnScoring(int scoring)
+		parent.OnScoring(scoring)
+
+		If (scoring == Invalid)
+			return
+		ElseIf (scoring == ScorePush)
+			Game.ShowPerkVaultBoyOnHUD(PushFX)
+		ElseIf (scoring == ScoreLose)
+			Game.ShowPerkVaultBoyOnHUD(LoseFX)
+			Player.RemoveItem(Caps, Debt, true)
+		ElseIf (scoring == ScoreWin)
+			Game.ShowPerkVaultBoyOnHUD(WinFX)
+			Player.AddItem(Caps, Debt, true)
+		ElseIf (scoring == ScoreBlackjack)
+			Game.ShowPerkVaultBoyOnHUD(BlackjackFX)
+			Player.AddItem(Caps, Debt, true)
+		Else
+			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
+		EndIf
+
+		Display.Earnings = Earnings
+		Display.Caps = Bank
 	EndEvent
 EndState
 
 
 State Exiting
-	Event OnTask()
+	Event OnState()
+		Wager = 0
 		Display.Close()
-		parent.OnTask()
+		parent.OnState()
 	EndEvent
 EndState
 
 
 ; Requests
 ;---------------------------------------------
-
-MarkerValue Function IMarkers()
-	; Required for type-check return because function is not on object.
-	return parent.IMarkers()
-EndFunction
 
 int Function IWager()
 	; Required for type-check return because function is not on object.
@@ -310,24 +307,21 @@ EndFunction
 ; Properties
 ;---------------------------------------------
 
-Group Human
+Group UI
+	Blackjack:Display Property Display Auto Const Mandatory
+	UI:ButtonMenu Property ButtonMenu Auto Const Mandatory
+	Shared:Keyboard Property Keyboard Auto Const Mandatory
+EndGroup
+
+Group SFX
+	Sound Property ITMBottlecapsUpx Auto Const Mandatory
+	Sound Property ITMBottlecapsDownx Auto Const Mandatory
+EndGroup
+
+Group Player
 	Actor Property Player Hidden
 		Actor Function Get()
 			return PlayerRef
 		EndFunction
 	EndProperty
-EndGroup
-
-Group Markers
-	ObjectReference Property Games_Blackjack_P1C01 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C02 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C03 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C04 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C05 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C06 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C07 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C08 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C09 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C10 Auto Const Mandatory
-	ObjectReference Property Games_Blackjack_P1C11 Auto Const Mandatory
 EndGroup
