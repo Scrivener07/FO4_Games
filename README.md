@@ -33,7 +33,7 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/con
 #### Acknowledgments
 * [The White Collar Players](https://github.com/TheWhiteCollarPlayers) - Creator, contact on discord `TheWhiteCollarPlayers#7879`
 * [Scrivener07](https://github.com/Scrivener07) - Scripter, contact on discord `Scrivener07#4154`
-* **Se7enRaven** - Artist, created playing card assets as a resource for this project. See [LICENSE.RESOURCE.md](LICENSE.RESOURCE.md).
+* [Se7enRaven](https://www.nexusmods.com/fallout4/users/184696) - Artist, created playing card assets as a resource for this project. See [LICENSE.RESOURCE.md](LICENSE.RESOURCE.md).
 * [Expired](https://github.com/expired6978) - Programmer, added F4SE papyrus functions for scaleform interoperation.
 * [Reg2K](https://github.com/reg2k) - Help, counsel regarding scaleform user interface and papyrus scripting.
 * [Neanka](https://github.com/Neanka) - Help, counsel regarding scaleform user interface and papyrus scripting.
