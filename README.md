@@ -3,7 +3,7 @@ Play classic games in Fallout 4.
 
 Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaju0r1Zw4MTMmxLbc9ZQ1MOLJ) for work in progress footage.
 
-<img src="Documents/Screenshot03.png" height="200">
+<img src="Documents/Screenshot03.png" height="175">
 
 #### Features
 - [x] Blackjack
@@ -11,6 +11,7 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 - [ ] Roulette
 - [ ] Caravan
 - [ ] Cadillac
+- [ ] Spades
 
 #### Requirements
 * A computer, PC only.
@@ -38,6 +39,7 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/con
 * [Neanka](https://github.com/Neanka) - Help, counsel regarding scaleform user interface and papyrus scripting.
 * [shad0wshayd3](https://github.com/shad0wshayd3) - Help, counsel regarding papyrus scripting.
 * [ForsakenShell, E, 1000101](https://github.com/ForsakenShell) - Help, counsel regarding papyrus scripting.
+* [Sireyn](https://www.nexusmods.com/newvegas/users/4344629) - Tester, provided excellent feedback and reported critical bugs.
 * **Sarinia** - Help, counsel regarding meshes, textures, and materials.
 * **Jonathan Ostrus** - Help, counsel regarding settlement objects in the Creation Kit and papyrus scripting.
 * **Kinggath** - Help, counsel regarding scripting for adding game tables to settlements.
