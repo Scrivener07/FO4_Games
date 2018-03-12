@@ -10,6 +10,10 @@ float Speed = -1.0
 
 int Motion_Keyframed = 2 const
 
+; SPLINE
+float Tangent = 100.0
+float Rotation = 0.0
+
 
 ; Methods
 ;---------------------------------------------
@@ -41,7 +45,8 @@ State Busy
 				object.SetMotionType(Motion_Keyframed)
 				RegisterForRemoteEvent(object, "OnTranslationComplete")
 				RegisterForRemoteEvent(object, "OnTranslationFailed")
-				object.TranslateToRef(Destination, Speed)
+				;object.TranslateToRef(Destination, Speed)
+				object.SplineTranslateToRef(Destination, Tangent, Speed, Rotation)
 				idx += 1
 			EndWhile
 		Else
@@ -65,7 +70,6 @@ State Busy
 	Function Evaluate()
 		Index += 1
 		int last = Objects.Length - 1
-
 		If (Index >= last)
 			ClearState(self)
 		EndIf
