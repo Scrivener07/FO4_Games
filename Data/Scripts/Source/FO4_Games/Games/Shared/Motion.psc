@@ -11,7 +11,7 @@ float Speed = -1.0
 int Motion_Keyframed = 2 const
 
 ; SPLINE
-float Tangent = 100.0
+float Tangent = -100.0
 float Rotation = 0.0
 
 

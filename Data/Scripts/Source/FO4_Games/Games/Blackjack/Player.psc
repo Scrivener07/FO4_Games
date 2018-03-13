@@ -251,6 +251,7 @@ bool Function TryDraw()
 				If (turnMarker)
 					HandArray.Add(drawn)
 					SetScore(Players.Score(self))
+					Motion.Translate(drawn.Reference, Games_Blackjack_DeckMarkerB)
 					Motion.Translate(drawn.Reference, turnMarker)
 					return Success
 				Else
@@ -405,6 +406,8 @@ Group Player
 EndGroup
 
 Group Hand
+	ObjectReference Property Games_Blackjack_DeckMarkerB Auto Const Mandatory
+
 	Card[] Property Hand Hidden
 		Card[] Function Get()
 			return HandArray
