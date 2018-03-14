@@ -2,6 +2,7 @@ ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
 import Games
 import Games:Blackjack
 import Games:Shared
+import Games:Shared:Deck
 import Games:Shared:Log
 import Games:Shared:UI:ButtonMenu
 
@@ -18,6 +19,11 @@ Button MaximumButton
 
 Button HitButton
 Button StandButton
+
+; Button DoubleButton
+; Button SplitButton
+; Button SplitSwitchButton
+
 
 Button PlayButton
 Button LeaveButton
@@ -184,12 +190,24 @@ State Dealing
 		parent.OnState()
 		Display.Score = Score
 	EndEvent
+
+	Event OnDrawn(Card drawn, ObjectReference marker)
+		Motion.Translate(drawn.Reference, Cards.GamesBlackjack_DeckMarkerB)
+		Utility.Wait(0.75)
+		parent.OnDrawn(drawn, marker)
+	EndEvent
 EndState
 
 
 State Playing
 	Event OnTurn(int number)
 		Display.Score = Score
+	EndEvent
+
+	Event OnDrawn(Card drawn, ObjectReference marker)
+		Motion.Translate(drawn.Reference, Cards.GamesBlackjack_DeckMarkerB)
+		Utility.Wait(0.75)
+		parent.OnDrawn(drawn, marker)
 	EndEvent
 
 	int Function IChoice()

@@ -1,4 +1,5 @@
 ScriptName Games:Blackjack:Players:Dealer extends Games:Blackjack:Player
+import Games:Shared:Deck
 import Games:Shared:Log
 
 ; States
@@ -12,12 +13,25 @@ State Wagering
 EndState
 
 
+State Dealing
+	Event OnDrawn(Card drawn, ObjectReference marker)
+		parent.OnDrawn(drawn, marker)
+		Utility.Wait(0.25)
+	EndEvent
+EndState
+
+
 State Playing
 	Event OnTurn(int number)
 		If (number == 1)
 			; reveal the face down card
 			Motion.Translate(Hand[0].Reference, Seating.Card01Reveal)
 		EndIf
+	EndEvent
+
+	Event OnDrawn(Card drawn, ObjectReference marker)
+		parent.OnDrawn(drawn, marker)
+		Utility.Wait(0.25)
 	EndEvent
 
 	int Function IChoice()

@@ -1,4 +1,5 @@
 ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:Type Native Hidden
+import Games:Shared:Deck
 import Games:Shared:Log
 
 ; States
@@ -50,8 +51,10 @@ EndState
 ; Abstract
 ;---------------------------------------------
 
+Event OnDrawn(Card drawn, ObjectReference marker) Native
 Event OnTurn(int number) Native
 Event OnScoring(int scoring) Native
+
 
 
 ; Structures
@@ -75,6 +78,7 @@ EndStruct
 ;---------------------------------------------
 
 Group Wager
+	{The wager values.}
 	int Property WagerStep = 5 AutoReadOnly
 	int Property WagerMinimum = 5 AutoReadOnly
 	int Property WagerMaximum = 50 AutoReadOnly
@@ -84,8 +88,8 @@ Group Choice
 	{The choice type for playing.}
 	int Property ChoiceHit = 0 AutoReadOnly
 	int Property ChoiceStand = 1 AutoReadOnly
-	; int Property ChoiceDouble = 2 AutoReadOnly ; not supported
-	; int Property ChoiceSplit = 3 AutoReadOnly  ; not supported
+	int Property ChoiceDouble = 2 AutoReadOnly
+	int Property ChoiceSplit = 3 AutoReadOnly
 EndGroup
 
 Group Score

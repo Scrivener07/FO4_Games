@@ -53,8 +53,12 @@ EndState
 
 State Dealing
 	Event OnState()
-		TryDraw()
-		WriteLine(self, "Dealt a card..")
+		Players.DrawFor(self)
+	EndEvent
+
+	Event OnDrawn(Card drawn, ObjectReference marker)
+		Motion.Translate(drawn.Reference, marker)
+		WriteLine(self, "Dealt a card." + drawn)
 	EndEvent
 EndState
 
@@ -65,30 +69,19 @@ State Playing
 		bool move = true const
 		bool break = false const
 		bool next = move
-
 		While (next)
 			Match.Turn += 1
 			OnTurn(Match.Turn)
-
 			If (IsWin(Score))
 				WriteLine(self, "Standing with 21.")
 				next = break
-
 			ElseIf (IsBust(Score))
 				WriteLine(self, "Busted!")
 				next = break
 			Else
 				Match.TurnChoice = IChoice()
-
 				If (Match.TurnChoice == ChoiceHit)
-					If (TryDraw())
-						WriteLine(self, "Drew a card." + Hand[HandLast])
-						next = move
-					Else
-						WriteUnexpected(self, "Playing.OnState", "Encountered problem drawing a card!")
-						next = break
-					EndIf
-
+					next = Players.DrawFor(self)
 				ElseIf (Match.TurnChoice == ChoiceStand)
 					WriteLine(self, "Chose to stand.")
 					next = break
@@ -98,6 +91,11 @@ State Playing
 				EndIf
 			EndIf
 		EndWhile
+	EndEvent
+
+	Event OnDrawn(Card drawn, ObjectReference marker)
+		Motion.Translate(drawn.Reference, marker)
+		WriteLine(self, "Drew a card." + drawn)
 	EndEvent
 
 	int Function IChoice()
@@ -242,74 +240,6 @@ int Function GetBank()
 EndFunction
 
 
-bool Function TryDraw()
-	If (CanDraw)
-		Card drawn = Cards.Deck.Draw()
-		If (drawn)
-			If (drawn.Reference)
-				ObjectReference turnMarker = GetMarkerFor(HandLast)
-				If (turnMarker)
-					HandArray.Add(drawn)
-					SetScore(Players.Score(self))
-					Motion.Translate(drawn.Reference, Games_Blackjack_DeckMarkerB)
-					Motion.Translate(drawn.Reference, turnMarker)
-					return Success
-				Else
-					Cards.Deck.Collect(drawn)
-					WriteUnexpectedValue(self, "TryDraw", "turnMarker", "The turn card marker cannot be none.")
-					return Failure
-				EndIf
-			Else
-				Cards.Deck.Collect(drawn)
-				WriteUnexpectedValue(self, "TryDraw", "drawn.Reference", "Cannot draw card with a none Card.Reference.")
-				return Failure
-			EndIf
-		Else
-			WriteUnexpectedValue(self, "TryDraw", "drawn", "The draw card cannot be none.")
-			return Failure
-		EndIf
-	Else
-		WriteUnexpectedValue(self, "TryDraw", "CanDraw", "Cannot draw another card right now.")
-		return Failure
-	EndIf
-EndFunction
-
-
-ObjectReference Function GetMarkerFor(int next)
-	If (Seating)
-		If (next == Invalid)
-			return Seating.Card01
-		ElseIf (next == 0)
-			return Seating.Card02
-		ElseIf (next == 1)
-			return Seating.Card03
-		ElseIf (next == 2)
-			return Seating.Card04
-		ElseIf (next == 3)
-			return Seating.Card05
-		ElseIf (next == 4)
-			return Seating.Card06
-		ElseIf (next == 5)
-			return Seating.Card07
-		ElseIf (next == 6)
-			return Seating.Card08
-		ElseIf (next == 7)
-			return Seating.Card09
-		ElseIf (next == 8)
-			return Seating.Card10
-		ElseIf (next == 9)
-			return Seating.Card11
-		Else
-			WriteUnexpectedValue(self, "NextMarker", "next", "The next marker "+next+" is out of range.")
-			return none
-		EndIf
-	Else
-		WriteUnexpectedValue(self, "NextMarker", "Seating", "Could not find a seat for the '"+Name+"' player in the array.")
-		return none
-	EndIf
-EndFunction
-
-
 ; Virtual
 ;---------------------------------------------
 
@@ -324,6 +254,10 @@ int Function IChoice()
 	WriteNotImplemented(self, "IChoice", "Not implemented in the empty state.")
 	return Invalid
 EndFunction
+
+Event OnDrawn(Card drawn, ObjectReference marker)
+	WriteNotImplemented(self, "OnDrawn", "Not implemented in the empty state.")
+EndEvent
 
 Event OnTurn(int number)
 	WriteNotImplemented(self, "OnTurn", "Not implemented in the empty state.")
@@ -406,8 +340,6 @@ Group Player
 EndGroup
 
 Group Hand
-	ObjectReference Property Games_Blackjack_DeckMarkerB Auto Const Mandatory
-
 	Card[] Property Hand Hidden
 		Card[] Function Get()
 			return HandArray
