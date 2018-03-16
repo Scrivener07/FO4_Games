@@ -9,6 +9,10 @@ import Games:Shared:Papyrus
 Players:Seat Seat0
 Players:Seat Seat1
 
+; Players:Seat SeatSplitA
+; Players:Seat SeatSplitB
+
+
 Struct Seat
 	ObjectReference Card01
 	ObjectReference Card01Reveal
@@ -46,6 +50,7 @@ State Starting
 		Seat0.Card11 = Cards.GamesBlackjack_DealerCard11
 		Dealer.Seating = Seat0
 
+
 		Seat1 = new Players:Seat
 		Seat1.Card01 = Cards.GamesBlackjack_PlayerCard01
 		Seat1.Card01Reveal = Cards.GamesBlackjack_PlayerCard01
@@ -60,6 +65,35 @@ State Starting
 		Seat1.Card10 = Cards.GamesBlackjack_PlayerCard10
 		Seat1.Card11 = Cards.GamesBlackjack_PlayerCard11
 		Human.Seating = Seat1
+
+		; SeatSplitA = new Players:Seat
+		; SeatSplitA.Card01 = Cards.GamesBlackjack_PlayerCardSplitA01
+		; SeatSplitA.Card02 = Cards.GamesBlackjack_PlayerCardSplitA02
+		; SeatSplitA.Card03 = Cards.GamesBlackjack_PlayerCardSplitA03
+		; SeatSplitA.Card04 = Cards.GamesBlackjack_PlayerCardSplitA04
+		; SeatSplitA.Card05 = Cards.GamesBlackjack_PlayerCardSplitA05
+		; SeatSplitA.Card06 = Cards.GamesBlackjack_PlayerCardSplitA06
+		; SeatSplitA.Card07 = Cards.GamesBlackjack_PlayerCardSplitA07
+		; SeatSplitA.Card08 = Cards.GamesBlackjack_PlayerCardSplitA08
+		; SeatSplitA.Card09 = Cards.GamesBlackjack_PlayerCardSplitA09
+		; SeatSplitA.Card10 = Cards.GamesBlackjack_PlayerCardSplitA10
+		; SeatSplitA.Card11 = Cards.GamesBlackjack_PlayerCardSplitA11
+		; Human.SeatingSplitA = SeatSplitA
+
+		; SeatSplitB = new Players:Seat
+		; SeatSplitB.Card01 = Cards.GamesBlackjack_PlayerCardSplitB01
+		; SeatSplitB.Card02 = Cards.GamesBlackjack_PlayerCardSplitB02
+		; SeatSplitB.Card03 = Cards.GamesBlackjack_PlayerCardSplitB03
+		; SeatSplitB.Card04 = Cards.GamesBlackjack_PlayerCardSplitB04
+		; SeatSplitB.Card05 = Cards.GamesBlackjack_PlayerCardSplitB05
+		; SeatSplitB.Card06 = Cards.GamesBlackjack_PlayerCardSplitB06
+		; SeatSplitB.Card07 = Cards.GamesBlackjack_PlayerCardSplitB07
+		; SeatSplitB.Card08 = Cards.GamesBlackjack_PlayerCardSplitB08
+		; SeatSplitB.Card09 = Cards.GamesBlackjack_PlayerCardSplitB09
+		; SeatSplitB.Card10 = Cards.GamesBlackjack_PlayerCardSplitB10
+		; SeatSplitB.Card11 = Cards.GamesBlackjack_PlayerCardSplitB11
+		; Human.SeatingSplitB = SeatSplitB
+
 
 		BeginState(Dealer, StartingState)
 		BeginState(Human, StartingState)
@@ -102,10 +136,10 @@ State Scoring
 	Event OnState()
 		{Scoring}
 		AwaitState(Human, ScoringState)
-		Cards.CollectFrom(Human)
+		CollectFrom(Human)
 
 		AwaitState(Dealer, ScoringState)
-		Cards.CollectFrom(Dealer)
+		CollectFrom(Dealer)
 	EndEvent
 EndState
 
@@ -122,9 +156,9 @@ EndState
 ; Methods
 ;---------------------------------------------
 
-Card Function DrawFor(Blackjack:Player player)
+Card Function DrawFor(Blackjack:Player player) ; pass the seating into here for splitting.
 	If (player.CanDraw)
-		Card drawn = Cards.Deck.Draw()
+		Card drawn = Cards.Draw()
 
 		If (drawn)
 			If (drawn.Reference)
@@ -156,6 +190,16 @@ Card Function DrawFor(Blackjack:Player player)
 EndFunction
 
 
+Function CollectFrom(Blackjack:Player player)
+	If (player)
+		Cards.CollectEach(player.Hand)
+		player.Motion.TranslateEach(Deck.ToReferences(player.Hand), Cards.GamesBlackjack_DeckMarker)
+	Else
+		WriteUnexpectedValue(self, "CollectFrom", "player", "Cannot collect cards from a none player.")
+	EndIf
+EndFunction
+
+
 ObjectReference Function GetMarkerFor(Players:Seat seat, int next)
 	If (next == Invalid)
 		return seat.Card01
@@ -183,7 +227,6 @@ ObjectReference Function GetMarkerFor(Players:Seat seat, int next)
 		WriteUnexpectedValue(self, "NextMarker", "next", "The next marker "+next+" is out of range.")
 		return none
 	EndIf
-
 EndFunction
 
 

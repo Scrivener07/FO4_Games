@@ -4,15 +4,17 @@ import Games:Blackjack
 import Games:Shared
 import Games:Shared:Deck
 import Games:Shared:Log
+import Games:Shared:Motion
 
+Actor Player
 ReferenceData Data
 ObjectReference[] References
 
 
 ; Events
 ;---------------------------------------------
-
-Event OnInit()
+Event OnQuestInit()
+	Player = Game.GetPlayer()
 	Data = new ReferenceData
 	Data.Spade01 = GamesBlackjack_Deck01SpadeAce
 	Data.Spade02 = GamesBlackjack_Deck01Spade02
@@ -67,7 +69,19 @@ Event OnInit()
 	Data.Heart12 = GamesBlackjack_Deck01HeartQueen
 	Data.Heart13 = GamesBlackjack_Deck01HeartKing
 	Deck:Card[] cards = Deck.SetData(Data)
-	References = ToReferences(cards)
+	References = Deck.ToReferences(cards)
+EndEvent
+
+
+Event Games:Shared:Motion.TranslationEvent(Shared:Motion sender, var[] arguments)
+	TranslationEventArgs e = sender.GetTranslationEventArgs(arguments)
+	If (e)
+		If (e.Translation == sender.TranslationStarted)
+			PHYPaperMagazineH.Play(e.From)
+		EndIf
+	Else
+		WriteUnexpectedValue(self, "Games:Shared:Motion.TranslationEvent", "e", "Cannot handle empty or none event arguments.")
+	EndIf
 EndEvent
 
 
@@ -76,7 +90,9 @@ EndEvent
 
 State Starting
 	Event OnState()
-		{Starting}
+		Motion.RegisterForTranslationEvent(self)
+		Dealer.Motion.RegisterForTranslationEvent(self)
+		Human.Motion.RegisterForTranslationEvent(self)
 		CollectAll(true)
 	EndEvent
 EndState
@@ -84,33 +100,24 @@ EndState
 
 State Dealing
 	Event OnState()
-		{Dealing}
-		Shuffle()
+		; TODO: Test spliting!
+		; WriteMessage(self, "", "Shuffling has been disabled. Rigging the deck to test spliting.")
+		Deck.Shuffle()
 	EndEvent
 EndState
 
 
-
-; Methods
-;---------------------------------------------
-
-Function CollectFrom(Blackjack:Player player)
-	If (player)
-		CollectEach(player.Hand)
-		player.Motion.TranslateEach(ToReferences(player.Hand), GamesBlackjack_DeckMarker)
-	Else
-		WriteUnexpectedValue(self, "CollectFrom", "player", "Cannot collect cards from a none player.")
-	EndIf
-EndFunction
+State Exiting
+	Event OnState()
+		Motion.UnregisterForTranslationEvent(self)
+		Dealer.Motion.UnregisterForTranslationEvent(self)
+		Human.Motion.UnregisterForTranslationEvent(self)
+	EndEvent
+EndState
 
 
 ; Functions
 ;---------------------------------------------
-
-Function Shuffle()
-	Deck.Shuffle()
-EndFunction
-
 
 Card Function Draw()
 	return Deck.Draw()
@@ -133,9 +140,6 @@ Function CollectEach(Card[] aCards)
 		WriteUnexpectedValue(self, "CollectEach", "aCards", "Cannot collect none or empty card array.")
 	EndIf
 EndFunction
-
-
-
 
 
 Function CollectAll(bool aForce = false)
@@ -161,11 +165,18 @@ EndFunction
 Group Scripts
 	Shared:Deck Property Deck Auto Const Mandatory
 	Shared:Motion Property Motion Auto Const Mandatory
+	Blackjack:Players:Dealer Property Dealer Auto Const Mandatory
+	Blackjack:Players:Human Property Human Auto Const Mandatory
+EndGroup
+
+Group SFX
+	Sound Property PHYPaperMagazineH Auto Const Mandatory
 EndGroup
 
 Group Deck
 	ObjectReference Property GamesBlackjack_DeckMarker Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_DeckMarkerB Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_DeckMarkerC Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_CardArrow Auto Const Mandatory
 EndGroup
 
@@ -198,7 +209,6 @@ Group Player
 	ObjectReference Property GamesBlackjack_PlayerCard11 Auto Const Mandatory
 EndGroup
 Group PlayerSplitA
-	; ObjectReference Property GamesBlackjack_PlayerCardSplitA_Selected Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitA01 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitA02 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitA03 Auto Const Mandatory
@@ -210,10 +220,8 @@ Group PlayerSplitA
 	ObjectReference Property GamesBlackjack_PlayerCardSplitA09 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitA10 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitA11 Auto Const Mandatory
-
 EndGroup
 Group PlayerSplitB
-	; ObjectReference Property GamesBlackjack_PlayerCardSplitB_Selected Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitB01 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitB02 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_PlayerCardSplitB03 Auto Const Mandatory

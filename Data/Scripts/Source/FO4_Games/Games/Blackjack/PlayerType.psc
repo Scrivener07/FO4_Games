@@ -56,7 +56,6 @@ Event OnTurn(int number) Native
 Event OnScoring(int scoring) Native
 
 
-
 ; Structures
 ;---------------------------------------------
 
@@ -90,6 +89,7 @@ Group Choice
 	int Property ChoiceStand = 1 AutoReadOnly
 	int Property ChoiceDouble = 2 AutoReadOnly
 	int Property ChoiceSplit = 3 AutoReadOnly
+	int Property ChoiceSplitSwitch = 4 AutoReadOnly
 EndGroup
 
 Group Score

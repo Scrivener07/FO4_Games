@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Type extends Quest Native Hidden
+ScriptName Games:Blackjack:Type extends Games:Type Native Hidden
 import Games
 import Games:Shared:Log
 import Games:Shared:Papyrus
@@ -103,37 +103,17 @@ EndEvent
 ;---------------------------------------------
 
 Group Properties
-	int Property Invalid = -1 AutoReadOnly
 	bool Property Completed = true AutoReadOnly
 	bool Property Incomplete = false AutoReadOnly
 EndGroup
 
 Group States
-	string Property IdlingState = "" AutoReadOnly
 	string Property StartingState = "Starting" AutoReadOnly
 	string Property WageringState = "Wagering" AutoReadOnly
 	string Property DealingState = "Dealing" AutoReadOnly
 	string Property PlayingState = "Playing" AutoReadOnly
 	string Property ScoringState = "Scoring" AutoReadOnly
 	string Property ExitingState = "Exiting" AutoReadOnly
-
-	string Property StateName Hidden
-		string Function Get()
-			return GetState()
-		EndFunction
-	EndProperty
-
-	bool Property Idling Hidden
-		bool Function Get()
-			return GetState() == IdlingState
-		EndFunction
-	EndProperty
-
-	bool Property IsBusy Hidden
-		bool Function Get()
-			return StateRunning(self)
-		EndFunction
-	EndProperty
 EndGroup
 
 Group PhaseChanges

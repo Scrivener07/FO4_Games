@@ -1,4 +1,4 @@
-ScriptName Games:Shared:Deck extends Quest Default
+ScriptName Games:Shared:Deck extends Games:Type Default
 import Games:Shared:Log
 
 Card[] Cards
@@ -14,7 +14,7 @@ Card Function Draw()
 		If (index > Invalid)
 			Card value = Cards[index]
 			value.Drawn = true
-			WriteLine(self, "Drawing the '"+value.Rank+"' card from the deck.")
+			WriteLine(self, "Drawing the '"+value.Reference.GetDisplayName()+"' card from the deck.")
 			return value
 		Else
 			WriteLine(self, "The deck has no cards left to draw.")
@@ -86,17 +86,40 @@ Card[] Function SetData(ReferenceData data)
 		Cards.Add(Joker02)
 	EndIf
 
+	;------------------------------------------------------------------------
+	; THE DECK IS RIGGED
+	;------------------------------------------------------------------------
+
 	Card Spade01 = new Card
 	Spade01.Suit = Spade
 	Spade01.Rank = Ace
 	Spade01.Reference = data.Spade01
 	Cards.Add(Spade01)
 
+
+	Card Spade05 = new Card
+	Spade05.Suit = Spade
+	Spade05.Rank = Five
+	Spade05.Reference = data.Spade05
+	Cards.Add(Spade05)
+
+
 	Card Spade02 = new Card
 	Spade02.Suit = Spade
 	Spade02.Rank = Two
 	Spade02.Reference = data.Spade02
 	Cards.Add(Spade02)
+
+
+	Card Diamond05 = new Card
+	Diamond05.Suit = Diamond
+	Diamond05.Rank = Five
+	Diamond05.Reference = data.Diamond05
+	Cards.Add(Diamond05)
+
+	;------------------------------------------------------------------------
+	; THE DECK IS RIGGED
+	;------------------------------------------------------------------------
 
 	Card Spade03 = new Card
 	Spade03.Suit = Spade
@@ -110,11 +133,7 @@ Card[] Function SetData(ReferenceData data)
 	Spade04.Reference = data.Spade04
 	Cards.Add(Spade04)
 
-	Card Spade05 = new Card
-	Spade05.Suit = Spade
-	Spade05.Rank = Five
-	Spade05.Reference = data.Spade05
-	Cards.Add(Spade05)
+	; TODO: SPADE 5
 
 	Card Spade06 = new Card
 	Spade06.Suit = Spade
@@ -189,11 +208,7 @@ Card[] Function SetData(ReferenceData data)
 	Diamond04.Reference = data.Diamond04
 	Cards.Add(Diamond04)
 
-	Card Diamond05 = new Card
-	Diamond05.Suit = Diamond
-	Diamond05.Rank = Five
-	Diamond05.Reference = data.Diamond05
-	Cards.Add(Diamond05)
+	; TODO: DIAMOND 5
 
 	Card Diamond06 = new Card
 	Diamond06.Suit = Diamond
@@ -413,7 +428,7 @@ bool Function IsFaceCard(Card value)
 EndFunction
 
 
-ObjectReference[] Function ToReferences(Deck:Card[] values) Global
+ObjectReference[] Function ToReferences(Deck:Card[] values)
 	ObjectReference[] array = new ObjectReference[0]
 	If (values)
 		int index = 0
@@ -431,7 +446,6 @@ EndFunction
 
 Group Properties
 	bool Property UseJoker = false Auto
-	int Property Invalid = -1 AutoReadOnly
 EndGroup
 
 Group Suits

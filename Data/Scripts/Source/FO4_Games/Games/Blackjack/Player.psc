@@ -19,7 +19,7 @@ int Win = 21 const
 ; Events
 ;---------------------------------------------
 
-Event OnInit()
+Event OnQuestInit()
 	HandArray = new Card[0]
 	Match = new MatchData
 	Session = new SessionData
@@ -80,11 +80,34 @@ State Playing
 				next = break
 			Else
 				Match.TurnChoice = IChoice()
+
 				If (Match.TurnChoice == ChoiceHit)
 					next = Players.DrawFor(self)
+
 				ElseIf (Match.TurnChoice == ChoiceStand)
 					WriteLine(self, "Chose to stand.")
 					next = break
+
+				ElseIf (Match.TurnChoice == ChoiceDouble)
+					WriteMessage(self, "Double Down", "Chose to double down.")
+					; double the wager  and commit to drawing one more card.
+					; must be the first turn
+					next = move
+
+				ElseIf (Match.TurnChoice == ChoiceSplit)
+					WriteMessage(self, "Split", "Chose to split.")
+					; Move the first two cards to split hand positions.
+					; must be  the first turn
+					Motion.Translate(Hand[0].Reference, Cards.GamesBlackjack_PlayerCardSplitA01)
+					Motion.Translate(Hand[1].Reference, Cards.GamesBlackjack_PlayerCardSplitB01)
+					next = move
+
+				ElseIf (Match.TurnChoice == ChoiceSplitSwitch)
+					WriteMessage(self, "Split Switch", "Chose to split switch.")
+					; Redirect card destination markers to one of the split hands.
+					Motion.Translate(Hand[0].Reference, Cards.GamesBlackjack_PlayerCard01)
+					Motion.Translate(Hand[1].Reference, Cards.GamesBlackjack_PlayerCard02)
+					next = move
 				Else
 					WriteUnexpectedValue(self, "Playing.OnState", "Match.TurnChoice", "The play choice "+Match.TurnChoice+" was out of range.")
 					next = break
@@ -272,15 +295,16 @@ EndEvent
 ;---------------------------------------------
 
 Group Scripts
+	Shared:Motion Property Motion Auto Const Mandatory
+	Blackjack:Cards Property Cards Auto Const Mandatory
 	Blackjack:Players Property Players Auto Const Mandatory
 	Blackjack:Players:Dealer Property Dealer Auto Const Mandatory
-	Blackjack:Players:Human Property Human Auto Const Mandatory
-	Blackjack:Cards Property Cards Auto Const Mandatory
-	Shared:Motion Property Motion Auto Const Mandatory
 EndGroup
 
-Group Properties
+Group Markers
 	Seat Property Seating Auto Hidden
+	; Seat Property SeatingSplitA Auto Hidden
+	; Seat Property SeatingSplitB Auto Hidden
 EndGroup
 
 Group Player

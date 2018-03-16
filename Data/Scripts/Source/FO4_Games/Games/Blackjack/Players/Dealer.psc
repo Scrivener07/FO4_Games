@@ -15,6 +15,9 @@ EndState
 
 State Dealing
 	Event OnDrawn(Card drawn, ObjectReference marker)
+		If (HandSize > 1)
+			Motion.Translate(drawn.Reference, Cards.GamesBlackjack_DeckMarkerC)
+		EndIf
 		parent.OnDrawn(drawn, marker)
 		Utility.Wait(0.25)
 	EndEvent
@@ -25,11 +28,13 @@ State Playing
 	Event OnTurn(int number)
 		If (number == 1)
 			; reveal the face down card
+			Motion.Translate(Hand[0].Reference, Cards.GamesBlackjack_DeckMarkerC)
 			Motion.Translate(Hand[0].Reference, Seating.Card01Reveal)
 		EndIf
 	EndEvent
 
 	Event OnDrawn(Card drawn, ObjectReference marker)
+		Motion.Translate(drawn.Reference, Cards.GamesBlackjack_DeckMarkerC)
 		parent.OnDrawn(drawn, marker)
 		Utility.Wait(0.25)
 	EndEvent

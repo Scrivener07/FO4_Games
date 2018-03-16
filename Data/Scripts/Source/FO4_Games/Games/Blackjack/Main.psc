@@ -5,8 +5,7 @@ import Games:Shared:Log
 import Games:Shared:Papyrus
 
 CustomEvent PhaseEvent
-
-int IdlingID   = 10 const
+int EmptyID   = 10 const
 int StartingID = 20 const
 int WageringID = 30 const
 int DealingID  = 40 const
@@ -14,29 +13,29 @@ int PlayingID  = 50 const
 int ScoringID  = 60 const
 int ExitingID  = 70 const
 
-float TimeDelay = 1.5 const
+float TimeDelay = 1.0 const
 
 
 ; Events
 ;---------------------------------------------
 
-Event OnTimer(int aiTimerID)
-	If (aiTimerID == IdlingID)
-		ChangeState(self, IdlingState)
-	ElseIf (aiTimerID == StartingID)
+Event OnTimer(int timerID)
+	If (timerID == EmptyID)
+		ChangeState(self, EmptyState)
+	ElseIf (timerID == StartingID)
 		ChangeState(self, StartingState)
-	ElseIf (aiTimerID == WageringID)
+	ElseIf (timerID == WageringID)
 		ChangeState(self, WageringState)
-	ElseIf (aiTimerID == DealingID)
+	ElseIf (timerID == DealingID)
 		ChangeState(self, DealingState)
-	ElseIf (aiTimerID == PlayingID)
+	ElseIf (timerID == PlayingID)
 		ChangeState(self, PlayingState)
-	ElseIf (aiTimerID == ScoringID)
+	ElseIf (timerID == ScoringID)
 		ChangeState(self, ScoringState)
-	ElseIf (aiTimerID == ExitingID)
+	ElseIf (timerID == ExitingID)
 		ChangeState(self, ExitingState)
 	Else
-		WriteUnexpectedValue(self, "OnTimer", "aiTimerID", "The timer ID "+aiTimerID+" was unhandled.")
+		WriteUnexpectedValue(self, "OnTimer", "timerID", "The timer ID "+timerID+" was unhandled.")
 	EndIf
 EndEvent
 
@@ -44,12 +43,12 @@ EndEvent
 ; Methods
 ;---------------------------------------------
 
-bool Function Play(ObjectReference aExitMarker)
-	If (Idling)
-		If (Environment.SetExit(aExitMarker))
+bool Function Play(ObjectReference exitMarker)
+	If (IsEmptyState)
+		If (Environment.SetExit(exitMarker))
 			return NewState(self, StartingID)
 		Else
-			WriteUnexpected(self, "Play", "Environment could not set the exit marker.")
+			WriteUnexpected(self, "Play", "Environment could not set the exit marker "+exitMarker)
 			return false
 		EndIf
 	Else
@@ -59,13 +58,13 @@ bool Function Play(ObjectReference aExitMarker)
 EndFunction
 
 
-bool Function PlayAsk(ObjectReference aExitMarker)
+bool Function PlayAsk(ObjectReference exitMarker)
 	int selected = Games_Blackjack_MessagePlay.Show()
 	int OptionExit = 0 const
 	int OptionStart = 1 const
 
 	If (selected == OptionStart)
-		return Play(aExitMarker)
+		return Play(exitMarker)
 	ElseIf (selected == OptionExit || selected == Invalid)
 		WriteLine(self, "Chose not to play Blackjack.")
 		return false
@@ -90,7 +89,7 @@ bool Function RegisterForPhaseEvent(ScriptObject script)
 EndFunction
 
 
-bool Function UnregisterForPhaseEvent(Blackjack:Main script)
+bool Function UnregisterForPhaseEvent(ScriptObject script)
 	If (script)
 		script.UnregisterForCustomEvent(self, "PhaseEvent")
 		return true
@@ -110,7 +109,7 @@ State Starting
 		WriteLine("Blackjack", "Starting")
 
 		If (Human.HasCaps == false)
-			NewState(self, IdlingID)
+			NewState(self, EmptyID)
 			Games_Blackjack_MessageNoFunds.Show()
 			return
 		EndIf
@@ -254,13 +253,14 @@ State Exiting
 		WriteLine("Blackjack", "Exiting")
 		If (SendPhase(self, ExitingState, Begun))
 			Utility.Wait(TimeDelay)
+			AwaitState(Cards, ExitingState)
 			AwaitState(Players, ExitingState)
 			AwaitState(Environment, ExitingState)
 		Else
 			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' state.")
 		EndIf
 
-		NewState(self, IdlingID)
+		NewState(self, EmptyID)
 	EndEvent
 
 	Event OnEndState(string asNewState)

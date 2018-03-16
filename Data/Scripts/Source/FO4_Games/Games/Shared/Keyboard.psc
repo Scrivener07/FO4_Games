@@ -1,6 +1,5 @@
-ScriptName Games:Shared:Keyboard extends Quest Default
+ScriptName Games:Shared:Keyboard extends Games:Type Default
 ; https://www.creationkit.com/fallout4/index.php?title=DirectX_Scan_Codes
-
 
 Group Keyboard
 	int Property Super = 92 AutoReadOnly

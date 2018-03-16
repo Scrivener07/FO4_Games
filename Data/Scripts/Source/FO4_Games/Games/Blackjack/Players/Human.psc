@@ -19,11 +19,9 @@ Button MaximumButton
 
 Button HitButton
 Button StandButton
-
-; Button DoubleButton
-; Button SplitButton
-; Button SplitSwitchButton
-
+Button DoubleButton
+Button SplitButton
+Button SplitSwitchButton
 
 Button PlayButton
 Button LeaveButton
@@ -37,8 +35,8 @@ string PushFX = "GamesBlackjackScorePush.swf" const
 ; Events
 ;---------------------------------------------
 
-Event OnInit()
-	parent.OnInit()
+Event OnQuestInit()
+	parent.OnQuestInit()
 	PlayerRef = Game.GetPlayer()
 	Caps = Game.GetCaps()
 
@@ -69,6 +67,18 @@ Event OnInit()
 	StandButton = new Button
 	StandButton.Text = "Stand"
 	StandButton.KeyCode = Keyboard.S
+
+	DoubleButton = new Button
+	DoubleButton.Text = "Double Down"
+	DoubleButton.KeyCode = Keyboard.D
+
+	SplitButton = new Button
+	SplitButton.Text = "Split"
+	SplitButton.KeyCode = Keyboard.A
+
+	SplitSwitchButton = new Button
+	SplitSwitchButton.Text = "Switch Hands"
+	SplitSwitchButton.KeyCode = Keyboard.Q
 
 	PlayButton = new Button
 	PlayButton.Text = "Play Again"
@@ -215,13 +225,28 @@ State Playing
 		ButtonMenu.SelectOnce = true
 		ButtonMenu.Add(HitButton)
 		ButtonMenu.Add(StandButton)
-		ButtonMenu.Show()
 
+		; TODO: WIP
+		If (Turn == 1)
+			ButtonMenu.Add(DoubleButton)
+			If (Hand[0].Rank == Hand[1].Rank)
+				ButtonMenu.Add(SplitButton)
+				ButtonMenu.Add(SplitSwitchButton)
+			EndIf
+		EndIf
+
+		ButtonMenu.Show()
 		If (ButtonMenu.Selected)
 			If (ButtonMenu.Selected == HitButton)
 				return ChoiceHit
 			ElseIf (ButtonMenu.Selected == StandButton)
 				return ChoiceStand
+			ElseIf (ButtonMenu.Selected == DoubleButton)
+				return ChoiceDouble
+			ElseIf (ButtonMenu.Selected == SplitButton)
+				return ChoiceSplit
+			ElseIf (ButtonMenu.Selected == SplitSwitchButton)
+				return ChoiceSplitSwitch
 			Else
 				WriteUnexpected(self, "Playing.IChoice", "The selected choice button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				return Invalid
@@ -270,10 +295,10 @@ State Scoring
 			Game.ShowPerkVaultBoyOnHUD(LoseFX)
 			Player.RemoveItem(Caps, Debt, true)
 		ElseIf (scoring == ScoreWin)
-			Game.ShowPerkVaultBoyOnHUD(WinFX)
+			Game.ShowPerkVaultBoyOnHUD(WinFX, UIExperienceUp)
 			Player.AddItem(Caps, Debt, true)
 		ElseIf (scoring == ScoreBlackjack)
-			Game.ShowPerkVaultBoyOnHUD(BlackjackFX)
+			Game.ShowPerkVaultBoyOnHUD(BlackjackFX, UIExperienceUp)
 			Player.AddItem(Caps, Debt, true)
 		Else
 			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
@@ -334,6 +359,7 @@ EndGroup
 Group SFX
 	Sound Property ITMBottlecapsUpx Auto Const Mandatory
 	Sound Property ITMBottlecapsDownx Auto Const Mandatory
+	Sound Property UIExperienceUp Auto Const Mandatory
 EndGroup
 
 Group Player
