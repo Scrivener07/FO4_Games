@@ -3,7 +3,7 @@ Play classic games in Fallout 4.
 
 Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaju0r1Zw4MTMmxLbc9ZQ1MOLJ) for work in progress footage.
 
-<img src="Documents/Screenshot03.png" height="200">
+<img src="Documents/Screenshot03.png" height="175">
 
 #### Features
 - [x] Blackjack
@@ -11,6 +11,7 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 - [ ] Roulette
 - [ ] Caravan
 - [ ] Cadillac
+- [ ] Spades
 
 #### Requirements
 * A computer, PC only.
@@ -32,12 +33,13 @@ See also the list of [contributors](https://github.com/Scrivener07/FO4_Games/con
 #### Acknowledgments
 * [The White Collar Players](https://github.com/TheWhiteCollarPlayers) - Creator, contact on discord `TheWhiteCollarPlayers#7879`
 * [Scrivener07](https://github.com/Scrivener07) - Scripter, contact on discord `Scrivener07#4154`
-* **Se7enRaven** - Artist, created playing card assets as a resource for this project. See [LICENSE.RESOURCE.md](LICENSE.RESOURCE.md).
+* [Se7enRaven](https://www.nexusmods.com/fallout4/users/184696) - Artist, created playing card assets as a resource for this project. See [LICENSE.RESOURCE.md](LICENSE.RESOURCE.md).
 * [Expired](https://github.com/expired6978) - Programmer, added F4SE papyrus functions for scaleform interoperation.
 * [Reg2K](https://github.com/reg2k) - Help, counsel regarding scaleform user interface and papyrus scripting.
 * [Neanka](https://github.com/Neanka) - Help, counsel regarding scaleform user interface and papyrus scripting.
 * [shad0wshayd3](https://github.com/shad0wshayd3) - Help, counsel regarding papyrus scripting.
 * [ForsakenShell, E, 1000101](https://github.com/ForsakenShell) - Help, counsel regarding papyrus scripting.
+* [Sireyn](https://www.nexusmods.com/users/4344629) - Tester, provided excellent feedback and reported critical bugs.
 * **Sarinia** - Help, counsel regarding meshes, textures, and materials.
 * **Jonathan Ostrus** - Help, counsel regarding settlement objects in the Creation Kit and papyrus scripting.
 * **Kinggath** - Help, counsel regarding scripting for adding game tables to settlements.

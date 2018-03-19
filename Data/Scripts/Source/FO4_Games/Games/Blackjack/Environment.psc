@@ -51,7 +51,7 @@ State Starting
 		{Starting}
 		FadeGameOut()
 		Player.MoveTo(Games_Blackjack_CellMarker)
-
+		Game.ForceFirstPerson()
 		Utility.Wait(1.0)
 
 		InputLayer = InputEnableLayer.Create()
