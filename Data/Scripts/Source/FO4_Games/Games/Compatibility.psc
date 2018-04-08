@@ -52,6 +52,6 @@ Group Properties
 EndGroup
 
 Group F4SE
-	int Property MinimumReleaseF4SE = 12  AutoReadOnly
-	string Property	MinimumVersionF4SE = "0.6.5" AutoReadOnly
+	int Property MinimumReleaseF4SE = 14  AutoReadOnly
+	string Property	MinimumVersionF4SE = "0.6.7" AutoReadOnly
 EndGroup
