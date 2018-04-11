@@ -4,7 +4,7 @@
 | Mod Category    | Gameplay Effects and Changes                                      |
 | Mod Name        | Barstool Games                                                    |
 | Mod Language    | English                                                           |
-| Current Version | 0.1.0.0                                                           |
+| Current Version | 0.1.2.1                                                           |
 | Author or Team  | Scrivener07 and TheWhiteCollarPlayers                             |
 | Brief Overview  | Brings classic games such as Blackjack to the world of Fallout 4. |
 | Classification  | None                                                              |
@@ -19,6 +19,20 @@
 | Download on GitHub | https://github.com/Scrivener07/FO4_Games/releases |
 
 ```
+[size=6]What's New: Version 0.1.2.1[/size]
+[size=3]-A brand new custom card table created by the talented [url=https://www.nexusmods.com/fallout4/users/10204660]Corvalho[/url]﻿. This one is much smaller and fits in nearly every home.
+[/size]-Support for Nuka World and Far Harbor locations, currently available as individual plugins.
+-A plethora of bug fixes and optimizations. Expand the spoiler section below for details.
+[spoiler]
+Fixed issue with entering game in third person.
+Fixed issue with companions interfering while playing game.
+Fixed issue with perk magazine location conflicting with Sim Settlements: Industrial Revolution. New magazine location is in the Boylston Club near the Boston Commons.
+Fixed issue with the "Earnings" calculation.
+Fixed issue with the UI display.
+Fixed issue with scoring hands.
+Fixed camera positioning in game.
+Miscellaneous optimizations and improvements.
+[/spoiler]
 [size=6]Details[/size]
 [size=3]Barstool Games restores gambling related mini-games like those found in Fallout: New Vegas, to the world of Fallout 4. Currently, the only minigame added is Blackjack which can be played in a variety of ways. However in the future all of the minigames from Fallout: New Vegas as well as others will be added.
 [/size]
@@ -36,7 +50,6 @@
 
 [size=6]What's Next[/size]
 [size=3]-More minigames. Eventually all of the games from Fallout: New Vegas will be restored as well as several others.
--Support for DLC locations.
 -Fully voiced NPC's.
 -Updates and improvements to existing features.
 [/size]
@@ -44,7 +57,7 @@
 [size=6]How to Install[/size]
 [size=3]1) Make sure you have the current steam version of Fallout 4 as well as the corresponding version of the [url=http://f4se.silverlock.org/]Fallout 4 Script Extender[/url].
 2) Install the mod archive either manually or via NMM. 
-3) Activate Games.esm and BarstoolGames.esp in your load order.
+3) Activate Games.esm and BarstoolGames.esm in your load order.
 4) Launch the game.
 [/size]
 
@@ -55,7 +68,12 @@
 
 [size=6]Who to Thank[/size]
 [size=3]-[url=https://www.nexusmods.com/users/1493226]Scrivener07[/url], the brilliant and exceptionally talented individual without whom this entire project would not be possible.
+-[url=https://www.nexusmods.com/fallout4/users/10204660]Corvalho[/url]﻿, the exceptionally talented asset creator who gave us the gorgeous custom card table.
 -[url=https://www.nexusmods.com/fallout4/users/184696]Se7enraven[/url] , who created the wonderful card assets you see.
 -All of the many many extremely talented mod authors who provided testing, feedback, support, and a shoulder to cry on during the ongoing development of this project.
 [/size]
+
+[size=6]Collaborators[/size]
+[img]https://staticdelivery.nexusmods.com/images/1151/1493226-1521362470.png[/img]﻿
+[img]https://staticdelivery.nexusmods.com/images/1151/1493226-1521362899.png[/img]
 ```
