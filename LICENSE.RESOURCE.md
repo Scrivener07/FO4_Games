@@ -1,5 +1,16 @@
 Please see the respective license for each resource.
 
+## Corvalho﻿'s Resources
+The custom card table assets were created by Corvalho for this project. You are not allowed to use these assets in any mods/files.
+
+```
+Data.Vanilla\Meshes\Games\CardTable\CardTable.nif
+Data.Vanilla\Materials\Games\CardTable\CardTable.bgsm
+Data.Vanilla\Textures\Games\CardTable\CardTable.dds
+Data.Vanilla\Textures\Games\CardTable\CardTable_n.dds
+Data.Vanilla\Textures\Games\CardTable\CardTable_s.dds
+```
+
 ## Se7enraven FO4 Modder's Resources
 The playing card textures for this project were taken from `Se7enraven FO4 Modder's Resources` by Se7enraven.
 
