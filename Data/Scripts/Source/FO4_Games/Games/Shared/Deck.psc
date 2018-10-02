@@ -115,17 +115,19 @@ bool Function CardEquals(Card this, Card value)
 EndFunction
 
 
-ObjectReference[] Function ToReferences(Card[] cards)
+ObjectReference[] Function ToReferences(Card[] array)
 	{Returns a new array of each card's object reference.}
-	ObjectReference[] array = new ObjectReference[0]
-	If (cards)
+	If (array)
+		ObjectReference[] references = new ObjectReference[0]
 		int index = 0
-		While (index < cards.Length)
-			array.Add(cards[index].Reference)
+		While (index < array.Length)
+			references.Add(array[index].Reference)
 			index += 1
 		EndWhile
+		return references
+	Else
+		return none
 	EndIf
-	return array
 EndFunction
 
 
