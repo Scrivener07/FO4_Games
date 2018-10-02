@@ -121,3 +121,16 @@ bool Function IsDebug() Global DebugOnly
 	{Returns true if papyrus is in debug mode.}
 	return true
 EndFunction
+
+
+; Value Types
+;---------------------------------------------
+
+Struct BooleanValue
+	bool Value = false
+EndStruct
+
+
+Struct IntegerValue
+	int Value = 0
+EndStruct

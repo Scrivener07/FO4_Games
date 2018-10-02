@@ -20,8 +20,6 @@ Button MaximumButton
 Button HitButton
 Button StandButton
 Button DoubleButton
-Button SplitButton
-Button SplitSwitchButton
 
 Button PlayButton
 Button LeaveButton
@@ -31,6 +29,8 @@ string WinFX = "GamesBlackjackScoreWin.swf" const
 string BlackjackFX = "GamesBlackjackScore21.swf" const
 string PushFX = "GamesBlackjackScorePush.swf" const
 
+Seat Seat1
+
 
 ; Events
 ;---------------------------------------------
@@ -39,6 +39,20 @@ Event OnQuestInit()
 	parent.OnQuestInit()
 	PlayerRef = Game.GetPlayer()
 	Caps = Game.GetCaps()
+
+	Seating = new Seat
+	Seating.Card01 = GamesBlackjack_PlayerCard01
+	Seating.Card01Reveal = Seating.Card01 ; same, same
+	Seating.Card02 = GamesBlackjack_PlayerCard02
+	Seating.Card03 = GamesBlackjack_PlayerCard03
+	Seating.Card04 = GamesBlackjack_PlayerCard04
+	Seating.Card05 = GamesBlackjack_PlayerCard05
+	Seating.Card06 = GamesBlackjack_PlayerCard06
+	Seating.Card07 = GamesBlackjack_PlayerCard07
+	Seating.Card08 = GamesBlackjack_PlayerCard08
+	Seating.Card09 = GamesBlackjack_PlayerCard09
+	Seating.Card10 = GamesBlackjack_PlayerCard10
+	Seating.Card11 = GamesBlackjack_PlayerCard11
 
 	AcceptButton = new Button
 	AcceptButton.Text = "Accept"
@@ -71,14 +85,6 @@ Event OnQuestInit()
 	DoubleButton = new Button
 	DoubleButton.Text = "Double Down"
 	DoubleButton.KeyCode = Keyboard.D
-
-	SplitButton = new Button
-	SplitButton.Text = "Split"
-	SplitButton.KeyCode = Keyboard.A
-
-	SplitSwitchButton = new Button
-	SplitSwitchButton.Text = "Switch Hands"
-	SplitSwitchButton.KeyCode = Keyboard.Q
 
 	PlayButton = new Button
 	PlayButton.Text = "Play Again"
@@ -202,7 +208,7 @@ State Dealing
 	EndEvent
 
 	Event OnDrawn(Card drawn, ObjectReference marker)
-		Motion.Translate(drawn.Reference, Cards.GamesBlackjack_DeckMarkerB)
+		Motion.Translate(drawn.Reference, Blackjack.Deck.GamesBlackjack_DeckMarkerB)
 		Utility.Wait(0.75)
 		parent.OnDrawn(drawn, marker)
 	EndEvent
@@ -215,7 +221,7 @@ State Playing
 	EndEvent
 
 	Event OnDrawn(Card drawn, ObjectReference marker)
-		Motion.Translate(drawn.Reference, Cards.GamesBlackjack_DeckMarkerB)
+		Motion.Translate(drawn.Reference, Blackjack.Deck.GamesBlackjack_DeckMarkerB)
 		Utility.Wait(0.75)
 		parent.OnDrawn(drawn, marker)
 	EndEvent
@@ -229,10 +235,6 @@ State Playing
 		; TODO: WIP
 		If (Turn == 1)
 			ButtonMenu.Add(DoubleButton)
-			If (Hand[0].Rank == Hand[1].Rank)
-				ButtonMenu.Add(SplitButton)
-				ButtonMenu.Add(SplitSwitchButton)
-			EndIf
 		EndIf
 
 		ButtonMenu.Show()
@@ -243,10 +245,6 @@ State Playing
 				return ChoiceStand
 			ElseIf (ButtonMenu.Selected == DoubleButton)
 				return ChoiceDouble
-			ElseIf (ButtonMenu.Selected == SplitButton)
-				return ChoiceSplit
-			ElseIf (ButtonMenu.Selected == SplitSwitchButton)
-				return ChoiceSplitSwitch
 			Else
 				WriteUnexpected(self, "Playing.IChoice", "The selected choice button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				return Invalid
@@ -368,4 +366,18 @@ Group Player
 			return PlayerRef
 		EndFunction
 	EndProperty
+EndGroup
+
+Group Seat
+	ObjectReference Property GamesBlackjack_PlayerCard01 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard02 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard03 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard04 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard05 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard06 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard07 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard08 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard09 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard10 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard11 Auto Const Mandatory
 EndGroup

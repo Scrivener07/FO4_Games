@@ -2,61 +2,7 @@ ScriptName Games:Blackjack:PlayerType extends Games:Blackjack:Type Native Hidden
 import Games:Shared:Deck
 import Games:Shared:Log
 
-; States
-;---------------------------------------------
-
-State Starting
-	Event OnState()
-		{Allocate data for new game session.}
-		WriteNotImplemented(self, "Starting.OnState", "The member must be implemented on and extending script.")
-	EndEvent
-EndState
-
-State Wagering
-	Event OnState()
-		{Wagering}
-		WriteNotImplemented(self, "Wagering.OnState", "The member must be implemented on and extending script.")
-	EndEvent
-EndState
-
-State Dealing
-	Event OnState()
-		{Dealing}
-		WriteNotImplemented(self, "Dealing.OnState", "The member must be implemented on and extending script.")
-	EndEvent
-EndState
-
-State Playing
-	Event OnState()
-		{Playing}
-		WriteNotImplemented(self, "Playing.OnState", "The member must be implemented on and extending script.")
-	EndEvent
-EndState
-
-State Scoring
-	Event OnState()
-		{Scoring}
-		WriteNotImplemented(self, "Scoring.OnState", "The member must be implemented on and extending script.")
-	EndEvent
-EndState
-
-State Exiting
-	Event OnState()
-		{Exiting}
-		WriteNotImplemented(self, "Exiting.OnState", "The member must be implemented on and extending script.")
-	EndEvent
-EndState
-
-
-; Abstract
-;---------------------------------------------
-
-Event OnDrawn(Card drawn, ObjectReference marker) Native
-Event OnTurn(int number) Native
-Event OnScoring(int scoring) Native
-
-
-; Structures
+; Data
 ;---------------------------------------------
 
 Struct SessionData
@@ -71,6 +17,62 @@ Struct MatchData
 	int TurnChoice = -1
 	int Debt = 0
 EndStruct
+
+
+; Logic
+;---------------------------------------------
+
+Event OnDrawn(Card drawn, ObjectReference marker) Native
+Event OnTurn(int number) Native
+Event OnScoring(int scoring) Native
+
+
+; Seating
+;---------------------------------------------
+
+Struct Seat
+	ObjectReference Card01
+	ObjectReference Card01Reveal
+	ObjectReference Card02
+	ObjectReference Card03
+	ObjectReference Card04
+	ObjectReference Card05
+	ObjectReference Card06
+	ObjectReference Card07
+	ObjectReference Card08
+	ObjectReference Card09
+	ObjectReference Card10
+	ObjectReference Card11
+EndStruct
+
+ObjectReference Function GetMarkerFor(Seat seat, int next)
+	If (next == Invalid)
+		return seat.Card01
+	ElseIf (next == 0)
+		return seat.Card02
+	ElseIf (next == 1)
+		return seat.Card03
+	ElseIf (next == 2)
+		return seat.Card04
+	ElseIf (next == 3)
+		return seat.Card05
+	ElseIf (next == 4)
+		return seat.Card06
+	ElseIf (next == 5)
+		return seat.Card07
+	ElseIf (next == 6)
+		return seat.Card08
+	ElseIf (next == 7)
+		return seat.Card09
+	ElseIf (next == 8)
+		return seat.Card10
+	ElseIf (next == 9)
+		return seat.Card11
+	Else
+		WriteUnexpectedValue(self, "NextMarker", "next", "The next marker "+next+" is out of range.")
+		return none
+	EndIf
+EndFunction
 
 
 ; Properties
@@ -88,8 +90,6 @@ Group Choice
 	int Property ChoiceHit = 0 AutoReadOnly
 	int Property ChoiceStand = 1 AutoReadOnly
 	int Property ChoiceDouble = 2 AutoReadOnly
-	int Property ChoiceSplit = 3 AutoReadOnly
-	int Property ChoiceSplitSwitch = 4 AutoReadOnly
 EndGroup
 
 Group Score

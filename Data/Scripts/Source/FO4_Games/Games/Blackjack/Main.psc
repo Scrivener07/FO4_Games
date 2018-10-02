@@ -1,11 +1,17 @@
 ScriptName Games:Blackjack:Main extends Games:Blackjack:Type
 import Games
+import Games:Blackjack
 import Games:Shared
+;---------------------------------------------
+import Games:Shared:Deck
 import Games:Shared:Log
 import Games:Shared:Papyrus
+import Games:Blackjack:PlayerType
+
 
 CustomEvent PhaseEvent
-int EmptyID   = 10 const
+
+int EmptyID    = 10 const
 int StartingID = 20 const
 int WageringID = 30 const
 int DealingID  = 40 const
@@ -45,10 +51,10 @@ EndEvent
 
 bool Function Play(ObjectReference exitMarker)
 	If (IsEmptyState)
-		If (Environment.SetExit(exitMarker))
+		If (Setup.SetExit(exitMarker))
 			return NewState(self, StartingID)
 		Else
-			WriteUnexpected(self, "Play", "Environment could not set the exit marker "+exitMarker)
+			WriteUnexpected(self, "Play", "Setup could not set the exit marker "+exitMarker)
 			return false
 		EndIf
 	Else
@@ -72,6 +78,40 @@ bool Function PlayAsk(ObjectReference exitMarker)
 		WriteUnexpectedValue(self, "PlayAsk", "selected", "The option '"+selected+"' is unhandled.")
 		return false
 	EndIf
+EndFunction
+
+
+int Function Score(Blackjack:Player player)
+	int score = 0
+	int index = 0
+	While (index < player.Hand.Length)
+		Deck:Card card = player.Hand[index]
+
+		If (card.Rank == Deck.Ace)
+			score += 11
+		ElseIf (Deck.IsFaceCard(card))
+			score += 10
+		Else
+			score += card.Rank
+		EndIf
+
+		index += 1
+	EndWhile
+
+	index = 0
+	While (index < player.Hand.Length)
+		Deck:Card card = player.Hand[index]
+
+		If (card.Rank == Deck.Ace)
+			If (player.IsBust(score))
+				score -= 10
+			EndIf
+		EndIf
+
+		index += 1
+	EndWhile
+
+	return score
 EndFunction
 
 
@@ -104,7 +144,7 @@ EndFunction
 ;---------------------------------------------
 
 State Starting
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Session Begin}
 		WriteLine("Blackjack", "Starting")
 
@@ -115,9 +155,10 @@ State Starting
 		EndIf
 
 		If (SendPhase(self, StartingState, Begun))
-			AwaitState(Environment, StartingState)
-			AwaitState(Cards, StartingState)
-			AwaitState(Players, StartingState)
+			AwaitState(Setup, StartingState)
+			AwaitState(Deck, StartingState)
+			BeginState(Dealer, StartingState)
+			BeginState(Human, StartingState)
 			NewState(self, WageringID)
 		Else
 			WriteUnexpected(self, "Starting.OnBeginState", "Could not begin the '"+StartingState+"' state.")
@@ -126,8 +167,8 @@ State Starting
 	EndEvent
 
 
-	Event OnEndState(string asNewState)
-		If (asNewState == WageringState)
+	Event OnEndState(string newState)
+		If (newState == WageringState)
 			SendPhase(self, StartingState, Ended)
 		EndIf
 	EndEvent
@@ -135,7 +176,7 @@ EndState
 
 
 State Wagering
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
 		WriteLine("Blackjack", "Wagering")
 
@@ -148,7 +189,9 @@ State Wagering
 
 		If (SendPhase(self, WageringState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Players, WageringState)
+
+			BeginState(Dealer, WageringState)
+			BeginState(Human, WageringState)
 
 			If (Human.Continue)
 				If (Human.Bet == Invalid)
@@ -167,20 +210,26 @@ State Wagering
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, WageringState, Ended)
 	EndEvent
 EndState
 
 
 State Dealing
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
 		WriteLine("Blackjack", "Dealing")
 		If (SendPhase(self, DealingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Cards, DealingState)
-			AwaitState(Players, DealingState)
+			AwaitState(Deck, DealingState)
+
+			AwaitState(Dealer, DealingState)
+			AwaitState(Human, DealingState)
+
+			AwaitState(Dealer, DealingState)
+			AwaitState(Human, DealingState)
+
 			NewState(self, PlayingID)
 		Else
 			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' state.")
@@ -188,19 +237,24 @@ State Dealing
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, DealingState, Ended)
 	EndEvent
 EndState
 
 
 State Playing
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
 		WriteLine("Blackjack", "Playing")
 		If (SendPhase(self, PlayingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Players, PlayingState)
+
+			; TODO: Peek at the dealers hand for a blackjack score.
+
+			AwaitState(Human, PlayingState)
+			AwaitState(Dealer, PlayingState)
+
 			NewState(self, ScoringID)
 		Else
 			WriteUnexpected(self, "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' state.")
@@ -208,19 +262,25 @@ State Playing
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, PlayingState, Ended)
 	EndEvent
 EndState
 
 
 State Scoring
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
 		WriteLine("Blackjack", "Scoring")
 		If (SendPhase(self, ScoringState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Players, ScoringState)
+
+			AwaitState(Human, ScoringState)
+			Deck.CollectFrom(Human)
+
+			AwaitState(Dealer, ScoringState)
+			Deck.CollectFrom(Dealer)
+
 
 			If (Human.Continue)
 				If (Human.HasCaps)
@@ -241,21 +301,24 @@ State Scoring
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, ScoringState, Ended)
 	EndEvent
 EndState
 
 
 State Exiting
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Session End}
 		WriteLine("Blackjack", "Exiting")
 		If (SendPhase(self, ExitingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Cards, ExitingState)
-			AwaitState(Players, ExitingState)
-			AwaitState(Environment, ExitingState)
+			AwaitState(Deck, ExitingState)
+
+			AwaitState(Human, ExitingState)
+			AwaitState(Dealer, ExitingState)
+
+			AwaitState(Setup, ExitingState)
 		Else
 			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' state.")
 		EndIf
@@ -263,7 +326,7 @@ State Exiting
 		NewState(self, EmptyID)
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, ExitingState, Ended)
 	EndEvent
 EndState
@@ -278,8 +341,8 @@ Group Messages
 EndGroup
 
 Group Scripts
-	Blackjack:Environment Property Environment Auto Const Mandatory
-	Blackjack:Cards Property Cards Auto Const Mandatory
-	Blackjack:Players Property Players Auto Const Mandatory
+	Blackjack:Setup Property Setup Auto Const Mandatory
+	Blackjack:Deck Property Deck Auto Const Mandatory
+	Blackjack:Players:Dealer Property Dealer Auto Const Mandatory
 	Blackjack:Players:Human Property Human Auto Const Mandatory
 EndGroup

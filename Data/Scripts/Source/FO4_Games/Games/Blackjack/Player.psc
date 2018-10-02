@@ -5,9 +5,9 @@ import Games:Shared
 import Games:Shared:papyrus
 import Games:Shared:Deck
 import Games:Shared:Log
-import Games:Blackjack:Players
 
-Card[] HandArray
+
+Card[] Cards
 SessionData Session
 MatchData Match
 
@@ -20,7 +20,7 @@ int Win = 21 const
 ;---------------------------------------------
 
 Event OnQuestInit()
-	HandArray = new Card[0]
+	Cards = new Card[0]
 	Match = new MatchData
 	Session = new SessionData
 EndEvent
@@ -39,7 +39,7 @@ EndState
 
 State Wagering
 	Event OnState()
-		HandArray = new Card[0]
+		Cards = new Card[0]
 		Match = new MatchData
 		Match.Bet = IWager()
 		WriteLine(self, "Wagered a bet of "+Bet)
@@ -53,7 +53,7 @@ EndState
 
 State Dealing
 	Event OnState()
-		Players.DrawFor(self)
+		Blackjack.Deck.DrawFor(self)
 	EndEvent
 
 	Event OnDrawn(Card drawn, ObjectReference marker)
@@ -82,7 +82,7 @@ State Playing
 				Match.TurnChoice = IChoice()
 
 				If (Match.TurnChoice == ChoiceHit)
-					next = Players.DrawFor(self)
+					next = Blackjack.Deck.DrawFor(self)
 
 				ElseIf (Match.TurnChoice == ChoiceStand)
 					WriteLine(self, "Chose to stand.")
@@ -90,24 +90,19 @@ State Playing
 
 				ElseIf (Match.TurnChoice == ChoiceDouble)
 					WriteMessage(self, "Double Down", "Chose to double down.")
+
 					; double the wager  and commit to drawing one more card.
 					; must be the first turn
-					next = move
+					;/
+						; Match.Double = true
+						; Match.Bet *= 2
+						; Hand.Draw()
+						; next = break
+						; WriteLine(ToString(), "Chose to double down.")
+					/;
 
-				ElseIf (Match.TurnChoice == ChoiceSplit)
-					WriteMessage(self, "Split", "Chose to split.")
-					; Move the first two cards to split hand positions.
-					; must be  the first turn
-					Motion.Translate(Hand[0].Reference, Cards.GamesBlackjack_PlayerCardSplitA01)
-					Motion.Translate(Hand[1].Reference, Cards.GamesBlackjack_PlayerCardSplitB01)
-					next = move
-
-				ElseIf (Match.TurnChoice == ChoiceSplitSwitch)
-					WriteMessage(self, "Split Switch", "Chose to split switch.")
-					; Redirect card destination markers to one of the split hands.
-					Motion.Translate(Hand[0].Reference, Cards.GamesBlackjack_PlayerCard01)
-					Motion.Translate(Hand[1].Reference, Cards.GamesBlackjack_PlayerCard02)
-					next = move
+					next = Blackjack.Deck.DrawFor(self)
+					next = move ; TODO: Treat double as a hit and just move on for now..
 				Else
 					WriteUnexpectedValue(self, "Playing.OnState", "Match.TurnChoice", "The play choice "+Match.TurnChoice+" was out of range.")
 					next = break
@@ -140,25 +135,25 @@ State Scoring
 				WriteLine(self, "Score of "+Score+" is a bust.")
 				OnScoring(ScoreLose)
 			Else
-				If (IsBust(Dealer.Score))
-					WriteLine(self, "The dealer busted with "+Dealer.Score+".")
+				If (IsBust(Blackjack.Dealer.Score))
+					WriteLine(self, "The dealer busted with "+Blackjack.Dealer.Score+".")
 					OnScoring(ScoreWin)
 				Else
-					If (Score > Dealer.Score)
-						WriteLine(self, "Score of "+Score+" beats dealers "+Dealer.Score+".")
+					If (Score > Blackjack.Dealer.Score)
+						WriteLine(self, "Score of "+Score+" beats dealers "+Blackjack.Dealer.Score+".")
 						If (HasBlackjack())
 							OnScoring(ScoreBlackjack)
 						Else
 							OnScoring(ScoreWin)
 						EndIf
-					ElseIf (Score < Dealer.Score)
-						WriteLine(self, "Score of "+Score+" loses to dealers "+Dealer.Score+".")
+					ElseIf (Score < Blackjack.Dealer.Score)
+						WriteLine(self, "Score of "+Score+" loses to dealers "+Blackjack.Dealer.Score+".")
 						OnScoring(ScoreLose)
-					ElseIf (Score == Dealer.Score)
-						WriteLine(self, "Score of "+Score+" pushes dealers "+Dealer.Score+".")
+					ElseIf (Score == Blackjack.Dealer.Score)
+						WriteLine(self, "Score of "+Score+" pushes dealers "+Blackjack.Dealer.Score+".")
 						OnScoring(ScorePush)
 					Else
-						WriteUnexpected(self, "Scoring.OnState", "Encountered a problem handling score "+Score+" against dealers "+dealer.Score+". Refunded "+Bet+" caps.")
+						WriteUnexpected(self, "Scoring.OnState", "Encountered a problem handling score "+Score+" against dealers "+Blackjack.Dealer.Score+". Refunded "+Bet+" caps.")
 						OnScoring(Invalid)
 					EndIf
 				EndIf
@@ -295,16 +290,12 @@ EndEvent
 ;---------------------------------------------
 
 Group Scripts
+	Blackjack:Main Property Blackjack Auto Const Mandatory
 	Shared:Motion Property Motion Auto Const Mandatory
-	Blackjack:Cards Property Cards Auto Const Mandatory
-	Blackjack:Players Property Players Auto Const Mandatory
-	Blackjack:Players:Dealer Property Dealer Auto Const Mandatory
 EndGroup
 
-Group Markers
+Group Seat
 	Seat Property Seating Auto Hidden
-	; Seat Property SeatingSplitA Auto Hidden
-	; Seat Property SeatingSplitB Auto Hidden
 EndGroup
 
 Group Player
@@ -366,19 +357,19 @@ EndGroup
 Group Hand
 	Card[] Property Hand Hidden
 		Card[] Function Get()
-			return HandArray
+			return Cards
 		EndFunction
 	EndProperty
 
 	int Property HandSize Hidden
 		int Function Get()
-			return HandArray.Length
+			return Cards.Length
 		EndFunction
 	EndProperty
 
 	int Property HandLast Hidden
 		int Function Get()
-			return HandArray.Length - 1
+			return Cards.Length - 1
 		EndFunction
 	EndProperty
 

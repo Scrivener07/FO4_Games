@@ -1,4 +1,4 @@
-ScriptName Games:Blackjack:Environment extends Games:Blackjack:Type
+ScriptName Games:Blackjack:Setup extends Games:Blackjack:Type
 import Games:Shared:Log
 
 Actor Player
