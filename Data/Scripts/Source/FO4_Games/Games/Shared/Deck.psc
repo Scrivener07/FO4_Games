@@ -53,7 +53,7 @@ bool Function Collect(Card value)
 			value.Drawn = false
 			return true
 		Else
-			WriteLine(ToString(), "Cannot collect none card.")
+			WriteLine(ToString(), "Cannot collect a none card.")
 			return false
 		EndIf
 	Else

@@ -21,68 +21,8 @@ Event Games:Shared:Motion.TranslationEvent(Shared:Motion sender, var[] arguments
 EndEvent
 
 
-; Players
-;---------------------------------------------
-
-Card Function DrawFor(Blackjack:Player player)
-	If (player.CanDraw)
-		Card drawn = Draw()
-		If (drawn)
-			If (drawn.Reference)
-				ObjectReference marker = player.GetMarkerFor(player.Seating, player.HandLast)
-				If (marker)
-					player.Hand.Add(drawn)
-					int newScore = Blackjack.Score(player)
-					player.SetScore(newScore)
-					player.OnDrawn(drawn, marker)
-					return drawn
-				Else
-					Collect(drawn)
-					WriteUnexpectedValue(self, "DrawFor", "marker", "The turn card marker cannot be none.")
-					return none
-				EndIf
-			Else
-				Collect(drawn)
-				WriteUnexpectedValue(self, "DrawFor", "drawn.Reference", "Cannot draw card with a none Card.Reference.")
-				return none
-			EndIf
-		Else
-			WriteUnexpectedValue(self, "DrawFor", "drawn", "The draw card cannot be none.")
-			return none
-		EndIf
-	Else
-		WriteUnexpectedValue(self, "DrawFor", "CanDraw", "Cannot draw another card right now.")
-		return none
-	EndIf
-EndFunction
-
-
-Function CollectFrom(Blackjack:Player player)
-	If (player)
-		CollectEach(player.Hand)
-		player.Motion.TranslateEach(ToReferences(player.Hand), GamesBlackjack_DeckMarker)
-	Else
-		WriteUnexpectedValue(self, "CollectFrom", "player", "Cannot collect cards from a none player.")
-	EndIf
-EndFunction
-
-
 ; Functions
 ;---------------------------------------------
-
-Function CollectEach(Card[] array)
-	{Sets the `Drawn` member of each card to false.}
-	If (array)
-		int index = 0
-		While (index < array.Length)
-			Collect(array[index])
-			index += 1
-		EndWhile
-	Else
-		WriteUnexpectedValue(ToString(), "CollectEach", "array", "Cannot collect none or empty card array.")
-	EndIf
-EndFunction
-
 
 Function MoveAll()
 	{Moves all cards in the deck to the deck marker without translation.}
@@ -98,12 +38,17 @@ Function MoveAll()
 EndFunction
 
 
-Function CollectAll()
-	{Collects all cards, marking them undrawn.}
-	If (References)
-		Motion.TranslateEach(References, GamesBlackjack_DeckMarker)
+Function CollectEach(Card[] array)
+	{Sets the `Drawn` member of each card in the given array to false.}
+	If (array)
+		int index = 0
+		While (index < array.Length)
+			Collect(array[index])
+			index += 1
+		EndWhile
+		Motion.TranslateEach(ToReferences(array), GamesBlackjack_DeckMarker, 200.0)
 	Else
-		WriteUnexpectedValue(ToString(), "CollectAll", "References", "Cannot collect none references.")
+		WriteUnexpectedValue(ToString(), "CollectEach", "array", "Cannot collect none or empty card array.")
 	EndIf
 EndFunction
 
@@ -481,8 +426,6 @@ EndGroup
 
 Group Markers
 	ObjectReference Property GamesBlackjack_DeckMarker Auto Const Mandatory
-	ObjectReference Property GamesBlackjack_DeckMarkerB Auto Const Mandatory
-	ObjectReference Property GamesBlackjack_DeckMarkerC Auto Const Mandatory
 EndGroup
 
 Group Cards

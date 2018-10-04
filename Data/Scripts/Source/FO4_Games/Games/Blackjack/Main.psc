@@ -6,7 +6,7 @@ import Games:Shared
 import Games:Shared:Deck
 import Games:Shared:Log
 import Games:Shared:Papyrus
-import Games:Blackjack:PlayerType
+import Games:Blackjack:Players:ObjectType
 
 
 CustomEvent PhaseEvent
@@ -78,40 +78,6 @@ bool Function PlayAsk(ObjectReference exitMarker)
 		WriteUnexpectedValue(self, "PlayAsk", "selected", "The option '"+selected+"' is unhandled.")
 		return false
 	EndIf
-EndFunction
-
-
-int Function Score(Blackjack:Player player)
-	int score = 0
-	int index = 0
-	While (index < player.Hand.Length)
-		Deck:Card card = player.Hand[index]
-
-		If (card.Rank == Deck.Ace)
-			score += 11
-		ElseIf (Deck.IsFaceCard(card))
-			score += 10
-		Else
-			score += card.Rank
-		EndIf
-
-		index += 1
-	EndWhile
-
-	index = 0
-	While (index < player.Hand.Length)
-		Deck:Card card = player.Hand[index]
-
-		If (card.Rank == Deck.Ace)
-			If (player.IsBust(score))
-				score -= 10
-			EndIf
-		EndIf
-
-		index += 1
-	EndWhile
-
-	return score
 EndFunction
 
 
@@ -193,7 +159,7 @@ State Wagering
 			BeginState(Dealer, WageringState)
 			BeginState(Human, WageringState)
 
-			If (Human.Continue)
+			If (!Human.Quit)
 				If (Human.Bet == Invalid)
 					WriteUnexpected(self, "Wagering.OnBeginState", "Exiting. Human bet of "+Human.Bet+" is invalid.")
 					NewState(self, ExitingID)
@@ -230,6 +196,12 @@ State Dealing
 			AwaitState(Dealer, DealingState)
 			AwaitState(Human, DealingState)
 
+			If (Dealer.Hand.IsBlackjack)
+				NewState(self, ScoringID)
+			Else
+				NewState(self, PlayingID)
+			EndIf
+
 			NewState(self, PlayingID)
 		Else
 			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' state.")
@@ -250,10 +222,11 @@ State Playing
 		If (SendPhase(self, PlayingState, Begun))
 			Utility.Wait(TimeDelay)
 
-			; TODO: Peek at the dealers hand for a blackjack score.
-
 			AwaitState(Human, PlayingState)
-			AwaitState(Dealer, PlayingState)
+
+			If (Human.Hand.IsInPlay)
+				AwaitState(Dealer, PlayingState)
+			EndIf
 
 			NewState(self, ScoringID)
 		Else
@@ -276,13 +249,12 @@ State Scoring
 			Utility.Wait(TimeDelay)
 
 			AwaitState(Human, ScoringState)
-			Deck.CollectFrom(Human)
+			Human.Hand.Collect()
 
 			AwaitState(Dealer, ScoringState)
-			Deck.CollectFrom(Dealer)
+			Dealer.Hand.Collect()
 
-
-			If (Human.Continue)
+			If (!Human.Quit)
 				If (Human.HasCaps)
 					WriteLine("Blackjack", "The player will continue playing game.")
 					NewState(self, WageringID)
@@ -343,6 +315,6 @@ EndGroup
 Group Scripts
 	Blackjack:Setup Property Setup Auto Const Mandatory
 	Blackjack:Deck Property Deck Auto Const Mandatory
-	Blackjack:Players:Dealer Property Dealer Auto Const Mandatory
-	Blackjack:Players:Human Property Human Auto Const Mandatory
+	Blackjack:Dealer Property Dealer Auto Const Mandatory
+	Blackjack:Human Property Human Auto Const Mandatory
 EndGroup

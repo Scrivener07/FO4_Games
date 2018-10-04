@@ -194,9 +194,9 @@ bool Function ShownNoButtonTest()
 	return Done
 EndFunction
 State ShownNoButtonTest
-	Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu akSender, var[] arguments)
-		WriteLine(self, "ShownNoButtonTest::Games:Shared:UI:ButtonMenu.OnShown:"+akSender.GetShownEventArgs(arguments))
-		akSender.Hide()
+	Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu sender, var[] arguments)
+		WriteLine(self, "ShownNoButtonTest::Games:Shared:UI:ButtonMenu.OnShown:"+sender.GetShownEventArgs(arguments))
+		sender.Hide()
 	EndEvent
 EndState
 
@@ -214,9 +214,9 @@ bool Function ShownButtonTest()
 	return Done
 EndFunction
 State ShownButtonTest
-	Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu akSender, var[] arguments)
-		WriteLine(self, "ShownButtonTest::Games:Shared:UI:ButtonMenu.OnShown:"+akSender.GetShownEventArgs(arguments))
-		akSender.Hide()
+	Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu sender, var[] arguments)
+		WriteLine(self, "ShownButtonTest::Games:Shared:UI:ButtonMenu.OnShown:"+sender.GetShownEventArgs(arguments))
+		sender.Hide()
 	EndEvent
 EndState
 
@@ -224,7 +224,7 @@ EndState
 ; Empty
 ;---------------------------------------------
 
-Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu akSender, var[] arguments)
+Event Games:Shared:UI:ButtonMenu.OnShown(UI:ButtonMenu sender, var[] arguments)
 	{EMPTY}
 EndEvent
 
