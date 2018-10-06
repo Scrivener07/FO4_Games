@@ -1,5 +1,6 @@
 ScriptName Games:Blackjack:Dealer extends Games:Blackjack:Players:Object
 import Games:Blackjack:Players:Hand
+import Games:Shared
 import Games:Shared:Log
 import Games:Shared:Papyrus
 
@@ -53,8 +54,10 @@ State Playing
 	Event OnTurn(BooleanValue continue)
 		{The dealer reveals their hole card.}
 		If (Turn == 1)
-			Motion.Translate(Hand.Cards[0].Reference, Hand.Markers.Transition)
-			Motion.Translate(Hand.Cards[0].Reference, GamesBlackjack_DealerCard01Reveal)
+			Deck:Card card = Hand.Cards[0]
+			Motion.Translate(card.Reference, Hand.Markers.Transition)
+			Motion.Translate(card.Reference, GamesBlackjack_DealerCard01Reveal)
+			WriteLine(ToString(), "The dealer has revealed their hole card. " + card)
 		EndIf
 		parent.OnTurn(continue)
 	EndEvent

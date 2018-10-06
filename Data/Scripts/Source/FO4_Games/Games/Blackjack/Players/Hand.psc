@@ -62,12 +62,12 @@ bool Function Draw(bool reveal = true)
 					Player.Motion.Translate(card.Reference, destination)
 					return true
 				Else
-					Deck.Collect(card)
+					Deck.Undraw(card)
 					WriteUnexpectedValue(ToString(), "Draw", "destination", "The card marker reference cannot be none.")
 					return false
 				EndIf
 			Else
-				Deck.Collect(card)
+				Deck.Undraw(card)
 				WriteUnexpectedValue(ToString(), "Draw", "card.Reference", "Cannot draw card with a none card reference.")
 				return false
 			EndIf
@@ -82,9 +82,9 @@ bool Function Draw(bool reveal = true)
 EndFunction
 
 
-Function Collect()
+Function Undraw()
 	{Collects all of this hands cards into the deck.}
-	Deck.CollectEach(Cards)
+	Deck.Collect(Cards)
 	Create()
 EndFunction
 

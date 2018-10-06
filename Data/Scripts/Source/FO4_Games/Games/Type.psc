@@ -21,8 +21,16 @@ EndEvent
 ; States
 ;---------------------------------------------
 
+Event OnBeginState(string asOldState)
+	If (!IsEmptyState)
+		RunOnce()
+	EndIf
+EndEvent
+
+
 Event OnState()
 	{Base event for self terminating states.}
+	; Note: Override the `OnBeginState` event to prevent the run once behavior of states.
 	WriteNotImplemented(ToString(), "OnState", "Must be implemented on an extending child script.")
 EndEvent
 
@@ -66,7 +74,11 @@ EndFunction
 
 string Function ToString()
 	{The string representation of this script.}
-	return self+"["+StateName+"]"
+	If (IsEmptyState)
+		return self
+	Else
+		return self+"["+StateName+"]"
+	EndIf
 EndFunction
 
 

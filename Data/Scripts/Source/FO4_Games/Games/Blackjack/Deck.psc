@@ -3,9 +3,6 @@ import Games
 import Games:Shared:Log
 import Games:Shared:Motion
 
-ObjectReference[] References
-
-
 ; Events
 ;---------------------------------------------
 
@@ -21,34 +18,58 @@ Event Games:Shared:Motion.TranslationEvent(Shared:Motion sender, var[] arguments
 EndEvent
 
 
-; Functions
+; Methods
 ;---------------------------------------------
 
-Function MoveAll()
-	{Moves all cards in the deck to the deck marker without translation.}
-	If (References)
-		int index = 0
-		While (index < References.Length)
-			References[index].MoveTo(GamesBlackjack_DeckMarker)
-			index += 1
-		EndWhile
+bool Function Create(Card[] values)
+	{Initializes the deck for Blackjack.}
+	If (parent.Create(values))
+		Motion.RegisterForTranslationEvent(self)
+		Blackjack.Dealer.Motion.RegisterForTranslationEvent(self)
+		Blackjack.Human.Motion.RegisterForTranslationEvent(self)
+		Restore()
+		return true
 	Else
-		WriteUnexpectedValue(ToString(), "MoveAll", "References", "Cannot collect none references.")
+		WriteUnexpected(ToString(), "Create", "The parent method has failed.")
+		return false
 	EndIf
 EndFunction
 
 
-Function CollectEach(Card[] array)
-	{Sets the `Drawn` member of each card in the given array to false.}
-	If (array)
+bool Function Restore()
+	{Will undraw and move all cards in the deck to the deck marker without translation.}
+	If (Cards)
 		int index = 0
-		While (index < array.Length)
-			Collect(array[index])
+		While (index < Cards.Length)
+			Card value = Cards[index]
+			value.Drawn = false
+			value.Reference.MoveTo(GamesBlackjack_DeckMarker)
 			index += 1
 		EndWhile
-		Motion.TranslateEach(ToReferences(array), GamesBlackjack_DeckMarker, 200.0)
+		return true
 	Else
-		WriteUnexpectedValue(ToString(), "CollectEach", "array", "Cannot collect none or empty card array.")
+		WriteUnexpectedValue(ToString(), "Restore", "Cards", "Cannot restore a none or empty card array.")
+		return false
+	EndIf
+EndFunction
+
+
+Function Collect(Card[] values)
+	{Collects an array of cards into the deck.}
+	If (values)
+		ObjectReference[] references = new ObjectReference[0]
+		int index = 0
+		While (index < values.Length)
+			Card value = Cards[index]
+			If (Undraw(value))
+				references.Add(value.Reference)
+			EndIf
+			index += 1
+		EndWhile
+		; Translate the card references as a single batch.
+		Motion.TranslateEach(references, GamesBlackjack_DeckMarker, 200.0)
+	Else
+		WriteUnexpectedValue(ToString(), "Collect", "values", "Cannot collect none or empty card values.")
 	EndIf
 EndFunction
 
@@ -57,10 +78,6 @@ EndFunction
 ;---------------------------------------------
 
 State Starting
-	Event OnBeginState(string oldState)
-		RunOnce()
-	EndEvent
-
 	Event OnState()
 		Card[] array = new Card[0]
 
@@ -380,20 +397,11 @@ State Starting
 		array.Add(Heart13)
 
 		Create(array)
-
-		References = GetReferences()
-		Motion.RegisterForTranslationEvent(self)
-		Blackjack.Dealer.Motion.RegisterForTranslationEvent(self)
-		Blackjack.Human.Motion.RegisterForTranslationEvent(self)
-		MoveAll()
 	EndEvent
 EndState
 
 
 State Dealing
-	Event OnBeginState(string oldState)
-		RunOnce()
-	EndEvent
 	Event OnState()
 		Shuffle()
 	EndEvent
@@ -401,9 +409,6 @@ EndState
 
 
 State Exiting
-	Event OnBeginState(string oldState)
-		RunOnce()
-	EndEvent
 	Event OnState()
 		Motion.UnregisterForTranslationEvent(self)
 		Blackjack.Dealer.Motion.UnregisterForTranslationEvent(self)

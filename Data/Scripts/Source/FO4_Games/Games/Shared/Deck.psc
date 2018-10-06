@@ -1,12 +1,13 @@
 ScriptName Games:Shared:Deck extends Games:Type
+{Provies a common base class for collections that represent a deck of playing cards.}
 import Games:Shared:Log
 
-Card[] Values
+Card[] Array
 
 Struct Card
 	int Suit = -1
 	int Rank = -1
-	bool Drawn = false
+	bool Drawn = true
 	ObjectReference Reference
 EndStruct
 
@@ -14,13 +15,31 @@ EndStruct
 ; Methods
 ;---------------------------------------------
 
-bool Function Create(Card[] array)
-	If (array)
-		Values = array
-		WriteLine(ToString(), "Created a deck of "+array.Length+" cards.")
+bool Function Create(Card[] values)
+	{Initializes the deck with a new array of card values.}
+	If (values)
+		Array = values
+		Restore()
+		WriteLine(ToString(), "Created a deck of "+values.Length+" cards.")
 		return true
 	Else
-		WriteUnexpectedValue(ToString(), "Create", "array", "The card array cannot be empty or none.")
+		WriteUnexpectedValue(ToString(), "Create", "values", "Cannot create none or empty card values.")
+		return false
+	EndIf
+EndFunction
+
+
+bool Function Restore()
+	{Will restore the drawn state of each card in the deck. This is called when the deck is created.}
+	If (Array)
+		int index = 0
+		While (index < Array.Length)
+			Array[index].Drawn = false
+			index += 1
+		EndWhile
+		return true
+	Else
+		WriteUnexpectedValue(ToString(), "Restore", "Array", "Cannot restore a none or empty card array.")
 		return false
 	EndIf
 EndFunction
@@ -28,36 +47,42 @@ EndFunction
 
 Card Function Draw()
 	{Returns the next undrawn card from the deck, marking it as drawn.}
-	If (Values)
-		int index = Values.FindStruct("Drawn", false, 0)
-		If (index > Invalid)
-			Card value = Values[index]
+	If (Array)
+		int found = Array.FindStruct("Drawn", false, 0)
+		If (found > Invalid)
+			Card value = Array[found]
 			value.Drawn = true
 			WriteLine(ToString(), "Drawing the '"+value.Reference.GetDisplayName()+"' card from the deck.")
 			return value
 		Else
-			WriteLine(ToString(), "The deck has no cards left to draw.")
+			WriteUnexpectedValue(ToString(), "Draw", "found", "No undrawn card could be found within the deck.")
 			return none
 		EndIf
 	Else
-		WriteUnexpectedValue(ToString(), "Draw", "Values", "The card array cannot be empty or none.")
+		WriteUnexpectedValue(ToString(), "Draw", "Array", "The card array cannot be empty or none.")
 		return none
 	EndIf
 EndFunction
 
 
-bool Function Collect(Card value)
-	{Collects the given card by marking it undrawn.}
-	If (Values)
+bool Function Undraw(Card value)
+	{Undraws the given card by marking its drawn member as false.}
+	If (Array)
 		If (value)
-			value.Drawn = false
-			return true
+			If (Array.Find(value) > Invalid)
+				value.Drawn = false
+				WriteLine(ToString(), "The '"+value.Reference.GetDisplayName()+"' card has been undrawn.")
+				return true
+			Else
+				WriteUnexpectedValue(ToString(), "Undraw", "value", "The card could not be found within the deck. "+value)
+				return false
+			EndIf
 		Else
-			WriteLine(ToString(), "Cannot collect a none card.")
+			WriteUnexpectedValue(ToString(), "Undraw", "value", "Cannot undraw a none card.")
 			return false
 		EndIf
 	Else
-		WriteUnexpectedValue(ToString(), "Collect", "Values", "The card array cannot be empty or none.")
+		WriteUnexpectedValue(ToString(), "Undraw", "Array", "The card array cannot be empty or none.")
 		return false
 	EndIf
 EndFunction
@@ -65,22 +90,20 @@ EndFunction
 
 bool Function Shuffle()
 	{Shuffles all cards within the deck.}
-	If (Values)
-		int count = Values.Length
+	If (Array)
+		int count = Array.Length
 		int index = 0
-
 		While (index < count)
 			int random = index + Utility.RandomInt() % (count - index)
-			Card value = Values[index]
-			Values[index] = Values[random]
-			Values[random] = value
+			Card value = Array[index]
+			Array[index] = Array[random]
+			Array[random] = value
 			index += 1
 		EndWhile
-
 		WriteLine(ToString(), "The deck has been shuffled.")
 		return true
 	Else
-		WriteUnexpectedValue(ToString(), "Shuffle", "Values", "The card array cannot be empty or none.")
+		WriteUnexpectedValue(ToString(), "Shuffle", "Array", "The card array cannot be empty or none.")
 		return false
 	EndIf
 EndFunction
@@ -88,7 +111,7 @@ EndFunction
 
 ObjectReference[] Function GetReferences()
 	{Returns an array of object references for each card in the deck.}
-	return ToReferences(Values)
+	return ToReferences(Array)
 EndFunction
 
 
@@ -96,12 +119,13 @@ EndFunction
 ;---------------------------------------------
 
 bool Function IsFaceCard(Card this)
+	{Returns true if this card's rank is greater than ten. This includes the Jack, Queen, King, or Joker.}
 	return this.Rank > Ten
 EndFunction
 
 
 int Function GetCardFamily(Card this)
-	{Odd suited cards are black, even are red.}
+	{Return the family for this card's suit. Odd suited card's are black, even are red.}
 	If (this.Suit % 2)
 		return Black
 	Else
@@ -110,18 +134,19 @@ int Function GetCardFamily(Card this)
 EndFunction
 
 
-bool Function CardEquals(Card this, Card value)
-	return this.Rank == value.Rank
+bool Function CardEquals(Card this, Card other)
+	{Returns true if this card is equal to the other card.}
+	return this.Rank == other.Rank
 EndFunction
 
 
-ObjectReference[] Function ToReferences(Card[] array)
+ObjectReference[] Function ToReferences(Card[] values)
 	{Returns a new array of each card's object reference.}
-	If (array)
+	If (values)
 		ObjectReference[] references = new ObjectReference[0]
 		int index = 0
-		While (index < array.Length)
-			references.Add(array[index].Reference)
+		While (index < values.Length)
+			references.Add(values[index].Reference)
 			index += 1
 		EndWhile
 		return references
@@ -143,7 +168,7 @@ EndFunction
 Group Properties
 	Card[] Property Cards Hidden
 		Card[] Function Get()
-			return Values
+			return Array
 		EndFunction
 	EndProperty
 EndGroup

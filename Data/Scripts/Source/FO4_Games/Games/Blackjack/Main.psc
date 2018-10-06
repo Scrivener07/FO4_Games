@@ -249,10 +249,10 @@ State Scoring
 			Utility.Wait(TimeDelay)
 
 			AwaitState(Human, ScoringState)
-			Human.Hand.Collect()
+			Human.Hand.Undraw()
 
 			AwaitState(Dealer, ScoringState)
-			Dealer.Hand.Collect()
+			Dealer.Hand.Undraw()
 
 			If (!Human.Quit)
 				If (Human.HasCaps)
