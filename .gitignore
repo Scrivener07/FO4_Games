@@ -1,14 +1,14 @@
 # Project
 # =========================
+Build
 Documents/Ignored
+
 
 # Bethesda Modding
 # =========================
 *.sublime-workspace
 *.pex
 *.swf
-*.hkx
-
 
 # Windows
 # =========================
