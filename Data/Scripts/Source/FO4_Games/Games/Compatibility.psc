@@ -6,6 +6,7 @@ import Games:Shared:Papyrus
 ;---------------------------------------------
 
 Event OnQuestInit()
+	OnGameReload()
 	RegisterForGameReload(self)
 EndEvent
 
@@ -56,13 +57,13 @@ EndGroup
 Group F4SE
 	string Property F4SE_VersionName Hidden
 		string Function Get()
-			return "0.6.5"
+			return "0.6.13"
 		EndFunction
 	EndProperty
 
 	int Property F4SE_ReleaseMinimum Hidden
 		int Function Get()
-			return 12
+			return 19
 		EndFunction
 	EndProperty
 EndGroup
