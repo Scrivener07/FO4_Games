@@ -1,5 +1,6 @@
 ScriptName Games:Blackjack:Deck extends Games:Shared:Deck
 import Games
+import Games:Blackjack
 import Games:Shared:Log
 import Games:Shared:Motion
 
@@ -21,13 +22,13 @@ EndEvent
 ; Methods
 ;---------------------------------------------
 
+; @Games:Shared:Deck
 bool Function Create(Card[] values)
 	{Initializes the deck for Blackjack.}
 	If (parent.Create(values))
 		Motion.RegisterForTranslationEvent(self)
 		Blackjack.Dealer.Motion.RegisterForTranslationEvent(self)
 		Blackjack.Human.Motion.RegisterForTranslationEvent(self)
-		Restore()
 		return true
 	Else
 		WriteUnexpected(ToString(), "Create", "The parent method has failed.")
@@ -36,6 +37,7 @@ bool Function Create(Card[] values)
 EndFunction
 
 
+; @Games:Shared:Deck
 bool Function Restore()
 	{Will undraw and move all cards in the deck to the deck marker without translation.}
 	If (Cards)
@@ -57,17 +59,14 @@ EndFunction
 Function Collect(Card[] values)
 	{Collects an array of cards into the deck.}
 	If (values)
-		ObjectReference[] references = new ObjectReference[0]
 		int index = 0
 		While (index < values.Length)
 			Card value = Cards[index]
-			If (Undraw(value))
-				references.Add(value.Reference)
+			If (Undraw(value) == false)
+				WriteUnexpectedValue(ToString(), "Collect", "value", "Failed to undraw the card value. "+value)
 			EndIf
 			index += 1
 		EndWhile
-		; Translate the card references as a single batch.
-		Motion.TranslateEach(references, GamesBlackjack_DeckMarker, 200.0)
 	Else
 		WriteUnexpectedValue(ToString(), "Collect", "values", "Cannot collect none or empty card values.")
 	EndIf

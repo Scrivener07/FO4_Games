@@ -1,6 +1,4 @@
 ScriptName Games:Blackjack:Players:ObjectType extends Games:Blackjack:Type Native Hidden
-import Games:Shared:Deck
-import Games:Shared:Log
 import Games:Shared:Papyrus
 
 ; Data

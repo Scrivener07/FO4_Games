@@ -82,10 +82,14 @@ bool Function Draw(bool reveal = true)
 EndFunction
 
 
-Function Undraw()
+Function Collect()
 	{Collects all of this hands cards into the deck.}
 	Deck.Collect(Cards)
+	ObjectReference[] references = Deck.ToReferences(Cards)
+	player.Motion.TranslateEach(references, Deck.GamesBlackjack_DeckMarker, 200.0)
+
 	Create()
+	WriteLine(ToString(), "Collected the cards for this hand.")
 EndFunction
 
 
@@ -156,7 +160,7 @@ EndFunction
 
 string Function ToString()
 	{The string representation of this script.}
-	return parent.ToString()+" Score:"+Score+", Count:"+Count
+	return parent.ToString()+" Name:"+Player.Name+", Score:"+Score+", Count:"+Count
 EndFunction
 
 

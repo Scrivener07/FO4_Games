@@ -185,6 +185,7 @@ EndFunction
 
 
 bool Function IsValidWager(int value)
+	{Returns true if the value is a valid wager.}
 	If (value == Match.Bet)
 		return false
 	ElseIf (value <= 0)
@@ -209,7 +210,7 @@ EndFunction
 
 string Function ToString()
 	{The string representation of this script.}
-	return Name+" "+Match+" "+Session
+	return parent.ToString()+" "+Name+" "+Match+" "+Session
 EndFunction
 
 

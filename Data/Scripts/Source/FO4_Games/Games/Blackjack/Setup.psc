@@ -23,7 +23,7 @@ bool Function SetExit(ObjectReference aExitMarker)
 		ExitMarker = aExitMarker
 		return true
 	Else
-		WriteUnexpectedValue(self, "SetExit", "aExitMarker", "The exit marker reference cannot be none.")
+		WriteUnexpectedValue(ToString(), "SetExit", "aExitMarker", "The exit marker reference cannot be none.")
 		return false
 	EndIf
 EndFunction

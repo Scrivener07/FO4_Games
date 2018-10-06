@@ -23,7 +23,7 @@ bool Function SendPhase(Blackjack:Main sender, string name, bool change)
 		sender.SendCustomEvent("PhaseEvent", arguments)
 		return true
 	Else
-		WriteUnexpectedValue(sender, "SendPhase", "name", "Cannot not send the phase '"+name+"' while in the '"+sender.StateName+"' state.")
+		WriteUnexpectedValue(sender.ToString(), "SendPhase", "name", "Cannot not send the phase '"+name+"' while in the '"+sender.StateName+"' state.")
 		return false
 	EndIf
 EndFunction
@@ -44,7 +44,7 @@ Event Games:Blackjack:Main.PhaseEvent(Blackjack:Main sender, var[] arguments)
 	If (e)
 		self.OnGamePhase(e)
 	Else
-		WriteUnexpectedValue(self, "Games:Blackjack:Main.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
+		WriteUnexpectedValue(ToString(), "Games:Blackjack:Main.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
 	EndIf
 EndEvent
 

@@ -4,7 +4,7 @@ import Games:Shared:Log
 import Games:Shared:Papyrus
 
 MotionData Motion
-ObjectReference[] Objects
+ObjectReference[] References
 CustomEvent TranslationEvent
 
 ; Constants
@@ -22,19 +22,26 @@ EndStruct
 ;---------------------------------------------
 
 Function Translate(ObjectReference from, ObjectReference to, float speed = 100.0)
-	ObjectReference[] array = new ObjectReference[1]
-	array[0] = from
-	TranslateEach(array, to, speed)
+	ObjectReference[] values = new ObjectReference[1]
+	values[0] = from
+	TranslateEach(values, to, speed)
 EndFunction
 
 
-Function TranslateEach(ObjectReference[] array, ObjectReference to, float speed = 100.0)
-	Objects = array
+Function TranslateEach(ObjectReference[] values, ObjectReference to, float speed = 100.0)
+	References = values
 	Motion = new MotionData
 	Motion.Speed = speed
 	Motion.Destination = to
 	AwaitState(self, TranslatingState)
 EndFunction
+
+
+string Function ToString()
+	{The string representation of this script.}
+	return parent.ToString()+"[Count:"+References.Length+"][Motion:"+Motion+"]"
+EndFunction
+
 
 
 ; OnTranslation
@@ -62,7 +69,7 @@ bool Function SendTranslationEvent(Shared:Motion sender, ObjectReference from, O
 		var[] arguments = new var[1]
 		arguments[0] = e
 		sender.SendCustomEvent("TranslationEvent", arguments)
-		WriteLine(self, "SendTranslationEvent :: EventArg:"+e+", Motion:"+Motion)
+		WriteLine(ToString(), "SendTranslationEvent :: EventArg:"+e+", Motion:"+Motion)
 		return true
 	Else
 		WriteUnexpectedValue(sender, "SendTranslationEvent", "StateName", "A translation event must happen while inside the '"+TranslatingState+"' state.")
@@ -76,7 +83,7 @@ bool Function RegisterForTranslationEvent(ScriptObject script)
 		script.RegisterForCustomEvent(self, "TranslationEvent")
 		return true
 	Else
-		WriteUnexpectedValue(self, "RegisterForTranslationEvent", "script", "Cannot register a none script for an event.")
+		WriteUnexpectedValue(ToString(), "RegisterForTranslationEvent", "script", "Cannot register a none script for an event.")
 		return false
 	EndIf
 EndFunction
@@ -87,7 +94,7 @@ bool Function UnregisterForTranslationEvent(ScriptObject script)
 		script.UnregisterForCustomEvent(self, "TranslationEvent")
 		return true
 	Else
-		WriteUnexpectedValue(self, "UnregisterForTranslationEvent", "script", "Cannot unregister a none script for an event.")
+		WriteUnexpectedValue(ToString(), "UnregisterForTranslationEvent", "script", "Cannot unregister a none script for an event.")
 		return false
 	EndIf
 EndFunction
@@ -107,21 +114,19 @@ EndFunction
 
 State Translating
 	Event OnBeginState(string oldState)
-		If (Objects)
-			WriteLine(self, "Translating.OnBeginState :: Starting translation for "+Objects.Length+" objects.")
+		If (References)
 			int index = 0
-			While (index < Objects.Length)
-				ObjectReference object = Objects[index]
-				object.SetMotionType(Motion_Keyframed)
-				RegisterForRemoteEvent(object, "OnTranslationComplete")
-				RegisterForRemoteEvent(object, "OnTranslationFailed")
-				object.TranslateToRef(Motion.Destination, Motion.Speed)
-				SendTranslationEvent(self, object, Motion.Destination, TranslationStarted)
+			While (index < References.Length)
+				ObjectReference reference = References[index]
+				reference.SetMotionType(Motion_Keyframed)
+				RegisterForRemoteEvent(reference, "OnTranslationComplete")
+				RegisterForRemoteEvent(reference, "OnTranslationFailed")
+				reference.TranslateToRef(Motion.Destination, Motion.Speed)
+				SendTranslationEvent(self, reference, Motion.Destination, TranslationStarted)
 				index += 1
-				WriteLine(self, "Translating.OnBeginState :: Started translation @"+index+", object:"+object)
 			EndWhile
 		Else
-			WriteUnexpectedValue(self, "Translating.OnBeginState", "Objects", "Cannot translate empty or none object array.")
+			WriteUnexpectedValue(ToString(), "Translating.OnBeginState", "References", "Cannot translate empty or none reference values.")
 			ClearState(self)
 		EndIf
 	EndEvent
@@ -129,11 +134,7 @@ State Translating
 
 	Event ObjectReference.OnTranslationComplete(ObjectReference sender)
 		SendTranslationEvent(self, sender, Motion.Destination, TranslationCompleted)
-
-		If (MoveNext())
-			WriteLine(self, "Translating.ObjectReference.OnTranslationComplete :: MoveNext")
-		Else
-			WriteLine(self, "Translating.ObjectReference.OnTranslationComplete :: TranslationFinished")
+		If (MoveNext() == false)
 			SendTranslationEvent(self, sender, Motion.Destination, TranslationFinished)
 			ClearState(self)
 		EndIf
@@ -141,13 +142,9 @@ State Translating
 
 
 	Event ObjectReference.OnTranslationFailed(ObjectReference sender)
-		WriteUnexpectedValue(self, "Translating.ObjectReference.OnTranslationFailed", "sender", "Failed for reference '"+sender+"' at index "+Motion.Index)
+		WriteUnexpectedValue(ToString(), "Translating.ObjectReference.OnTranslationFailed", "sender", "Failed for reference '"+sender+"' at index "+Motion.Index)
 		SendTranslationEvent(self, sender, Motion.Destination, TranslationFailed)
-
-		If (MoveNext())
-			WriteLine(self, "Translating.ObjectReference.OnTranslationFailed :: MoveNext")
-		Else
-			WriteLine(self, "Translating.ObjectReference.OnTranslationFailed :: TranslationFinished")
+		If (MoveNext() == false)
 			SendTranslationEvent(self, sender, Motion.Destination, TranslationFinished)
 			ClearState(self)
 		EndIf
@@ -155,43 +152,41 @@ State Translating
 
 
 	bool Function MoveNext()
-		WriteLine(self, "Translating.MoveNext @"+Motion.Index+", to index "+(Motion.Index + 1)+" of length "+Objects.Length)
 		Motion.Index += 1
-		return Motion.Index < Objects.Length
+		return Motion.Index < References.Length
 	EndFunction
 
 
 	Event OnEndState(string newState)
 		UnregisterForAllRemoteEvents()
-		Objects = none
-		WriteLine(self, "Translating.OnEndState")
+		References = none
 	EndEvent
 
 
 	Function Translate(ObjectReference from, ObjectReference to, float speed = 100.0)
 		{EMPTY}
-		WriteNotImplemented(self, "Translating.Translate", "The member is not implemented in the '"+StateName+"' state.")
+		WriteNotImplemented(ToString(), "Translating.Translate", "The member is not implemented in the '"+StateName+"' state.")
 	EndFunction
 
-	Function TranslateEach(ObjectReference[] array, ObjectReference to, float speed = 100.0)
+	Function TranslateEach(ObjectReference[] values, ObjectReference to, float speed = 100.0)
 		{EMPTY}
-		WriteNotImplemented(self, "Translating.TranslateEach", "The member is not implemented in the '"+StateName+"' state.")
+		WriteNotImplemented(ToString(), "Translating.TranslateEach", "The member is not implemented in the '"+StateName+"' state.")
 	EndFunction
 EndState
 
 
 Event ObjectReference.OnTranslationComplete(ObjectReference sender)
 	{EMPTY}
-	WriteNotImplemented(self, "ObjectReference.OnTranslationComplete", "The member is not implemented in the empty state.")
+	WriteNotImplemented(ToString(), "ObjectReference.OnTranslationComplete", "The member is not implemented in the empty state.")
 EndEvent
 
 Event ObjectReference.OnTranslationFailed(ObjectReference sender)
 	{EMPTY}
-	WriteNotImplemented(self, "ObjectReference.OnTranslationFailed", "The member is not implemented in the empty state.")
+	WriteNotImplemented(ToString(), "ObjectReference.OnTranslationFailed", "The member is not implemented in the empty state.")
 EndEvent
 
 bool Function MoveNext()
 	{EMPTY}
-	WriteNotImplemented(self, "MoveNext", "The member is not implemented in the empty state.")
+	WriteNotImplemented(ToString(), "MoveNext", "The member is not implemented in the empty state.")
 	return false
 EndFunction
