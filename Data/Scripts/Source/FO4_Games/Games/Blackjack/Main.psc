@@ -1,12 +1,12 @@
 ScriptName Games:Blackjack:Main extends Games:Blackjack:Type
+{The main entry point for the Blackjack game loop and and associated objects.}
 import Games
-import Games:Shared
 import Games:Shared:Log
 import Games:Shared:Papyrus
 
 CustomEvent PhaseEvent
 
-int IdlingID   = 10 const
+int EmptyID    = 10 const
 int StartingID = 20 const
 int WageringID = 30 const
 int DealingID  = 40 const
@@ -14,29 +14,29 @@ int PlayingID  = 50 const
 int ScoringID  = 60 const
 int ExitingID  = 70 const
 
-float TimeDelay = 1.5 const
+float TimeDelay = 1.0 const
 
 
 ; Events
 ;---------------------------------------------
 
-Event OnTimer(int aiTimerID)
-	If (aiTimerID == IdlingID)
-		ChangeState(self, IdlingState)
-	ElseIf (aiTimerID == StartingID)
+Event OnTimer(int timerID)
+	If (timerID == EmptyID)
+		ChangeState(self, EmptyState)
+	ElseIf (timerID == StartingID)
 		ChangeState(self, StartingState)
-	ElseIf (aiTimerID == WageringID)
+	ElseIf (timerID == WageringID)
 		ChangeState(self, WageringState)
-	ElseIf (aiTimerID == DealingID)
+	ElseIf (timerID == DealingID)
 		ChangeState(self, DealingState)
-	ElseIf (aiTimerID == PlayingID)
+	ElseIf (timerID == PlayingID)
 		ChangeState(self, PlayingState)
-	ElseIf (aiTimerID == ScoringID)
+	ElseIf (timerID == ScoringID)
 		ChangeState(self, ScoringState)
-	ElseIf (aiTimerID == ExitingID)
+	ElseIf (timerID == ExitingID)
 		ChangeState(self, ExitingState)
 	Else
-		WriteUnexpectedValue(self, "OnTimer", "aiTimerID", "The timer ID "+aiTimerID+" was unhandled.")
+		WriteUnexpectedValue(ToString(), "OnTimer", "timerID", "The timer ID "+timerID+" was unhandled.")
 	EndIf
 EndEvent
 
@@ -44,33 +44,33 @@ EndEvent
 ; Methods
 ;---------------------------------------------
 
-bool Function Play(ObjectReference aExitMarker)
-	If (Idling)
-		If (Environment.SetExit(aExitMarker))
+bool Function Play(ObjectReference exitMarker)
+	If (IsEmptyState)
+		If (Setup.SetExit(exitMarker))
 			return NewState(self, StartingID)
 		Else
-			WriteUnexpected(self, "Play", "Environment could not set the exit marker.")
+			WriteUnexpected(ToString(), "Play", "Setup could not set the exit marker "+exitMarker)
 			return false
 		EndIf
 	Else
-		WriteUnexpected(self, "Play", "The game is not ready to play in the '"+StateName+"' state.")
+		WriteUnexpected(ToString(), "Play", "The game is not ready to play in the '"+StateName+"' state.")
 		return false
 	EndIf
 EndFunction
 
 
-bool Function PlayAsk(ObjectReference aExitMarker)
+bool Function PlayAsk(ObjectReference exitMarker)
 	int selected = Games_Blackjack_MessagePlay.Show()
 	int OptionExit = 0 const
 	int OptionStart = 1 const
 
 	If (selected == OptionStart)
-		return Play(aExitMarker)
+		return Play(exitMarker)
 	ElseIf (selected == OptionExit || selected == Invalid)
-		WriteLine(self, "Chose not to play Blackjack.")
+		WriteLine(ToString(), "Chose not to play Blackjack.")
 		return false
 	Else
-		WriteUnexpectedValue(self, "PlayAsk", "selected", "The option '"+selected+"' is unhandled.")
+		WriteUnexpectedValue(ToString(), "PlayAsk", "selected", "The option '"+selected+"' is unhandled.")
 		return false
 	EndIf
 EndFunction
@@ -84,18 +84,18 @@ bool Function RegisterForPhaseEvent(ScriptObject script)
 		script.RegisterForCustomEvent(self, "PhaseEvent")
 		return true
 	Else
-		WriteUnexpectedValue(self, "RegisterForPhaseEvent", "script", "Cannot register a none script for phase events.")
+		WriteUnexpectedValue(ToString(), "RegisterForPhaseEvent", "script", "Cannot register a none script for phase events.")
 		return false
 	EndIf
 EndFunction
 
 
-bool Function UnregisterForPhaseEvent(Blackjack:Main script)
+bool Function UnregisterForPhaseEvent(ScriptObject script)
 	If (script)
 		script.UnregisterForCustomEvent(self, "PhaseEvent")
 		return true
 	Else
-		WriteUnexpectedValue(self, "UnregisterForPhaseEvent", "script", "Cannot unregister a none script for phase events.")
+		WriteUnexpectedValue(ToString(), "UnregisterForPhaseEvent", "script", "Cannot unregister a none script for phase events.")
 		return false
 	EndIf
 EndFunction
@@ -105,30 +105,31 @@ EndFunction
 ;---------------------------------------------
 
 State Starting
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Session Begin}
-		WriteLine("Blackjack", "Starting")
+		WriteLine(ToString(), "Starting")
 
 		If (Human.HasCaps == false)
-			NewState(self, IdlingID)
+			NewState(self, EmptyID)
 			Games_Blackjack_MessageNoFunds.Show()
 			return
 		EndIf
 
 		If (SendPhase(self, StartingState, Begun))
-			AwaitState(Environment, StartingState)
-			AwaitState(Cards, StartingState)
-			AwaitState(Players, StartingState)
+			AwaitState(Setup, StartingState)
+			AwaitState(Deck, StartingState)
+			BeginState(Dealer, StartingState)
+			BeginState(Human, StartingState)
 			NewState(self, WageringID)
 		Else
-			WriteUnexpected(self, "Starting.OnBeginState", "Could not begin the '"+StartingState+"' state.")
+			WriteUnexpected(ToString(), "Starting.OnBeginState", "Could not begin the '"+StartingState+"' state.")
 			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
 
-	Event OnEndState(string asNewState)
-		If (asNewState == WageringState)
+	Event OnEndState(string newState)
+		If (newState == WageringState)
 			SendPhase(self, StartingState, Ended)
 		EndIf
 	EndEvent
@@ -136,12 +137,12 @@ EndState
 
 
 State Wagering
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
-		WriteLine("Blackjack", "Wagering")
+		WriteLine(ToString(), "Wagering")
 
 		If (Human.HasCaps == false)
-			WriteLine("Blackjack", "Kicking because there are no funds to wager.")
+			WriteLine(ToString(), "Kicking because there are no funds to wager.")
 			NewState(self, ExitingID)
 			Games_Blackjack_MessageNoFunds.Show()
 			return
@@ -149,121 +150,150 @@ State Wagering
 
 		If (SendPhase(self, WageringState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Players, WageringState)
 
-			If (Human.Continue)
+			BeginState(Dealer, WageringState)
+			BeginState(Human, WageringState)
+
+			If (!Human.Quit)
 				If (Human.Bet == Invalid)
-					WriteUnexpected(self, "Wagering.OnBeginState", "Exiting. Human bet of "+Human.Bet+" is invalid.")
+					WriteUnexpected(ToString(), "Wagering.OnBeginState", "Exiting. Human bet of "+Human.Bet+" is invalid.")
 					NewState(self, ExitingID)
 				Else
 					NewState(self, DealingID)
 				EndIf
 			Else
-				WriteUnexpected(self, "Wagering.OnBeginState", "Exiting. Has no human. State:"+Human.StateName)
+				WriteUnexpected(ToString(), "Wagering.OnBeginState", "Exiting. Has no human. State:"+Human.StateName)
 				NewState(self, ExitingID)
 			EndIf
 		Else
-			WriteUnexpected(self, "Wagering.OnBeginState", "Could not begin the '"+WageringState+"' state.")
+			WriteUnexpected(ToString(), "Wagering.OnBeginState", "Could not begin the '"+WageringState+"' state.")
 			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, WageringState, Ended)
 	EndEvent
 EndState
 
 
 State Dealing
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
-		WriteLine("Blackjack", "Dealing")
+		WriteLine(ToString(), "Dealing")
 		If (SendPhase(self, DealingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Cards, DealingState)
-			AwaitState(Players, DealingState)
+			AwaitState(Deck, DealingState)
+
+			AwaitState(Dealer, DealingState)
+			AwaitState(Human, DealingState)
+
+			AwaitState(Dealer, DealingState)
+			AwaitState(Human, DealingState)
+
 			NewState(self, PlayingID)
 		Else
-			WriteUnexpected(self, "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' state.")
+			WriteUnexpected(ToString(), "Dealing.OnBeginState", "Could not begin the '"+DealingState+"' state.")
 			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, DealingState, Ended)
 	EndEvent
 EndState
 
 
 State Playing
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
-		WriteLine("Blackjack", "Playing")
+		WriteLine(ToString(), "Playing")
 		If (SendPhase(self, PlayingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Players, PlayingState)
-			NewState(self, ScoringID)
+
+			If (Dealer.Hand.IsBlackjack)
+				WriteLine(ToString(), "The dealer has a blackjack. The player loses and does not get to play.")
+				AwaitState(Dealer, PlayingState)
+				NewState(self, ScoringID)
+			Else
+				AwaitState(Human, PlayingState)
+				If (Human.Hand.IsInPlay)
+					AwaitState(Dealer, PlayingState)
+				Else
+					WriteLine(ToString(), "The human is no longer in play. Skipping the dealers turn to play.")
+				EndIf
+				NewState(self, ScoringID)
+			EndIf
 		Else
-			WriteUnexpected(self, "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' state.")
+			WriteUnexpected(ToString(), "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' state.")
 			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, PlayingState, Ended)
 	EndEvent
 EndState
 
 
 State Scoring
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Game State}
-		WriteLine("Blackjack", "Scoring")
+		WriteLine(ToString(), "Scoring")
 		If (SendPhase(self, ScoringState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Players, ScoringState)
 
-			If (Human.Continue)
+			AwaitState(Human, ScoringState)
+			Human.Hand.Collect()
+
+			AwaitState(Dealer, ScoringState)
+			Dealer.Hand.Collect()
+
+			If (!Human.Quit)
 				If (Human.HasCaps)
-					WriteLine("Blackjack", "The player will continue playing game.")
+					WriteLine(ToString(), "The player will continue playing game.")
 					NewState(self, WageringID)
 				Else
-					WriteLine("Blackjack", "Kicked from game for low funds.")
+					WriteLine(ToString(), "Kicked from game for low funds.")
 					NewState(self, ExitingID)
 					Games_Blackjack_MessageNoFunds.Show()
 				EndIf
 			Else
-				WriteLine("Blackjack", "The human player left the game.")
+				WriteLine(ToString(), "The human player left the game.")
 				NewState(self, ExitingID)
 			EndIf
 		Else
-			WriteUnexpected(self, "Scoring.OnBeginState", "Could not begin the '"+ScoringState+"' state.")
+			WriteUnexpected(ToString(), "Scoring.OnBeginState", "Could not begin the '"+ScoringState+"' state.")
 			NewState(self, ExitingID)
 		EndIf
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, ScoringState, Ended)
 	EndEvent
 EndState
 
 
 State Exiting
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		{Session End}
-		WriteLine("Blackjack", "Exiting")
+		WriteLine(ToString(), "Exiting")
 		If (SendPhase(self, ExitingState, Begun))
 			Utility.Wait(TimeDelay)
-			AwaitState(Players, ExitingState)
-			AwaitState(Environment, ExitingState)
+			AwaitState(Deck, ExitingState)
+
+			AwaitState(Human, ExitingState)
+			AwaitState(Dealer, ExitingState)
+
+			AwaitState(Setup, ExitingState)
 		Else
-			WriteUnexpected(self, "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' state.")
+			WriteUnexpected(ToString(), "Exiting.OnBeginState", "Could not begin the '"+ExitingState+"' state.")
 		EndIf
 
-		NewState(self, IdlingID)
+		NewState(self, EmptyID)
 	EndEvent
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		SendPhase(self, ExitingState, Ended)
 	EndEvent
 EndState
@@ -278,8 +308,8 @@ Group Messages
 EndGroup
 
 Group Scripts
-	Blackjack:Environment Property Environment Auto Const Mandatory
-	Blackjack:Cards Property Cards Auto Const Mandatory
-	Blackjack:Players Property Players Auto Const Mandatory
-	Blackjack:Players:Human Property Human Auto Const Mandatory
+	Blackjack:Setup Property Setup Auto Const Mandatory
+	Blackjack:Deck Property Deck Auto Const Mandatory
+	Blackjack:Dealer Property Dealer Auto Const Mandatory
+	Blackjack:Human Property Human Auto Const Mandatory
 EndGroup

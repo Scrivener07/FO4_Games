@@ -8,14 +8,14 @@ DisplayData Display
 ; Events
 ;---------------------------------------------
 
-Event OnInit()
+Event OnQuestInit()
 	OnGameReload()
 	RegisterForGameReload(self)
 EndEvent
 
 
-Event Actor.OnPlayerLoadGame(Actor akSender)
-	OnGameReload()
+Event OnQuestShutdown()
+	UnregisterForGameReload(self)
 EndEvent
 
 

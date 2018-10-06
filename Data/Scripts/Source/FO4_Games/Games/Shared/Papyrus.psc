@@ -15,12 +15,13 @@ bool Function NewState(ScriptObject this, int stateID) Global
 EndFunction
 
 
-bool Function AwaitState(ScriptObject this, string statename = "Busy") Global
+bool Function AwaitState(ScriptObject this, string statename) Global
 	{Polling until the given script is in the "empty" state.}
 	If (this)
 		If (BeginState(this, statename))
 			While (StateRunning(this))
 				Utility.Wait(0.1)
+				; WriteLine(this, "Waiting for '"+statename+"' state.")
 			EndWhile
 			return true
 		Else
@@ -34,7 +35,7 @@ bool Function AwaitState(ScriptObject this, string statename = "Busy") Global
 EndFunction
 
 
-bool Function BeginState(ScriptObject this, string statename = "Busy") Global
+bool Function BeginState(ScriptObject this, string statename) Global
 	{Begins the given state without waiting for it to end.}
 	If (this)
 		If (StateRunning(this))
@@ -111,3 +112,25 @@ bool Function StringIsNoneOrEmpty(string value) Global
 	{Indicates whether the specified string is none or an empty string.}
 	return !(value) || value == ""
 EndFunction
+
+
+; Debug
+;---------------------------------------------
+
+bool Function IsDebug() Global DebugOnly
+	{Returns true if papyrus is in debug mode.}
+	return true
+EndFunction
+
+
+; Value Types
+;---------------------------------------------
+
+Struct BooleanValue
+	bool Value = false
+EndStruct
+
+
+Struct IntegerValue
+	int Value = 0
+EndStruct

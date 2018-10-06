@@ -10,8 +10,6 @@ CustomEvent OnShown
 CustomEvent OnSelected
 
 bool AutoHide = false
-int Invalid = -1 const
-
 
 Struct Button
 	string Text = ""

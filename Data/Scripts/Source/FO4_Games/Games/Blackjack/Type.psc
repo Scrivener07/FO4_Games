@@ -1,58 +1,8 @@
-ScriptName Games:Blackjack:Type extends Quest Native Hidden
+ScriptName Games:Blackjack:Type extends Games:Type Native Hidden
+{The shared class among blackjack types.}
 import Games
 import Games:Shared:Log
 import Games:Shared:Papyrus
-
-; States
-;---------------------------------------------
-
-Event OnState()
-	{EMPTY}
-	WriteNotImplemented(self, "OnState", "The member is not implemented in the empty state.")
-EndEvent
-
-State Starting
-	Event OnBeginState(string asOldState)
-		OnState()
-		ClearState(self)
-	EndEvent
-EndState
-
-State Wagering
-	Event OnBeginState(string asOldState)
-		OnState()
-		ClearState(self)
-	EndEvent
-EndState
-
-State Dealing
-	Event OnBeginState(string asOldState)
-		OnState()
-		ClearState(self)
-	EndEvent
-EndState
-
-State Playing
-	Event OnBeginState(string asOldState)
-		OnState()
-		ClearState(self)
-	EndEvent
-EndState
-
-State Scoring
-	Event OnBeginState(string asOldState)
-		OnState()
-		ClearState(self)
-	EndEvent
-EndState
-
-State Exiting
-	Event OnBeginState(string asOldState)
-		OnState()
-		ClearState(self)
-	EndEvent
-EndState
-
 
 ; Events
 ;---------------------------------------------
@@ -73,7 +23,7 @@ bool Function SendPhase(Blackjack:Main sender, string name, bool change)
 		sender.SendCustomEvent("PhaseEvent", arguments)
 		return true
 	Else
-		WriteUnexpectedValue(sender, "SendPhase", "name", "Cannot not send the phase '"+name+"' while in the '"+sender.StateName+"' state.")
+		WriteUnexpectedValue(sender.ToString(), "SendPhase", "name", "Cannot not send the phase '"+name+"' while in the '"+sender.StateName+"' state.")
 		return false
 	EndIf
 EndFunction
@@ -94,7 +44,7 @@ Event Games:Blackjack:Main.PhaseEvent(Blackjack:Main sender, var[] arguments)
 	If (e)
 		self.OnGamePhase(e)
 	Else
-		WriteUnexpectedValue(self, "Games:Blackjack:Main.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
+		WriteUnexpectedValue(ToString(), "Games:Blackjack:Main.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
 	EndIf
 EndEvent
 
@@ -103,37 +53,17 @@ EndEvent
 ;---------------------------------------------
 
 Group Properties
-	int Property Invalid = -1 AutoReadOnly
 	bool Property Completed = true AutoReadOnly
 	bool Property Incomplete = false AutoReadOnly
 EndGroup
 
 Group States
-	string Property IdlingState = "" AutoReadOnly
 	string Property StartingState = "Starting" AutoReadOnly
 	string Property WageringState = "Wagering" AutoReadOnly
 	string Property DealingState = "Dealing" AutoReadOnly
 	string Property PlayingState = "Playing" AutoReadOnly
 	string Property ScoringState = "Scoring" AutoReadOnly
 	string Property ExitingState = "Exiting" AutoReadOnly
-
-	string Property StateName Hidden
-		string Function Get()
-			return GetState()
-		EndFunction
-	EndProperty
-
-	bool Property Idling Hidden
-		bool Function Get()
-			return GetState() == IdlingState
-		EndFunction
-	EndProperty
-
-	bool Property IsBusy Hidden
-		bool Function Get()
-			return StateRunning(self)
-		EndFunction
-	EndProperty
 EndGroup
 
 Group PhaseChanges

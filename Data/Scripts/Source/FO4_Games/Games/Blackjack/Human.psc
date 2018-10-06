@@ -1,9 +1,11 @@
-ScriptName Games:Blackjack:Players:Human extends Games:Blackjack:Player
+ScriptName Games:Blackjack:Human extends Games:Blackjack:Players:Object
 import Games
-import Games:Blackjack
 import Games:Shared
+import Games:Shared:Deck
 import Games:Shared:Log
+import Games:Shared:Papyrus
 import Games:Shared:UI:ButtonMenu
+import Games:Blackjack:Players:Hand
 
 Actor PlayerRef
 MiscObject Caps
@@ -18,6 +20,7 @@ Button MaximumButton
 
 Button HitButton
 Button StandButton
+Button DoubleButton
 
 Button PlayButton
 Button LeaveButton
@@ -31,10 +34,25 @@ string PushFX = "GamesBlackjackScorePush.swf" const
 ; Events
 ;---------------------------------------------
 
-Event OnInit()
-	parent.OnInit()
+Event OnQuestInit()
+	parent.OnQuestInit()
 	PlayerRef = Game.GetPlayer()
 	Caps = Game.GetCaps()
+
+	Hand.Markers = new Marker
+	Hand.Markers.Delay = 0.75
+	Hand.Markers.Transition = GamesBlackjack_DeckMarkerB
+	Hand.Markers.Card01 = GamesBlackjack_PlayerCard01
+	Hand.Markers.Card02 = GamesBlackjack_PlayerCard02
+	Hand.Markers.Card03 = GamesBlackjack_PlayerCard03
+	Hand.Markers.Card04 = GamesBlackjack_PlayerCard04
+	Hand.Markers.Card05 = GamesBlackjack_PlayerCard05
+	Hand.Markers.Card06 = GamesBlackjack_PlayerCard06
+	Hand.Markers.Card07 = GamesBlackjack_PlayerCard07
+	Hand.Markers.Card08 = GamesBlackjack_PlayerCard08
+	Hand.Markers.Card09 = GamesBlackjack_PlayerCard09
+	Hand.Markers.Card10 = GamesBlackjack_PlayerCard10
+	Hand.Markers.Card11 = GamesBlackjack_PlayerCard11
 
 	AcceptButton = new Button
 	AcceptButton.Text = "Accept"
@@ -64,6 +82,10 @@ Event OnInit()
 	StandButton.Text = "Stand"
 	StandButton.KeyCode = Keyboard.S
 
+	DoubleButton = new Button
+	DoubleButton.Text = "Double Down"
+	DoubleButton.KeyCode = Keyboard.D
+
 	PlayButton = new Button
 	PlayButton.Text = "Play Again"
 	PlayButton.KeyCode = Keyboard.E
@@ -74,9 +96,9 @@ Event OnInit()
 EndEvent
 
 
-Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] arguments)
-	akSender.UnregisterForSelectedEvent(self)
-	WriteUnexpected(self, "OnSelected", "Unregistered for event in the '"+StateName+"' state.")
+Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu sender, var[] arguments)
+	sender.UnregisterForSelectedEvent(self)
+	WriteUnexpected(ToString(), "OnSelected", "Unregistered for event in the '"+StateName+"' state.")
 EndEvent
 
 
@@ -99,19 +121,17 @@ EndState
 State Wagering
 	Event OnState()
 		If (Wager > Bank)
-			WriteLine(self, "A wager of "+Wager+" cannot be greater than a bank of "+Bank+". Resetting wager to "+WagerMinimum)
+			WriteLine(ToString(), "A wager of "+Wager+" cannot be greater than a bank of "+Bank+". Resetting wager to "+WagerMinimum)
 			Wager = WagerMinimum
 		EndIf
-
 		Display.Score = 0
 		Display.Bet = Wager
 		Display.Caps = Bank
 		Display.Earnings = Earnings
-
 		parent.OnState()
 	EndEvent
 
-	int Function IWager()
+	Function WagerSet(IntegerValue setter)
 		ButtonMenu.Clear()
 		ButtonMenu.SelectOnce = false
 		ButtonMenu.Add(AcceptButton)
@@ -122,25 +142,22 @@ State Wagering
 		ButtonMenu.Add(LeaveButton)
 		ButtonMenu.RegisterForSelectedEvent(self)
 		ButtonMenu.Show()
-		return Wager
+		setter.Value = Wager
 	EndFunction
 
-	Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu akSender, var[] arguments)
+	Event Games:Shared:UI:ButtonMenu.OnSelected(UI:ButtonMenu sender, var[] arguments)
 		If (arguments)
-			Button selected = akSender.GetSelectedEventArgs(arguments)
+			Button selected = sender.GetSelectedEventArgs(arguments)
 
 			If (selected == AcceptButton)
 				If (IsValidWager(Wager))
-					akSender.UnregisterForSelectedEvent(self)
-					akSender.Hide()
+					sender.UnregisterForSelectedEvent(self)
+					sender.Hide()
 				EndIf
 			ElseIf (selected == LeaveButton)
-				If (Quit())
-					akSender.UnregisterForSelectedEvent(self)
-					akSender.Hide()
-				Else
-					WriteUnexpected(self, "Wagering.OnSelected", "The request to leave the game failed for some reason.")
-				EndIf
+				Quit()
+				sender.UnregisterForSelectedEvent(self)
+				sender.Hide()
 
 			ElseIf (selected == IncreaseButton)
 				If (IsValidWager(Wager + WagerStep))
@@ -170,10 +187,10 @@ State Wagering
 					ITMBottlecapsDownx.Play(Player)
 				EndIf
 			Else
-				WriteUnexpected(self, "Wagering.OnSelected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpectedValue(ToString(), "Wagering.OnSelected", "selected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
 			EndIf
 		Else
-			WriteUnexpectedValue(self, "Wagering.OnSelected", "arguments", "The arguments are null or empty.")
+			WriteUnexpectedValue(ToString(), "Wagering.OnSelected", "arguments", "The arguments are null or empty.")
 		EndIf
 	EndEvent
 EndState
@@ -188,29 +205,41 @@ EndState
 
 
 State Playing
-	Event OnTurn(int number)
+	Event OnTurn(BooleanValue continue)
+		parent.OnTurn(continue)
 		Display.Score = Score
+		Display.Bet = Bet
 	EndEvent
 
-	int Function IChoice()
+	Function ChoiceSet(IntegerValue setter)
 		ButtonMenu.Clear()
 		ButtonMenu.SelectOnce = true
 		ButtonMenu.Add(HitButton)
 		ButtonMenu.Add(StandButton)
-		ButtonMenu.Show()
 
+		If (Turn == 1)
+			int double = Bet * 2
+			If (IsValidWager(double))
+				DoubleButton.Text = "Double Down ("+double+")"
+				ButtonMenu.Add(DoubleButton)
+			EndIf
+		EndIf
+
+		ButtonMenu.Show()
 		If (ButtonMenu.Selected)
 			If (ButtonMenu.Selected == HitButton)
-				return ChoiceHit
+				setter.Value = ChoiceHit
 			ElseIf (ButtonMenu.Selected == StandButton)
-				return ChoiceStand
+				setter.Value = ChoiceStand
+			ElseIf (ButtonMenu.Selected == DoubleButton)
+				setter.Value = ChoiceDouble
 			Else
-				WriteUnexpected(self, "Playing.IChoice", "The selected choice button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
-				return Invalid
+				WriteUnexpectedValue(ToString(), "Playing.ChoiceSet", "ButtonMenu.Selected", "The selected choice button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
+				setter.Value = Invalid
 			EndIf
 		Else
-			WriteUnexpected(self, "Playing.IChoice", "No choice button was selected.")
-			return Invalid
+			WriteUnexpectedValue(ToString(), "Playing.ChoiceSet", "ButtonMenu.Selected", "No choice button was selected.")
+			setter.Value = Invalid
 		EndIf
 	EndFunction
 EndState
@@ -228,15 +257,15 @@ State Scoring
 
 		If (ButtonMenu.Selected)
 			If (ButtonMenu.Selected == PlayButton)
-				WriteLine(self, "Selected the play button.")
+				WriteLine(ToString(), "Selected the play button.")
 			ElseIf (ButtonMenu.Selected == LeaveButton)
 				Quit()
 			Else
-				WriteUnexpected(self, "Scoring.OnState", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
+				WriteUnexpectedValue(ToString(), "Scoring.OnState", "ButtonMenu.Selected", "The selected button '"+ButtonMenu.Selected+"' was unhandled in the '"+StateName+"' state.")
 				Quit()
 			EndIf
 		Else
-			WriteUnexpected(self, "Scoring.OnState", "No button hint was selected.")
+			WriteUnexpectedValue(ToString(), "Scoring.OnState", "ButtonMenu.Selected", "No button hint was selected.")
 			Quit()
 		EndIf
 	EndEvent
@@ -252,13 +281,13 @@ State Scoring
 			Game.ShowPerkVaultBoyOnHUD(LoseFX)
 			Player.RemoveItem(Caps, Debt, true)
 		ElseIf (scoring == ScoreWin)
-			Game.ShowPerkVaultBoyOnHUD(WinFX)
+			Game.ShowPerkVaultBoyOnHUD(WinFX, UIExperienceUp)
 			Player.AddItem(Caps, Debt, true)
 		ElseIf (scoring == ScoreBlackjack)
-			Game.ShowPerkVaultBoyOnHUD(BlackjackFX)
+			Game.ShowPerkVaultBoyOnHUD(BlackjackFX, UIExperienceUp)
 			Player.AddItem(Caps, Debt, true)
 		Else
-			WriteUnexpected(self, "OnScoring", "Scoring of "+scoring+" was unhandled.")
+			WriteUnexpectedValue(ToString(), "OnScoring", "scoring", "Scoring of "+scoring+" was unhandled.")
 		EndIf
 
 		Display.Earnings = Earnings
@@ -276,31 +305,11 @@ State Exiting
 EndState
 
 
-; Requests
-;---------------------------------------------
-
-int Function IWager()
-	; Required for type-check return because function is not on object.
-	return parent.IWager()
-EndFunction
-
-int Function IChoice()
-	; Required for type-check return because function is not on object.
-	return parent.IChoice()
-EndFunction
-
-
 ; Player
 ;---------------------------------------------
 
 int Function GetBank()
 	return Player.GetGoldAmount()
-EndFunction
-
-
-Function SetScore(int value)
-	parent.SetScore(value)
-	Display.Score = value
 EndFunction
 
 
@@ -316,6 +325,7 @@ EndGroup
 Group SFX
 	Sound Property ITMBottlecapsUpx Auto Const Mandatory
 	Sound Property ITMBottlecapsDownx Auto Const Mandatory
+	Sound Property UIExperienceUp Auto Const Mandatory
 EndGroup
 
 Group Player
@@ -324,4 +334,19 @@ Group Player
 			return PlayerRef
 		EndFunction
 	EndProperty
+EndGroup
+
+Group Marker
+	ObjectReference Property GamesBlackjack_DeckMarkerB Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard01 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard02 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard03 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard04 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard05 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard06 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard07 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard08 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard09 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard10 Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_PlayerCard11 Auto Const Mandatory
 EndGroup

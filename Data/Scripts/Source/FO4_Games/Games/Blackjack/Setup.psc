@@ -1,16 +1,16 @@
-ScriptName Games:Blackjack:Environment extends Games:Blackjack:Type
+ScriptName Games:Blackjack:Setup extends Games:Blackjack:Type
 import Games:Shared:Log
-
 
 Actor Player
 ObjectReference ExitMarker
 InputEnableLayer InputLayer
 
+string HavokDisablePlayerCollision = "bDisablePlayerCollision:Havok" const
 
 ; Events
 ;---------------------------------------------
 
-Event OnInit()
+Event OnQuestInit()
 	Player = Game.GetPlayer()
 EndEvent
 
@@ -23,7 +23,7 @@ bool Function SetExit(ObjectReference aExitMarker)
 		ExitMarker = aExitMarker
 		return true
 	Else
-		WriteUnexpectedValue(self, "SetExit", "aExitMarker", "The exit marker reference cannot be none.")
+		WriteUnexpectedValue(ToString(), "SetExit", "aExitMarker", "The exit marker reference cannot be none.")
 		return false
 	EndIf
 EndFunction
@@ -50,6 +50,7 @@ State Starting
 	Event OnState()
 		{Starting}
 		FadeGameOut()
+		Utility.SetIniBool(HavokDisablePlayerCollision, true)
 		Player.MoveTo(Games_Blackjack_CellMarker)
 		Game.ForceFirstPerson()
 		Utility.Wait(1.0)
@@ -61,6 +62,8 @@ State Starting
 		InputLayer.EnableMenu(false)
 		InputLayer.EnableVATS(false)
 		InputLayer.EnableFighting(false)
+		InputLayer.EnableActivate(false)
+		InputLayer.EnableZKey(false)
 
 		Game.SetPlayerAIDriven()
 		Game.ShowFirstPersonGeometry(false)
@@ -90,6 +93,7 @@ State Exiting
 		Player.SetScale(1.0)
 
 		Player.MoveTo(ExitMarker, -120.0)
+		Utility.SetIniBool(HavokDisablePlayerCollision, false)
 		FadeGameIn()
 	EndEvent
 EndState
