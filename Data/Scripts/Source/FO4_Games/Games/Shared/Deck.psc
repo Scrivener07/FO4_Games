@@ -48,7 +48,7 @@ EndFunction
 Card Function Draw()
 	{Returns the next undrawn card from the deck, marking it as drawn.}
 	If (Array)
-		int found = Array.FindStruct("Drawn", false, 0)
+		int found = Array.FindStruct("Drawn", false)
 		If (found > Invalid)
 			Card value = Array[found]
 			value.Drawn = true

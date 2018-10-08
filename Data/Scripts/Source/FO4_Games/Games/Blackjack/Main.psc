@@ -1,5 +1,5 @@
 ScriptName Games:Blackjack:Main extends Games:Blackjack:Type
-{The main entry point for the Blackjack game loop and and associated objects.}
+{The main entry point for Blackjack.}
 import Games
 import Games:Shared:Log
 import Games:Shared:Papyrus
@@ -210,20 +210,20 @@ State Playing
 		WriteLine(ToString(), "Playing")
 		If (SendPhase(self, PlayingState, Begun))
 			Utility.Wait(TimeDelay)
-
-			If (Dealer.Hand.IsBlackjack)
-				WriteLine(ToString(), "The dealer has a blackjack. The player loses and does not get to play.")
-				AwaitState(Dealer, PlayingState)
-				NewState(self, ScoringID)
+			If (Dealer.Hand.IsBlackjack || Human.Hand.IsBlackjack)
+				WriteLine(ToString(), "A blackjack is on the table. A push will be resolved at scoring.")
+				Dealer.Reveal()
 			Else
 				AwaitState(Human, PlayingState)
-				If (Human.Hand.IsInPlay)
+				If (Human.Hand.IsBust == false)
+					WriteLine(ToString(), "The dealer will challenge the players hand.")
 					AwaitState(Dealer, PlayingState)
 				Else
-					WriteLine(ToString(), "The human is no longer in play. Skipping the dealers turn to play.")
+					WriteLine(ToString(), "The dealer will not challenge a busted hand.")
+					Dealer.Reveal()
 				EndIf
-				NewState(self, ScoringID)
 			EndIf
+			NewState(self, ScoringID)
 		Else
 			WriteUnexpected(ToString(), "Playing.OnBeginState", "Could not begin the '"+PlayingState+"' state.")
 			NewState(self, ExitingID)
@@ -244,10 +244,7 @@ State Scoring
 			Utility.Wait(TimeDelay)
 
 			AwaitState(Human, ScoringState)
-			Human.Hand.Collect()
-
 			AwaitState(Dealer, ScoringState)
-			Dealer.Hand.Collect()
 
 			If (!Human.Quit)
 				If (Human.HasCaps)

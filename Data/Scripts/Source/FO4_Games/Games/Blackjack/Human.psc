@@ -164,6 +164,8 @@ State Wagering
 					Wager += WagerStep
 					Display.Bet = Wager
 					ITMBottlecapsDownx.Play(Player)
+				Else
+					UIMenuCancel.Play(Player)
 				EndIf
 
 			ElseIf (selected == DecreaseButton)
@@ -171,6 +173,8 @@ State Wagering
 					Wager -= WagerStep
 					Display.Bet = Wager
 					ITMBottlecapsUpx.Play(Player)
+				Else
+					UIMenuCancel.Play(Player)
 				EndIf
 
 			ElseIf (selected == MinimumButton)
@@ -178,6 +182,8 @@ State Wagering
 					Wager = WagerMinimum
 					Display.Bet = Wager
 					ITMBottlecapsUpx.Play(Player)
+				Else
+					UIMenuCancel.Play(Player)
 				EndIf
 
 			ElseIf (selected == MaximumButton)
@@ -185,6 +191,8 @@ State Wagering
 					Wager = WagerMaximum
 					Display.Bet = Wager
 					ITMBottlecapsDownx.Play(Player)
+				Else
+					UIMenuCancel.Play(Player)
 				EndIf
 			Else
 				WriteUnexpectedValue(ToString(), "Wagering.OnSelected", "selected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
@@ -276,9 +284,9 @@ State Scoring
 		If (scoring == Invalid)
 			return
 		ElseIf (scoring == ScorePush)
-			Game.ShowPerkVaultBoyOnHUD(PushFX)
+			Game.ShowPerkVaultBoyOnHUD(PushFX, OBJLoadElevatorUtilityDing)
 		ElseIf (scoring == ScoreLose)
-			Game.ShowPerkVaultBoyOnHUD(LoseFX)
+			Game.ShowPerkVaultBoyOnHUD(LoseFX, ITMBottlecapsDownx)
 			Player.RemoveItem(Caps, Debt, true)
 		ElseIf (scoring == ScoreWin)
 			Game.ShowPerkVaultBoyOnHUD(WinFX, UIExperienceUp)
@@ -308,7 +316,20 @@ EndState
 ; Player
 ;---------------------------------------------
 
+; Override
+bool Function IsValidWager(int value)
+	{Returns true if the value is a valid wager.}
+	If (value == Wager)
+		return false
+	Else
+		return parent.IsValidWager(value)
+	EndIf
+EndFunction
+
+
+; Override
 int Function GetBank()
+	{The amount of caps the player has to gamble with.}
 	return Player.GetGoldAmount()
 EndFunction
 
@@ -326,6 +347,8 @@ Group SFX
 	Sound Property ITMBottlecapsUpx Auto Const Mandatory
 	Sound Property ITMBottlecapsDownx Auto Const Mandatory
 	Sound Property UIExperienceUp Auto Const Mandatory
+	Sound Property OBJLoadElevatorUtilityDing Auto Const Mandatory
+	Sound Property UIMenuCancel Auto Const Mandatory
 EndGroup
 
 Group Player

@@ -139,6 +139,8 @@ State Scoring
 				EndIf
 			EndIf
 		EndIf
+
+		Hand.Collect()
 	EndEvent
 
 	Event OnScoring(int scoring)
@@ -292,7 +294,7 @@ Group Player
 
 	bool Property HasCaps Hidden
 		bool Function Get()
-			return Bank > 0
+			return Bank >= WagerMinimum
 		EndFunction
 	EndProperty
 

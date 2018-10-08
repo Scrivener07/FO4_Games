@@ -48,7 +48,7 @@ EndFunction
 ;---------------------------------------------
 
 State Shown
-	Event OnBeginState(string asOldState)
+	Event OnBeginState(string oldState)
 		If (Open())
 			If (Buttons)
 				var[] arguments = new var[0]
@@ -128,7 +128,7 @@ State Shown
 	EndFunction
 
 
-	Event OnEndState(string asNewState)
+	Event OnEndState(string newState)
 		WriteLine(self, "Ending the '"+GetState()+"' state.")
 		Close()
 

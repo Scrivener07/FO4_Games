@@ -73,6 +73,18 @@ Function Collect(Card[] values)
 EndFunction
 
 
+bool Function Shuffle()
+	{Shuffles all cards within the deck with a sound effect.}
+	If (parent.Shuffle())
+		UIPerkMenuEnter.Play(Game.GetPlayer())
+		Utility.Wait(1.0)
+	Else
+		WriteUnexpected(ToString(), "Shuffle", "The parent method has failed.")
+		return false
+	EndIf
+EndFunction
+
+
 ; States
 ;---------------------------------------------
 
@@ -426,6 +438,8 @@ EndGroup
 
 Group SFX
 	Sound Property PHYPaperMagazineH Auto Const Mandatory
+	Sound Property UIPerkMenuEnter Auto Const Mandatory
+	{The sound for Shuffling.}
 EndGroup
 
 Group Markers

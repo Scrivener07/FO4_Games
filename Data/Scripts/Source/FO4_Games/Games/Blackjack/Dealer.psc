@@ -57,13 +57,15 @@ State Playing
 			Deck:Card card = Hand.Cards[0]
 			Motion.Translate(card.Reference, Hand.Markers.Transition)
 			Motion.Translate(card.Reference, GamesBlackjack_DealerCard01Reveal)
-			WriteLine(ToString(), "The dealer has revealed their hole card. " + card)
 		EndIf
 		parent.OnTurn(continue)
 	EndEvent
 
 	Function ChoiceSet(IntegerValue setter)
-		If (Score <= 17)
+		{The dealer will hit when their score is less than 17.}
+		; TODO: Hitting on a soft-17 will increase the house edge against the player by about 0.22 percent.
+		; Note: In general the dealer should not hit on a 17.
+		If (Score < 17)
 			setter.Value = ChoiceHit
 		Else
 			setter.Value = ChoiceStand
@@ -79,6 +81,26 @@ State Scoring
 EndState
 
 
+; Methods
+;---------------------------------------------
+
+bool Function Reveal()
+	If (Hand.Count == 2)
+		; TODO: How do I return failure if the card has already been revealed?
+		Motion.Translate(Hand.Cards[0].Reference, GamesBlackjack_DealerCardRevealA)
+		Motion.Translate(Hand.Cards[1].Reference, GamesBlackjack_DealerCardRevealB)
+		Utility.Wait(2.0)
+		Motion.Translate(Hand.Cards[0].Reference, GamesBlackjack_DealerCard01Reveal)
+		Motion.Translate(Hand.Cards[1].Reference, GamesBlackjack_DealerCard02)
+		WriteLine(ToString(), "The dealer has revealed their hand.")
+		return true
+	Else
+		WriteUnexpectedValue(ToString(), "Reveal", "The hand must have exactly two cards.")
+		return false
+	EndIf
+EndFunction
+
+
 ; Properties
 ;---------------------------------------------
 
@@ -86,6 +108,8 @@ Group Marker
 	ObjectReference Property GamesBlackjack_DeckMarkerC Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_DealerCard01 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_DealerCard01Reveal Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_DealerCardRevealA Auto Const Mandatory
+	ObjectReference Property GamesBlackjack_DealerCardRevealB Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_DealerCard02 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_DealerCard03 Auto Const Mandatory
 	ObjectReference Property GamesBlackjack_DealerCard04 Auto Const Mandatory

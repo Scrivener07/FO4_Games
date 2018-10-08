@@ -21,7 +21,7 @@ EndEvent
 ; States
 ;---------------------------------------------
 
-Event OnBeginState(string asOldState)
+Event OnBeginState(string oldState)
 	If (!IsEmptyState)
 		RunOnce()
 	EndIf

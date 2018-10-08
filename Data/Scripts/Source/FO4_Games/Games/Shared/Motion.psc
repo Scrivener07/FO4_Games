@@ -14,7 +14,7 @@ int Motion_Keyframed = 2 const
 Struct MotionData
 	int Index = 0
 	ObjectReference Destination
-	float Speed = -1.0
+	float Speed = 100.0
 EndStruct
 
 
@@ -31,8 +31,8 @@ EndFunction
 Function TranslateEach(ObjectReference[] values, ObjectReference to, float speed = 100.0)
 	References = values
 	Motion = new MotionData
-	Motion.Speed = speed
 	Motion.Destination = to
+	Motion.Speed = speed
 	AwaitState(self, TranslatingState)
 EndFunction
 
@@ -121,7 +121,10 @@ State Translating
 				reference.SetMotionType(Motion_Keyframed)
 				RegisterForRemoteEvent(reference, "OnTranslationComplete")
 				RegisterForRemoteEvent(reference, "OnTranslationFailed")
+
+				; TODO: Figure out how to translate with a spline.
 				reference.TranslateToRef(Motion.Destination, Motion.Speed)
+
 				SendTranslationEvent(self, reference, Motion.Destination, TranslationStarted)
 				index += 1
 			EndWhile

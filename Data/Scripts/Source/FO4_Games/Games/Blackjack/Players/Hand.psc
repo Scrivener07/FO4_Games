@@ -42,6 +42,7 @@ Function Create()
 	{Creates a new internal hand array.}
 	Score_ = 0
 	Array = new Deck:Card[0]
+	WriteLine(ToString(), "Created a new empty hand.")
 EndFunction
 
 
@@ -84,12 +85,11 @@ EndFunction
 
 Function Collect()
 	{Collects all of this hands cards into the deck.}
+	WriteLine(ToString(), "Collecting the cards for this hand.")
 	Deck.Collect(Cards)
 	ObjectReference[] references = Deck.ToReferences(Cards)
-	player.Motion.TranslateEach(references, Deck.GamesBlackjack_DeckMarker, 200.0)
-
+	Player.Motion.TranslateEach(references, Deck.GamesBlackjack_DeckMarker)
 	Create()
-	WriteLine(ToString(), "Collected the cards for this hand.")
 EndFunction
 
 
