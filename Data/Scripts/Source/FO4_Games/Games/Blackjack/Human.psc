@@ -313,10 +313,10 @@ State Exiting
 EndState
 
 
-; Player
+; Methods
 ;---------------------------------------------
 
-; Override
+; @Override
 bool Function IsValidWager(int value)
 	{Returns true if the value is a valid wager.}
 	If (value == Wager)
@@ -327,7 +327,7 @@ bool Function IsValidWager(int value)
 EndFunction
 
 
-; Override
+; @Override
 int Function GetBank()
 	{The amount of caps the player has to gamble with.}
 	return Player.GetGoldAmount()

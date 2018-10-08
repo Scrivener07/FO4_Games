@@ -22,7 +22,7 @@ EndEvent
 ; Methods
 ;---------------------------------------------
 
-; @Games:Shared:Deck
+; @Override
 bool Function Create(Card[] values)
 	{Initializes the deck for Blackjack.}
 	If (parent.Create(values))
@@ -37,13 +37,14 @@ bool Function Create(Card[] values)
 EndFunction
 
 
-; @Games:Shared:Deck
+; @Override
 bool Function Restore()
 	{Will undraw and move all cards in the deck to the deck marker without translation.}
 	If (Cards)
 		int index = 0
 		While (index < Cards.Length)
 			Card value = Cards[index]
+			WriteLine(ToString(), "Restoring the drawn value to false for the "+value+" card.")
 			value.Drawn = false
 			value.Reference.MoveTo(GamesBlackjack_DeckMarker)
 			index += 1
@@ -51,6 +52,19 @@ bool Function Restore()
 		return true
 	Else
 		WriteUnexpectedValue(ToString(), "Restore", "Cards", "Cannot restore a none or empty card array.")
+		return false
+	EndIf
+EndFunction
+
+
+; @Override
+bool Function Shuffle()
+	{Shuffles all cards within the deck with a sound effect.}
+	If (parent.Shuffle())
+		UIPerkMenuEnter.Play(Game.GetPlayer())
+		Utility.Wait(1.0)
+	Else
+		WriteUnexpected(ToString(), "Shuffle", "The parent method has failed.")
 		return false
 	EndIf
 EndFunction
@@ -69,18 +83,6 @@ Function Collect(Card[] values)
 		EndWhile
 	Else
 		WriteUnexpectedValue(ToString(), "Collect", "values", "Cannot collect none or empty card values.")
-	EndIf
-EndFunction
-
-
-bool Function Shuffle()
-	{Shuffles all cards within the deck with a sound effect.}
-	If (parent.Shuffle())
-		UIPerkMenuEnter.Play(Game.GetPlayer())
-		Utility.Wait(1.0)
-	Else
-		WriteUnexpected(ToString(), "Shuffle", "The parent method has failed.")
-		return false
 	EndIf
 EndFunction
 
@@ -438,6 +440,8 @@ EndGroup
 
 Group SFX
 	Sound Property PHYPaperMagazineH Auto Const Mandatory
+	{The sound for card movement.}
+
 	Sound Property UIPerkMenuEnter Auto Const Mandatory
 	{The sound for Shuffling.}
 EndGroup

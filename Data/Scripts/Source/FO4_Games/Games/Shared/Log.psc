@@ -1,6 +1,6 @@
 ScriptName Games:Shared:Log Const Native Hidden DebugOnly
+{Provides a custom papyrus log file that may written to with string messages.}
 import Games:Shared:Papyrus
-
 
 ; Logging
 ;---------------------------------------------

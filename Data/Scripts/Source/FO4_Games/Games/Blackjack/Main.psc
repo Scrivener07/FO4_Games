@@ -151,6 +151,7 @@ State Wagering
 		If (SendPhase(self, WageringState, Begun))
 			Utility.Wait(TimeDelay)
 
+			Deck.Restore()
 			BeginState(Dealer, WageringState)
 			BeginState(Human, WageringState)
 

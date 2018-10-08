@@ -34,6 +34,7 @@ bool Function Restore()
 	If (Array)
 		int index = 0
 		While (index < Array.Length)
+			WriteLine(ToString(), "Restoring the drawn value for the "+Array[index]+" card.")
 			Array[index].Drawn = false
 			index += 1
 		EndWhile
@@ -156,6 +157,7 @@ ObjectReference[] Function ToReferences(Card[] values)
 EndFunction
 
 
+; @Override
 string Function ToString()
 	{The string representation of this script.}
 	return parent.ToString()+"[Count:"+Cards.Length+"]"
