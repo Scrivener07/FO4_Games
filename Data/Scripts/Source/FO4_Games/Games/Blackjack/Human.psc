@@ -153,49 +153,52 @@ State Wagering
 				If (IsValidWager(Wager))
 					sender.UnregisterForSelectedEvent(self)
 					sender.Hide()
+				Else
+					UIMenuCancel.Play(Player)
 				EndIf
 			ElseIf (selected == LeaveButton)
 				Quit()
 				sender.UnregisterForSelectedEvent(self)
 				sender.Hide()
-
-			ElseIf (selected == IncreaseButton)
-				If (IsValidWager(Wager + WagerStep))
-					Wager += WagerStep
-					Display.Bet = Wager
-					ITMBottlecapsDownx.Play(Player)
-				Else
-					UIMenuCancel.Play(Player)
-				EndIf
-
-			ElseIf (selected == DecreaseButton)
-				If (IsValidWager(Wager - WagerStep))
-					Wager -= WagerStep
-					Display.Bet = Wager
-					ITMBottlecapsUpx.Play(Player)
-				Else
-					UIMenuCancel.Play(Player)
-				EndIf
-
-			ElseIf (selected == MinimumButton)
-				If (IsValidWager(WagerMinimum))
-					Wager = WagerMinimum
-					Display.Bet = Wager
-					ITMBottlecapsUpx.Play(Player)
-				Else
-					UIMenuCancel.Play(Player)
-				EndIf
-
-			ElseIf (selected == MaximumButton)
-				If (IsValidWager(WagerMaximum))
-					Wager = WagerMaximum
-					Display.Bet = Wager
-					ITMBottlecapsDownx.Play(Player)
-				Else
-					UIMenuCancel.Play(Player)
-				EndIf
 			Else
-				WriteUnexpectedValue(ToString(), "Wagering.OnSelected", "selected", "The selected wager button '"+selected+"' was unhandled in the '"+StateName+"' state.")
+				int value = Invalid
+				If (selected == IncreaseButton)
+					value = Wager + WagerStep
+					If (IsValidWager(value) && value != Wager)
+						Wager = value
+						Display.Bet = value
+						ITMBottlecapsDownx.Play(Player)
+					Else
+						UIMenuCancel.Play(Player)
+					EndIf
+				ElseIf (selected == DecreaseButton)
+					value = Wager - WagerStep
+					If (IsValidWager(value) && value != Wager)
+						Wager = value
+						Display.Bet = value
+						ITMBottlecapsUpx.Play(Player)
+					Else
+						UIMenuCancel.Play(Player)
+					EndIf
+				ElseIf (selected == MinimumButton)
+					If (IsValidWager(WagerMinimum) && WagerMinimum != Wager)
+						Wager = WagerMinimum
+						Display.Bet = Wager
+						ITMBottlecapsUpx.Play(Player)
+					Else
+						UIMenuCancel.Play(Player)
+					EndIf
+				ElseIf (selected == MaximumButton)
+					If (IsValidWager(WagerMaximum) && WagerMaximum != Wager)
+						Wager = WagerMaximum
+						Display.Bet = Wager
+						ITMBottlecapsDownx.Play(Player)
+					Else
+						UIMenuCancel.Play(Player)
+					EndIf
+				Else
+					WriteUnexpectedValue(ToString(), "Wagering.OnSelected", "selected", "The selected button '"+selected+"' was unhandled.")
+				EndIf
 			EndIf
 		Else
 			WriteUnexpectedValue(ToString(), "Wagering.OnSelected", "arguments", "The arguments are null or empty.")
@@ -315,17 +318,6 @@ EndState
 
 ; Methods
 ;---------------------------------------------
-
-; @Override
-bool Function IsValidWager(int value)
-	{Returns true if the value is a valid wager.}
-	If (value == Wager)
-		return false
-	Else
-		return parent.IsValidWager(value)
-	EndIf
-EndFunction
-
 
 ; @Override
 int Function GetBank()

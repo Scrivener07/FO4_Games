@@ -83,13 +83,18 @@ bool Function Draw(bool reveal = true)
 EndFunction
 
 
-Function Collect()
-	{Collects all of this hands cards into the deck.}
-	WriteLine(ToString(), "Collecting the cards for this hand.")
-	Deck.Collect(Cards)
-	ObjectReference[] references = Deck.ToReferences(Cards)
-	Player.Motion.TranslateEach(references, Deck.GamesBlackjack_DeckMarker)
-	Create()
+bool Function Collect()
+	{Collects all of this hands cards into the deck with translation.}
+	If (Deck.Collect(Cards))
+		ObjectReference[] references = Deck.ToReferences(Cards)
+		Player.Motion.TranslateEach(references, Deck.GamesBlackjack_Card_DeckMarker)
+		Create()
+		WriteLine(ToString(), "Collected the cards for this hand.")
+		return true
+	Else
+		WriteUnexpected(ToString(), "Collect", "Failed to collect this hand.")
+		return false
+	EndIf
 EndFunction
 
 

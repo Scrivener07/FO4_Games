@@ -89,7 +89,7 @@ bool Function Reveal()
 		; TODO: How do I return failure if the card has already been revealed?
 		Motion.Translate(Hand.Cards[0].Reference, GamesBlackjack_DealerCardRevealA)
 		Motion.Translate(Hand.Cards[1].Reference, GamesBlackjack_DealerCardRevealB)
-		Utility.Wait(2.0)
+		Utility.Wait(1.5)
 		Motion.Translate(Hand.Cards[0].Reference, GamesBlackjack_DealerCard01Reveal)
 		Motion.Translate(Hand.Cards[1].Reference, GamesBlackjack_DealerCard02)
 		WriteLine(ToString(), "The dealer has revealed their hand.")

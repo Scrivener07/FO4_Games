@@ -15,6 +15,13 @@ EndStruct
 ; Methods
 ;---------------------------------------------
 
+; @Virtual
+Card[] Function Seed()
+	{Seeds the collection by providing an initial set of data. The default data is empty.}
+	return new Card[0]
+EndFunction
+
+
 bool Function Create(Card[] values)
 	{Initializes the deck with a new array of card values.}
 	If (values)

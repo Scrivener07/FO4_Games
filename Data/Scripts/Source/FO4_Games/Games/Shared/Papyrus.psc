@@ -114,15 +114,6 @@ bool Function StringIsNoneOrEmpty(string value) Global
 EndFunction
 
 
-; Debug
-;---------------------------------------------
-
-bool Function IsDebug() Global DebugOnly
-	{Returns true if papyrus is in debug mode.}
-	return true
-EndFunction
-
-
 ; Value Types
 ;---------------------------------------------
 

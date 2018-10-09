@@ -18,12 +18,12 @@ EndEvent
 ; Methods
 ;---------------------------------------------
 
-bool Function SetExit(ObjectReference aExitMarker)
-	If (aExitMarker)
-		ExitMarker = aExitMarker
+bool Function SetExit(ObjectReference reference)
+	If (reference)
+		ExitMarker = reference
 		return true
 	Else
-		WriteUnexpectedValue(ToString(), "SetExit", "aExitMarker", "The exit marker reference cannot be none.")
+		WriteUnexpectedValue(ToString(), "SetExit", "reference", "The exit marker reference cannot be none.")
 		return false
 	EndIf
 EndFunction

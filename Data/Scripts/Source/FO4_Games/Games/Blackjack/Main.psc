@@ -151,7 +151,7 @@ State Wagering
 		If (SendPhase(self, WageringState, Begun))
 			Utility.Wait(TimeDelay)
 
-			Deck.Restore()
+
 			BeginState(Dealer, WageringState)
 			BeginState(Human, WageringState)
 
@@ -188,7 +188,6 @@ State Dealing
 
 			AwaitState(Dealer, DealingState)
 			AwaitState(Human, DealingState)
-
 			AwaitState(Dealer, DealingState)
 			AwaitState(Human, DealingState)
 
@@ -246,6 +245,9 @@ State Scoring
 
 			AwaitState(Human, ScoringState)
 			AwaitState(Dealer, ScoringState)
+
+			Human.Collect()
+			Dealer.Collect()
 
 			If (!Human.Quit)
 				If (Human.HasCaps)

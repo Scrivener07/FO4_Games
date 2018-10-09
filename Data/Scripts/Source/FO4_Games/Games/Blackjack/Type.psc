@@ -8,12 +8,26 @@ import Games:Shared:Papyrus
 ;---------------------------------------------
 
 Struct PhaseEventArgs
-	string Name
+	; A data structure for a strongly typed event argument.
+	string Name = ""
 	bool Change = true
 EndStruct
 
+; @Abstract
+Event OnGamePhase(PhaseEventArgs e) Native
+Event Games:Blackjack:Main.PhaseEvent(Blackjack:Main sender, var[] arguments)
+	{Handles this event delegate for the custom event.}
+	PhaseEventArgs e = GetPhaseEventArgs(arguments)
+	If (e)
+		self.OnGamePhase(e)
+	Else
+		WriteUnexpectedValue(ToString(), "Games:Blackjack:Main.PhaseEvent", "e", "Cannot handle empty or none event arguments.")
+	EndIf
+EndEvent
+
 
 bool Function SendPhase(Blackjack:Main sender, string name, bool change)
+	{Sends the custom event with the given arguments.}
 	If (sender.StateName == name)
 		PhaseEventArgs phase = new PhaseEventArgs
 		phase.Name = name
@@ -30,6 +44,7 @@ EndFunction
 
 
 PhaseEventArgs Function GetPhaseEventArgs(var[] arguments)
+	{Converts generic event arguments into a strongly typed event argument.}
 	If (arguments)
 		return arguments[0] as PhaseEventArgs
 	Else
@@ -38,24 +53,8 @@ PhaseEventArgs Function GetPhaseEventArgs(var[] arguments)
 EndFunction
 
 
-Event OnGamePhase(PhaseEventArgs e) Native
-Event Games:Blackjack:Main.PhaseEvent(Blackjack:Main sender, var[] arguments)
-	PhaseEventArgs e = GetPhaseEventArgs(arguments)
-	If (e)
-		self.OnGamePhase(e)
-	Else
-		WriteUnexpectedValue(ToString(), "Games:Blackjack:Main.PhaseEvent", "e", "Cannot handle empty or none phase event arguments.")
-	EndIf
-EndEvent
-
-
 ; Properties
 ;---------------------------------------------
-
-Group Properties
-	bool Property Completed = true AutoReadOnly
-	bool Property Incomplete = false AutoReadOnly
-EndGroup
 
 Group States
 	string Property StartingState = "Starting" AutoReadOnly

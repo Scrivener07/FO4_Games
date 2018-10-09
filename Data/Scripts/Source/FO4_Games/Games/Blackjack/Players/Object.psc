@@ -12,7 +12,6 @@ MatchData Match
 ;---------------------------------------------
 
 Event OnQuestInit()
-	Hand.Create()
 	Match = new MatchData
 	Session = new SessionData
 EndEvent
@@ -139,8 +138,6 @@ State Scoring
 				EndIf
 			EndIf
 		EndIf
-
-		Hand.Collect()
 	EndEvent
 
 	Event OnScoring(int scoring)
@@ -180,12 +177,6 @@ EndState
 ; Methods
 ;---------------------------------------------
 
-bool Function Quit()
-	Session.Quit = true
-	return Session.Quit
-EndFunction
-
-
 bool Function IsValidWager(int value)
 	{Returns true if the value is a valid wager.}
 	If (value == Match.Bet)
@@ -207,6 +198,19 @@ EndFunction
 int Function GetBank()
 	{The amount of caps the player has to gamble with.}
 	return 1000
+EndFunction
+
+
+bool Function Quit()
+	{Sets the sessions quit flag to true.}
+	Session.Quit = true
+	return Session.Quit
+EndFunction
+
+
+bool Function Collect()
+	{Helper method for hand collection.}
+	return Hand.Collect()
 EndFunction
 
 

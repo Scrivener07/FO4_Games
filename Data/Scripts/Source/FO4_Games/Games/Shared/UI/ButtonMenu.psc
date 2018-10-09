@@ -68,13 +68,13 @@ State Shown
 				shownArguments[0] = e
 				SendCustomEvent("OnShown", shownArguments)
 
-				WriteLine(self, "Showing button press hints. Invoke:"+member+"("+arguments+") @"+Menu)
+				WriteLine(ToString(), "Showing button press hints. Invoke:"+member+"("+arguments+") @"+Menu)
 			Else
-				WriteUnexpectedValue(self, "Shown.OnBeginState", "Buttons", "The button array is none or empty.")
+				WriteUnexpectedValue(ToString(), "Shown.OnBeginState", "Buttons", "The button array is none or empty.")
 				ClearState(self)
 			EndIf
 		Else
-			WriteUnexpected(self, "Shown.OnBeginState", "Could not open menu for '"+GetState()+"' state.")
+			WriteUnexpected(ToString(), "Shown.OnBeginState", "Could not open menu for '"+GetState()+"' state.")
 			ClearState(self)
 		EndIf
 	EndEvent
@@ -89,47 +89,47 @@ State Shown
 			SendCustomEvent("OnSelected", arguments)
 
 			If (AutoHide)
-				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected. Automatically hiding for select once.")
+				WriteLine(ToString(), "The '"+SelectedButton.Text+"' button was selected. Automatically hiding for select once.")
 				ClearState(self)
 			Else
-				WriteLine(self, "The '"+SelectedButton.Text+"' button was selected.")
+				WriteLine(ToString(), "The '"+SelectedButton.Text+"' button was selected.")
 			EndIf
 		Else
-			WriteUnexpected(self, "Shown.OnKeyDown", "Ignoring the "+keyCode+" key press for the developer console menu.")
+			WriteUnexpected(ToString(), "Shown.OnKeyDown", "Ignoring the "+keyCode+" key press for the developer console menu.")
 		EndIf
 	EndEvent
 
 
 	bool Function Show()
 		{EMPTY}
-		WriteNotImplemented(self, "Shown.Show", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(ToString(), "Shown.Show", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Add(Button value)
 		{EMPTY}
-		WriteNotImplemented(self, "Shown.Add", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(ToString(), "Shown.Add", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Remove(Button value)
 		{EMPTY}
-		WriteNotImplemented(self, "Shown.Remove", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(ToString(), "Shown.Remove", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	bool Function Clear()
 		{EMPTY}
-		WriteNotImplemented(self, "Shown.Clear", "Not implemented in the '"+GetState()+"' state.")
+		WriteNotImplemented(ToString(), "Shown.Clear", "Not implemented in the '"+GetState()+"' state.")
 		return false
 	EndFunction
 
 
 	Event OnEndState(string newState)
-		WriteLine(self, "Ending the '"+GetState()+"' state.")
+		WriteLine(ToString(), "Ending the '"+GetState()+"' state.")
 		Close()
 
 		int index = 0
@@ -158,15 +158,15 @@ bool Function Add(Button value)
 				Buttons.Add(value)
 				return true
 			Else
-				WriteUnexpected(self, "Add", "The button array already contains a button with key code '"+value.KeyCode+"'.")
+				WriteUnexpected(ToString(), "Add", "The button array already contains a button with key code '"+value.KeyCode+"'.")
 				return false
 			EndIf
 		Else
-			WriteUnexpected(self, "Add", "The button array already contains '"+value+"'.")
+			WriteUnexpected(ToString(), "Add", "The button array already contains '"+value+"'.")
 			return false
 		EndIf
 	Else
-		WriteUnexpectedValue(self, "Add", "value", "Cannot add a none value to button array.")
+		WriteUnexpectedValue(ToString(), "Add", "value", "Cannot add a none value to button array.")
 		return false
 	EndIf
 EndFunction
@@ -179,11 +179,11 @@ bool Function Remove(Button value)
 			Buttons.Remove(IndexOf(value))
 			return true
 		Else
-			WriteUnexpected(self, "Remove", "The button array does not contain '"+value+"'.")
+			WriteUnexpected(ToString(), "Remove", "The button array does not contain '"+value+"'.")
 			return false
 		EndIf
 	Else
-		WriteUnexpectedValue(self, "Remove", "value", "Cannot remove a none value from button array.")
+		WriteUnexpectedValue(ToString(), "Remove", "value", "Cannot remove a none value from button array.")
 		return false
 	EndIf
 EndFunction
@@ -196,7 +196,7 @@ bool Function Clear()
 		Buttons.Clear()
 		return true
 	Else
-		WriteUnexpected(self, "Clear", "The button array is already cleared.")
+		WriteUnexpected(ToString(), "Clear", "The button array is already cleared.")
 		return false
 	EndIf
 EndFunction
@@ -236,7 +236,7 @@ bool Function RegisterForSelectedEvent(ScriptObject script)
 		script.RegisterForCustomEvent(self, "OnSelected")
 		return true
 	Else
-		WriteUnexpectedValue(self, "RegisterForSelectedEvent", "script", "Cannot register a none script for selection events.")
+		WriteUnexpectedValue(ToString(), "RegisterForSelectedEvent", "script", "Cannot register a none script for selection events.")
 		return false
 	EndIf
 EndFunction
@@ -247,7 +247,7 @@ bool Function UnregisterForSelectedEvent(ScriptObject script)
 		script.UnregisterForCustomEvent(self, "OnSelected")
 		return true
 	Else
-		WriteUnexpectedValue(self, "UnregisterForSelectedEvent", "script", "Cannot register a none script for selection events.")
+		WriteUnexpectedValue(ToString(), "UnregisterForSelectedEvent", "script", "Cannot register a none script for selection events.")
 		return false
 	EndIf
 EndFunction
@@ -257,7 +257,7 @@ Button Function GetSelectedEventArgs(var[] arguments)
 	If (arguments)
 		return arguments[0] as Button
 	Else
-		WriteUnexpectedValue(self, "GetSelectedEventArgs", "arguments", "The selection event arguments are empty or none.")
+		WriteUnexpectedValue(ToString(), "GetSelectedEventArgs", "arguments", "The selection event arguments are empty or none.")
 		return none
 	EndIf
 EndFunction
@@ -274,7 +274,7 @@ bool Function RegisterForShownEvent(ScriptObject script)
 		script.RegisterForCustomEvent(self, "OnShown")
 		return true
 	Else
-		WriteUnexpectedValue(self, "RegisterForShownEvent", "script", "Cannot register a none script for shown events.")
+		WriteUnexpectedValue(ToString(), "RegisterForShownEvent", "script", "Cannot register a none script for shown events.")
 		return false
 	EndIf
 EndFunction
@@ -285,7 +285,7 @@ bool Function UnregisterForShownEvent(ScriptObject script)
 		script.UnregisterForCustomEvent(self, "OnShown")
 		return true
 	Else
-		WriteUnexpectedValue(self, "UnregisterForShownEvent", "script", "Cannot register a none script for shown events.")
+		WriteUnexpectedValue(ToString(), "UnregisterForShownEvent", "script", "Cannot register a none script for shown events.")
 		return false
 	EndIf
 EndFunction
@@ -295,7 +295,7 @@ ShownEventArgs Function GetShownEventArgs(var[] arguments)
 	If (arguments)
 		return arguments[0] as ShownEventArgs
 	Else
-		WriteUnexpectedValue(self, "GetShownEventArgs", "arguments", "The shown event arguments are empty or none.")
+		WriteUnexpectedValue(ToString(), "GetShownEventArgs", "arguments", "The shown event arguments are empty or none.")
 		return none
 	EndIf
 EndFunction

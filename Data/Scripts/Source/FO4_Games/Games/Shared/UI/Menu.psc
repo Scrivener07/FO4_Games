@@ -25,9 +25,9 @@ Event OnGameReload()
 	data.MenuFlags = FlagNone
 	data.ExtendedFlags = FlagInheritColors + FlagCheckForGamepad
 	If (UI.RegisterCustomMenu(Display.Menu, Display.Asset, Display.Root, data))
-		WriteLine(self, ToString()+" has registered as a custom menu.")
+		WriteLine(ToString(), "Registered as a custom menu.")
 	Else
-		WriteUnexpected(self, "OnGameReload", ToString()+" failed to register as a custom menu.")
+		WriteUnexpected(ToString(), "OnGameReload", "Failed to register as a custom menu.")
 	EndIf
 EndEvent
 
@@ -39,7 +39,7 @@ bool Function Open()
 	If (UI.IsMenuRegistered(Menu))
 		return UI.OpenMenu(Menu)
 	Else
-		WriteUnexpected(self, "Open", "The menu is not registered.")
+		WriteUnexpected(ToString(), "Open", "The menu is not registered.")
 		return false
 	EndIf
 EndFunction
@@ -49,7 +49,7 @@ bool Function Close()
 	If (UI.IsMenuRegistered(Menu))
 		return UI.CloseMenu(Menu)
 	Else
-		WriteUnexpected(self, "Close", "The menu is not registered.")
+		WriteUnexpected(ToString(), "Close", "The menu is not registered.")
 		return false
 	EndIf
 EndFunction
@@ -59,7 +59,7 @@ bool Function GetVisible()
 	If (UI.IsMenuOpen(Menu))
 		return UI.Get(Menu, GetMember("Visible")) as bool
 	Else
-		WriteUnexpected(self, "GetVisible", "The menu is not open.")
+		WriteUnexpected(ToString(), "GetVisible", "The menu is not open.")
 		return false
 	EndIf
 EndFunction
@@ -69,7 +69,7 @@ bool Function SetVisible(bool value)
 	If (UI.IsMenuOpen(Menu))
 		return UI.Set(Menu, GetMember("Visible"), value)
 	Else
-		WriteUnexpected(self, "SetVisible", "The menu is not open.")
+		WriteUnexpected(ToString(), "SetVisible", "The menu is not open.")
 		return false
 	EndIf
 EndFunction
@@ -78,10 +78,10 @@ EndFunction
 string Function GetMember(string member)
 	{Returns the full AS3 instance path for the given member name.}
 	If (StringIsNoneOrEmpty(member))
-		WriteUnexpectedValue(self, "GetMember", "member", "Cannot operate on a none or empty display member.")
+		WriteUnexpectedValue(ToString(), "GetMember", "member", "Cannot operate on a none or empty display member.")
 		return none
 	ElseIf (StringIsNoneOrEmpty(root))
-		WriteUnexpected(self, "GetMember", "Cannot operate on a none or empty display root.")
+		WriteUnexpected(ToString(), "GetMember", "Cannot operate on a none or empty display root.")
 		return none
 	Else
 		return Root+"."+member
@@ -91,7 +91,7 @@ EndFunction
 
 string Function ToString()
 	{The string representation of this UI type.}
-	return "[Menu:"+Menu+", Asset:"+Asset+", Root:"+Root+"]"
+	return parent.ToString()+"[Menu:"+Menu+", Asset:"+Asset+", Root:"+Root+"]"
 EndFunction
 
 
