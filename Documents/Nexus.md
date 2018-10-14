@@ -4,7 +4,7 @@
 | Mod Category    | Gameplay Effects and Changes                                      |
 | Mod Name        | Barstool Games                                                    |
 | Mod Language    | English                                                           |
-| Current Version | 0.1.2.1                                                           |
+| Current Version | 1.1.0                                                             |
 | Author or Team  | Scrivener07 and TheWhiteCollarPlayers                             |
 | Brief Overview  | Brings classic games such as Blackjack to the world of Fallout 4. |
 | Classification  | None                                                              |
@@ -19,7 +19,7 @@
 | Download on GitHub | https://github.com/Scrivener07/FO4_Games/releases |
 
 ```
-[size=6]What's New: Version 0.1.2.1[/size]
+[size=6]What's New: Version 1.1.0[/size]
 [size=3]-A brand new custom card table created by the talented [url=https://www.nexusmods.com/fallout4/users/10204660]Corvalho[/url]﻿. This one is much smaller and fits in nearly every home.
 [/size]-Support for Nuka World and Far Harbor locations, currently available as individual plugins.
 -A plethora of bug fixes and optimizations. Expand the spoiler section below for details.

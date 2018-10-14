@@ -151,7 +151,6 @@ State Wagering
 		If (SendPhase(self, WageringState, Begun))
 			Utility.Wait(TimeDelay)
 
-
 			BeginState(Dealer, WageringState)
 			BeginState(Human, WageringState)
 

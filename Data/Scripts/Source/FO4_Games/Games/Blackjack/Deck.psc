@@ -374,8 +374,10 @@ EndFunction
 bool Function Shuffle()
 	{Shuffles all cards within the deck with FX.}
 	If (parent.Shuffle())
-
-		int index = 0
+		; TODO: I am not happy with the speed here. Too many nasty loops.
+		; TODO: Disabling my card references causes them to reset back to their editor positions.
+		
+		int index = 0 ; Hides the deck cards by disabling each reference.
 		While (index < Cards.Length)
 			Cards[index].Reference.Disable()
 			index += 1

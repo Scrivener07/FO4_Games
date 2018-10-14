@@ -19,10 +19,10 @@ Check out the [video playlist](https://www.youtube.com/playlist?list=PLdEgiq4kaj
 
 #### Installation
 * Start Fallout 4 with `Games.esm` enabled within your load order. 
-* Enable `Games_WhiteCollar.esp` for classic games implemented in the vanilla game world.
+* Enable `BarstoolGames.esm` for classic games implemented in the vanilla game world.
 
 #### Playing
-Use the in-game developer console for access to the projects testing cell. Use the console command `coc GamesTestCell`. To add caps, use the console command `Player.AddItem F 100`. If `Games_WhiteCollar.esp` is enabled you may play games with certain NPCs or build game tables in settlements.
+Use the in-game developer console for access to the projects testing cell. Use the console command `coc GamesTestCell`. To add caps, use the console command `Player.AddItem F 100`. If `BarstoolGames.esm` is enabled you may play games with certain NPCs or build game tables in settlements.
 
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing to this project.
