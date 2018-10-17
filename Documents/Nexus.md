@@ -19,20 +19,12 @@
 | Download on GitHub | https://github.com/Scrivener07/FO4_Games/releases |
 
 ```
-[size=6]What's New: Version 1.1.0[/size]
-[size=3]-A brand new custom card table created by the talented [url=https://www.nexusmods.com/fallout4/users/10204660]Corvalho[/url]﻿. This one is much smaller and fits in nearly every home.
-[/size]-Support for Nuka World and Far Harbor locations, currently available as individual plugins.
--A plethora of bug fixes and optimizations. Expand the spoiler section below for details.
-[spoiler]
-Fixed issue with entering game in third person.
-Fixed issue with companions interfering while playing game.
-Fixed issue with perk magazine location conflicting with Sim Settlements: Industrial Revolution. New magazine location is in the Boylston Club near the Boston Commons.
-Fixed issue with the "Earnings" calculation.
-Fixed issue with the UI display.
-Fixed issue with scoring hands.
-Fixed camera positioning in game.
-Miscellaneous optimizations and improvements.
-[/spoiler]
+[size=6]What's New: Version 1.2.0[/size]
+-Update to mechanics for the settlement Blackjack table. See this [url=https://www.youtube.com/watch?v=VxwP6LVN8bs&t=1s]video[/url] for details about the new mechanic.
+-Voice and lip support for all Commonwealth, Far Harbor, and Nuka World NPC's. With the exception of settler dialogue which is currently unvoiced, will be addressed in a later update. Also fixed Player voice to be silent so no long awkward pauses.
+-Motion and SFX changes to the Blackjack game itself, more updates to SFX coming in future updates. See this [url=https://www.youtube.com/watch?v=73ORUjqUpDw]video[/url] for a preview.
+-A plethora of bug fixes and optimizations. Details can be found by viewing progress on our[url=https://github.com/Scrivener07/FO4_Games] Github[/url] page.
+
 [size=6]Details[/size]
 [size=3]Barstool Games restores gambling related mini-games like those found in Fallout: New Vegas, to the world of Fallout 4. Currently, the only minigame added is Blackjack which can be played in a variety of ways. However in the future all of the minigames from Fallout: New Vegas as well as others will be added.
 [/size]
@@ -43,7 +35,9 @@ Miscellaneous optimizations and improvements.
 [youtube]HA4OaDVA3rk[/youtube]
 
 [size=6]What's Included[/size]
-[size=3]-Playable Blackjack
+[size=3][size=3]-A brand new custom card table created by the talented [url=https://www.nexusmods.com/fallout4/users/10204660]Corvalho[/url]﻿. This one is much smaller and fits in nearly every home.
+[/size]-Support for Nuka World and Far Harbor locations, currently available as individual plugins.
+-Playable Blackjack
 -Play cards, purchase Card Decks, and purchase tutorial pamphlets through 6 new NPC's in 6 different locations across the Commonwealth.
 -Play cards at your settlements. Requires building a Blackjack table which must first be unlocked by finding a magazine hidden somewhere in the Commonwealth. Constructing the table requires a Deck of Cards and an upfront investment of caps.
 [/size]
