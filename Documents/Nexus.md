@@ -4,7 +4,7 @@
 | Mod Category    | Gameplay Effects and Changes                                      |
 | Mod Name        | Barstool Games                                                    |
 | Mod Language    | English                                                           |
-| Current Version | 1.1.0                                                             |
+| Current Version | 1.2.0                                                             |
 | Author or Team  | Scrivener07 and TheWhiteCollarPlayers                             |
 | Brief Overview  | Brings classic games such as Blackjack to the world of Fallout 4. |
 | Classification  | None                                                              |
