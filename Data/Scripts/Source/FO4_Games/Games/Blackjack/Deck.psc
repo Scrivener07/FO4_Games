@@ -11,12 +11,8 @@ import Games:Shared:Motion
 Event Games:Shared:Motion.TranslationEvent(Shared:Motion sender, var[] arguments)
 	TranslationEventArgs e = sender.GetTranslationEventArgs(arguments)
 	If (e)
-		If (e.From == GamesBlackjack_Deck)
-			UIPerkMenuEnter.Play(e.From)
-		Else
-			If (e.Translation == sender.TranslationStarted)
-				PHYPaperMagazineH.Play(e.From)
-			EndIf
+		If (e.Translation == sender.TranslationStarted)
+			Games_Card_Move_SFX.Play(e.From)
 		EndIf
 	Else
 		WriteUnexpectedValue(ToString(), "Games:Shared:Motion.TranslationEvent", "e", "Cannot handle empty or none event arguments.")
@@ -375,9 +371,9 @@ bool Function Shuffle()
 	{Shuffles all cards within the deck with FX.}
 	If (parent.Shuffle())
 		; TODO: I am not happy with the speed here. Too many nasty loops.
-		; TODO: Disabling my card references causes them to reset back to their editor positions.
-		
-		int index = 0 ; Hides the deck cards by disabling each reference.
+		; Note: Disabling my card references causes them to reset back to their editor positions.
+
+		int index = 0
 		While (index < Cards.Length)
 			Cards[index].Reference.Disable()
 			index += 1
@@ -386,7 +382,7 @@ bool Function Shuffle()
 		Motion.Translate(GamesBlackjack_Deck, GamesBlackjack_Deck_ShuffleMarker, 50.0)
 		index = 0
 		While (index < 10)
-			PHYPaperMagazineH.Play(Game.GetPlayer())
+			Games_CardDeck_Shuffle_SFX.Play(Game.GetPlayer())
 			Utility.Wait(0.25)
 			index += 1
 		EndWhile
@@ -466,10 +462,10 @@ Group Scripts
 EndGroup
 
 Group SFX
-	Sound Property PHYPaperMagazineH Auto Const Mandatory
-	{The sound for card movement.}
-	Sound Property UIPerkMenuEnter Auto Const Mandatory
-	{The sound for Shuffling.}
+	Sound Property Games_Card_Move_SFX Auto Const Mandatory
+	{The sound a card makes when it moves.}
+	Sound Property Games_CardDeck_Shuffle_SFX Auto Const Mandatory
+	{The sound a card deck makes when it shuffles.}
 EndGroup
 
 Group Deck
@@ -481,8 +477,6 @@ Group Deck
 	{The decks shuffle position.}
 	ObjectReference Property GamesBlackjack_Card_DeckMarker Auto Const Mandatory
 	{The cards position inside the deck.}
-	ObjectReference Property GamesBlackjack_Card_DeckEnabler Auto Const Mandatory
-	{The enable parent for all cards in the deck.}
 EndGroup
 
 Group Cards

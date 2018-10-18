@@ -210,7 +210,7 @@ State Playing
 		If (SendPhase(self, PlayingState, Begun))
 			Utility.Wait(TimeDelay)
 			If (Dealer.Hand.IsBlackjack || Human.Hand.IsBlackjack)
-				WriteLine(ToString(), "A blackjack is on the table. A push will be resolved at scoring.")
+				WriteLine(ToString(), "A blackjack is on the table. The dealer will reveal their hand and a push may be resolved at scoring.")
 				Dealer.Reveal()
 			Else
 				AwaitState(Human, PlayingState)
@@ -218,7 +218,7 @@ State Playing
 					WriteLine(ToString(), "The dealer will challenge the players hand.")
 					AwaitState(Dealer, PlayingState)
 				Else
-					WriteLine(ToString(), "The dealer will not challenge a busted hand.")
+					WriteLine(ToString(), "The dealer will not challenge a busted hand but will reveal their own instead.")
 					Dealer.Reveal()
 				EndIf
 			EndIf

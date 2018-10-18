@@ -63,8 +63,6 @@ State Playing
 
 	Function ChoiceSet(IntegerValue setter)
 		{The dealer will hit when their score is less than 17.}
-		; TODO: Hitting on a soft-17 will increase the house edge against the player by about 0.22 percent.
-		; Note: In general the dealer should not hit on a 17.
 		If (Score < 17)
 			setter.Value = ChoiceHit
 		Else
@@ -86,13 +84,11 @@ EndState
 
 bool Function Reveal()
 	If (Hand.Count == 2)
-		; TODO: How do I return failure if the card has already been revealed?
 		Motion.Translate(Hand.Cards[0].Reference, GamesBlackjack_DealerCardRevealA)
 		Motion.Translate(Hand.Cards[1].Reference, GamesBlackjack_DealerCardRevealB)
 		Utility.Wait(1.5)
 		Motion.Translate(Hand.Cards[0].Reference, GamesBlackjack_DealerCard01Reveal)
 		Motion.Translate(Hand.Cards[1].Reference, GamesBlackjack_DealerCard02)
-		WriteLine(ToString(), "The dealer has revealed their hand.")
 		return true
 	Else
 		WriteUnexpectedValue(ToString(), "Reveal", "The hand must have exactly two cards.")

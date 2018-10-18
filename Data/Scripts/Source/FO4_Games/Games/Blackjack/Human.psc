@@ -154,7 +154,7 @@ State Wagering
 					sender.UnregisterForSelectedEvent(self)
 					sender.Hide()
 				Else
-					UIMenuCancel.Play(Player)
+					Games_Shared_ButtonMenu_Cancel_SFX.Play(Player)
 				EndIf
 			ElseIf (selected == LeaveButton)
 				Quit()
@@ -167,34 +167,34 @@ State Wagering
 					If (IsValidWager(value) && value != Wager)
 						Wager = value
 						Display.Bet = value
-						ITMBottlecapsDownx.Play(Player)
+						Games_Blackjack_WagerIncrease_SFX.Play(Player)
 					Else
-						UIMenuCancel.Play(Player)
+						Games_Shared_ButtonMenu_Cancel_SFX.Play(Player)
 					EndIf
 				ElseIf (selected == DecreaseButton)
 					value = Wager - WagerStep
 					If (IsValidWager(value) && value != Wager)
 						Wager = value
 						Display.Bet = value
-						ITMBottlecapsUpx.Play(Player)
+						Games_Blackjack_WagerDecrease_SFX.Play(Player)
 					Else
-						UIMenuCancel.Play(Player)
+						Games_Shared_ButtonMenu_Cancel_SFX.Play(Player)
 					EndIf
 				ElseIf (selected == MinimumButton)
 					If (IsValidWager(WagerMinimum) && WagerMinimum != Wager)
 						Wager = WagerMinimum
 						Display.Bet = Wager
-						ITMBottlecapsUpx.Play(Player)
+						Games_Blackjack_WagerMinimum_SFX.Play(Player)
 					Else
-						UIMenuCancel.Play(Player)
+						Games_Shared_ButtonMenu_Cancel_SFX.Play(Player)
 					EndIf
 				ElseIf (selected == MaximumButton)
 					If (IsValidWager(WagerMaximum) && WagerMaximum != Wager)
 						Wager = WagerMaximum
 						Display.Bet = Wager
-						ITMBottlecapsDownx.Play(Player)
+						Games_Blackjack_WagerMaximum_SFX.Play(Player)
 					Else
-						UIMenuCancel.Play(Player)
+						Games_Shared_ButtonMenu_Cancel_SFX.Play(Player)
 					EndIf
 				Else
 					WriteUnexpectedValue(ToString(), "Wagering.OnSelected", "selected", "The selected button '"+selected+"' was unhandled.")
@@ -287,15 +287,15 @@ State Scoring
 		If (scoring == Invalid)
 			return
 		ElseIf (scoring == ScorePush)
-			Game.ShowPerkVaultBoyOnHUD(PushFX, OBJLoadElevatorUtilityDing)
+			Game.ShowPerkVaultBoyOnHUD(PushFX, Games_Blackjack_ScoringPush_SFX)
 		ElseIf (scoring == ScoreLose)
-			Game.ShowPerkVaultBoyOnHUD(LoseFX, ITMBottlecapsDownx)
+			Game.ShowPerkVaultBoyOnHUD(LoseFX, Games_Blackjack_ScoringLose_SFX)
 			Player.RemoveItem(Caps, Debt, true)
 		ElseIf (scoring == ScoreWin)
-			Game.ShowPerkVaultBoyOnHUD(WinFX, UIExperienceUp)
+			Game.ShowPerkVaultBoyOnHUD(WinFX, Games_Blackjack_ScoringWin_SFX)
 			Player.AddItem(Caps, Debt, true)
 		ElseIf (scoring == ScoreBlackjack)
-			Game.ShowPerkVaultBoyOnHUD(BlackjackFX, UIExperienceUp)
+			Game.ShowPerkVaultBoyOnHUD(BlackjackFX, Games_Blackjack_ScoringBlackjack_SFX)
 			Player.AddItem(Caps, Debt, true)
 		Else
 			WriteUnexpectedValue(ToString(), "OnScoring", "scoring", "Scoring of "+scoring+" was unhandled.")
@@ -336,11 +336,15 @@ Group UI
 EndGroup
 
 Group SFX
-	Sound Property ITMBottlecapsUpx Auto Const Mandatory
-	Sound Property ITMBottlecapsDownx Auto Const Mandatory
-	Sound Property UIExperienceUp Auto Const Mandatory
-	Sound Property OBJLoadElevatorUtilityDing Auto Const Mandatory
-	Sound Property UIMenuCancel Auto Const Mandatory
+	Sound Property Games_Blackjack_WagerIncrease_SFX Auto Const Mandatory
+	Sound Property Games_Blackjack_WagerDecrease_SFX Auto Const Mandatory
+	Sound Property Games_Blackjack_WagerMinimum_SFX Auto Const Mandatory
+	Sound Property Games_Blackjack_WagerMaximum_SFX Auto Const Mandatory
+	Sound Property Games_Blackjack_ScoringLose_SFX Auto Const Mandatory
+	Sound Property Games_Blackjack_ScoringWin_SFX Auto Const Mandatory
+	Sound Property Games_Blackjack_ScoringBlackjack_SFX Auto Const Mandatory
+	Sound Property Games_Blackjack_ScoringPush_SFX Auto Const Mandatory
+	Sound Property Games_Shared_ButtonMenu_Cancel_SFX Auto Const Mandatory
 EndGroup
 
 Group Player

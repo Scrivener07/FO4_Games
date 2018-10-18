@@ -121,10 +121,7 @@ State Translating
 				reference.SetMotionType(Motion_Keyframed)
 				RegisterForRemoteEvent(reference, "OnTranslationComplete")
 				RegisterForRemoteEvent(reference, "OnTranslationFailed")
-
-				; TODO: Figure out how to translate with a spline.
 				reference.TranslateToRef(Motion.Destination, Motion.Speed)
-
 				SendTranslationEvent(self, reference, Motion.Destination, TranslationStarted)
 				index += 1
 			EndWhile
