@@ -167,7 +167,11 @@ State Wagering
 					If (IsValidWager(value) && value != Wager)
 						Wager = value
 						Display.Bet = value
-						Games_Blackjack_WagerIncrease_SFX.Play(Player)
+						If (value >= WagerMaximum)
+							Games_Blackjack_WagerMaximum_SFX.Play(Player)
+						Else
+							Games_Blackjack_WagerIncrease_SFX.Play(Player)
+						EndIf
 					Else
 						Games_Shared_ButtonMenu_Cancel_SFX.Play(Player)
 					EndIf
@@ -176,7 +180,11 @@ State Wagering
 					If (IsValidWager(value) && value != Wager)
 						Wager = value
 						Display.Bet = value
-						Games_Blackjack_WagerDecrease_SFX.Play(Player)
+						If (value <= WagerMinimum)
+							Games_Blackjack_WagerMinimum_SFX.Play(Player)
+						Else
+							Games_Blackjack_WagerDecrease_SFX.Play(Player)
+						EndIf
 					Else
 						Games_Shared_ButtonMenu_Cancel_SFX.Play(Player)
 					EndIf
