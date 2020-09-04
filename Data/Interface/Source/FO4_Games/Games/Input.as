@@ -1,4 +1,4 @@
-package Games
+﻿package Games
 {
 	public class Input
 	{
@@ -104,7 +104,21 @@ package Games
 		private static const Mouse3:int = 258;
 		private static const Mouse4:int = 259;
 		private static const Mouse5:int = 260;
-
+		private static const Button_LT:int = 267;
+		private static const Button_RT:int = 268;
+		private static const Button_Options:int = 269;
+		private static const Button_Start:int = 270;
+		private static const Button_Select:int = 271;
+		private static const Button_L3:int = 272;
+		private static const Button_R3:int = 273;
+		private static const Button_L1:int = 274;
+		private static const Button_R1:int = 275;
+		private static const Button_A:int = 276;
+		private static const Button_B:int = 277;
+		private static const Button_X:int = 278;
+		private static const Button_Y:int = 279;
+		private static const Button_L2:int = 280;
+		private static const Button_R2:int = 281;
 
 		public static function KeyCodeToPC(keycode:int) : String
 		{
@@ -526,6 +540,133 @@ package Games
 			}
 		}
 
-
+		public static function KeyCodeToPS(keycode:int) : String
+		{
+			if (keycode == -1)
+			{
+				return keycode.toString();
+			}
+			else if (keycode == Button_Start)
+			{
+				return "PSN_Start";
+			}
+			else if (keycode == Button_Select)
+			{
+				return "PSN_Select";
+			}
+			else if (keycode == Button_L3)
+			{
+				return "PSN_L3";
+			}
+			else if (keycode == Button_R3)
+			{
+				return "PSN_R3";
+			}
+			else if (keycode == Button_L1)
+			{
+				return "PSN_L1";
+			}
+			else if (keycode == Button_R1)
+			{
+				return "PSN_R1";
+			}
+			else if (keycode == Button_A)
+			{
+				return "PSN_A";
+			}
+			else if (keycode == Button_B)
+			{
+				return "PSN_B";
+			}
+			else if (keycode == Button_X)
+			{
+				return "PSN_X";
+			}
+			else if (keycode == Button_Y)
+			{
+				return "PSN_Y";
+			}
+			else if (keycode == Button_L2)
+			{
+				return "PSN_L2";
+			}
+			else if (keycode == Button_R2)
+			{
+				return "PSN_R2";
+			}
+			else
+			{
+				return "PlayStation";
+			}
+		}
+		
+		public static function KeyCodeToXB(keycode:int) : String
+		{
+			if (keycode == -1)
+			{
+				return keycode.toString();
+			}
+			else if (keycode == Button_LT)
+			{
+				return "Xenon_L3";
+			}
+			else if (keycode == Button_RT)
+			{
+				return "Xenon_R3";
+			}
+			else if (keycode == Button_Start)
+			{
+				return "Xenon_Start";
+			}
+			else if (keycode == Button_Select)
+			{
+				return "Xenon_Select";
+			}
+			else if (keycode == Button_L3)
+			{
+				return "Xenon_L3";
+			}
+			else if (keycode == Button_R3)
+			{
+				return "Xenon_R3";
+			}
+			else if (keycode == Button_L1)
+			{
+				return "Xenon_L1";
+			}
+			else if (keycode == Button_R1)
+			{
+				return "Xenon_R1";
+			}
+			else if (keycode == Button_A)
+			{
+				return "Xenon_A";
+			}
+			else if (keycode == Button_B)
+			{
+				return "Xenon_B";
+			}
+			else if (keycode == Button_X)
+			{
+				return "Xenon_X";
+			}
+			else if (keycode == Button_Y)
+			{
+				return "Xenon_Y";
+			}
+			else if (keycode == Button_L2)
+			{
+				return "Xenon_L2";
+			}
+			else if (keycode == Button_R2)
+			{
+				return "Xenon_R2";
+			}
+			else
+			{
+				return "Xbox";
+			}
+		}
+		
 	}
 }

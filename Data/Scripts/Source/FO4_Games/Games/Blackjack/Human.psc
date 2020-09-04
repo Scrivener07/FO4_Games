@@ -54,45 +54,16 @@ Event OnQuestInit()
 	Hand.Markers.Card10 = GamesBlackjack_PlayerCard10
 	Hand.Markers.Card11 = GamesBlackjack_PlayerCard11
 
-	AcceptButton = new Button
-	AcceptButton.Text = "Accept"
-	AcceptButton.KeyCode = Keyboard.E
-
-	IncreaseButton = new Button
-	IncreaseButton.Text = "Increase"
-	IncreaseButton.KeyCode = Keyboard.W
-
-	DecreaseButton = new Button
-	DecreaseButton.Text = "Decrease"
-	DecreaseButton.KeyCode = Keyboard.S
-
-	MinimumButton = new Button
-	MinimumButton.Text = "Minimum"
-	MinimumButton.KeyCode = Keyboard.A
-
-	MaximumButton = new Button
-	MaximumButton.Text = "Maximum"
-	MaximumButton.KeyCode = Keyboard.D
-
-	HitButton = new Button
-	HitButton.Text = "Hit"
-	HitButton.KeyCode = Keyboard.W
-
-	StandButton = new Button
-	StandButton.Text = "Stand"
-	StandButton.KeyCode = Keyboard.S
-
-	DoubleButton = new Button
-	DoubleButton.Text = "Double Down"
-	DoubleButton.KeyCode = Keyboard.D
-
-	PlayButton = new Button
-	PlayButton.Text = "Play Again"
-	PlayButton.KeyCode = Keyboard.E
-
-	LeaveButton = new Button
-	LeaveButton.Text = "Leave"
-	LeaveButton.KeyCode = Keyboard.Tab
+	AcceptButton = SetupButton("Accept", "Activate")
+	IncreaseButton = SetupButton("Increase", "Sprint")
+	DecreaseButton = SetupButton("Decrease", "Sneak")
+	MinimumButton = SetupButton("Minimum", "ReadyWeapon")
+	MaximumButton = SetupButton("Maximum", "Jump")
+	HitButton = SetupButton("Hit", "Sprint")
+	StandButton = SetupButton("Stand", "Sneak")
+	DoubleButton = SetupButton("Double Down", "Jump")
+	PlayButton = SetupButton("Play Again", "Activate")
+	LeaveButton = SetupButton("Leave", "PipBoy")
 EndEvent
 
 

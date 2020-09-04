@@ -74,13 +74,14 @@
 		{
 			var textValue = argument["__struct__"]["__data__"]["text"];
 			var keyCode = 	argument["__struct__"]["__data__"]["keyCode"];
+			var gamePad = 	argument["__struct__"]["__data__"]["GamePad"];
 
 			var hint:BSButtonHintData = new BSButtonHintData
 			(
 				textValue,
 				Games.Input.KeyCodeToPC(keyCode),
-				"PlayStation",
-				"Xbox",
+				Games.Input.KeyCodeToPS(gamePad),
+				Games.Input.KeyCodeToXB(gamePad),
 				1,
 				null
 			);

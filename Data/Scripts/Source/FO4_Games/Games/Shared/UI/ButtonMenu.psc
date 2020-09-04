@@ -16,6 +16,10 @@ Struct Button
 	{The button text label.}
 	int KeyCode = -1
 	{The keyboard scancode.}
+	int GamePad = -1
+	{The gamepad scancode.}
+	String Control = ""
+	{The assigned control ("Forward", "Back", "Strafe Left", etc).}
 EndStruct
 
 
@@ -56,6 +60,7 @@ State Shown
 				While (index < Buttons.Length)
 					arguments.Add(Buttons[index])
 					RegisterForKey(Buttons[index].KeyCode)
+					RegisterForKey(Buttons[index].GamePad)
 					index += 1
 				EndWhile
 
@@ -135,6 +140,7 @@ State Shown
 		int index = 0
 		While (index < Buttons.Length)
 			UnregisterForKey(Buttons[index].KeyCode)
+			UnregisterForKey(Buttons[index].GamePad)
 			index += 1
 		EndWhile
 
@@ -204,7 +210,13 @@ EndFunction
 
 int Function FindByKeyCode(int value)
 	{Determines the index of a button with the given key code.}
-	return Buttons.FindStruct("KeyCode", value)
+	Int i = -1
+	If Game.UsingGamepad()
+		i = Buttons.FindStruct("GamePad", value)
+	Else
+		i = Buttons.FindStruct("KeyCode", value)
+	EndIf
+	return i
 EndFunction
 
 
@@ -300,6 +312,18 @@ ShownEventArgs Function GetShownEventArgs(var[] arguments)
 	EndIf
 EndFunction
 
+Button Function SetupButton(String t, String c) Global
+	Button b = new Button
+	b.Text = t
+	b.Control = c
+	Int k = Input.GetMappedKey(c, 0);keyboard
+	If k == -1
+		k = Input.GetMappedKey(c, 1);mouse
+	EndIf
+	b.KeyCode = k
+	b.GamePad = Input.GetMappedKey(c, 2);gamepad
+	return b
+EndFunction
 
 ; Properties
 ;---------------------------------------------
